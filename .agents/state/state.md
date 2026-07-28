@@ -9,8 +9,9 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 ## Working System
 
 - Ten reusable skills are present and match the routing in `AGENTS.md`.
-- Installation exports only tracked files, preserves target Git metadata, and
-  documents collision handling.
+- The documented installer exports tracked files and preserves target Git
+  metadata, but is not a clean distribution boundary for repositories that
+  already have agent workflow state.
 - Active and archived task state is validated for exact structure, unique
   visible fields, review semantics, status/turn pairing, terminal status, and
   matching ids.
@@ -26,29 +27,43 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 
 ## Known Failures
 
-None currently recorded. Task 002 resolved all six findings from the
-[historical workflow audit](../../docs/audits/agent-workflow-audit.md) and
-received an independent `Accepted` verdict after two bounded revision rounds.
+- The tracked-tree installer collides with all four assessed target
+  repositories and would copy agent-kit's own state, task, audit, test, and ARA
+  history. A clean payload boundary and disposable distribution regression are
+  required before any target pilot.
+- Task 002 resolved all six findings from the
+  [historical workflow audit](../../docs/audits/agent-workflow-audit.md).
 
 ## Important Decisions
 
-None recorded.
+- Do not install agent-kit into, or replace the existing workflow of, Prospect,
+  StructSplat, realtime-gs, or IntrinsicEngine.
+- After the distribution blocker is fixed, evaluate only bounded coordination
+  pilots in realtime-gs and Prospect. Consider in-place schema experiments in
+  StructSplat or IntrinsicEngine only after a concrete failure establishes the
+  need.
+- Preserve the targets' stronger task, evidence, validation, and domain-skill
+  systems. The leading reciprocal P1 candidate is a generic research-results
+  audit; single-source IntrinsicEngine ideas remain P2 hypotheses.
 
 ## Current Metrics
 
 - Routed skills: 10.
 - Workflow regression tests: 31.
-- Archived operational tasks: 2.
+- Archived operational tasks: 3.
 - Remediated audit findings: 6 of 6.
-- Task 002 independent verdict: Accepted.
+- Assessed target workflows: 4.
+- Task 003 independent verdict: Accepted.
 
 ## Immediate Next Step
 
-No adoption-blocking workflow fix remains. The next substantial task swaps the
-roles recorded below and starts with `task-orchestration`.
+Replace the tracked-tree installer with an explicit clean payload boundary and
+add disposable fresh-target, collision-refusal, no-history, and payload
+allowlist regressions. The next substantial task swaps the roles recorded
+below and starts with `task-orchestration`.
 
 ## Last Completed Task
 
-- Task ID: 002
-- Driver: codex-b
-- Reviewer: codex-a
+- Task ID: 003
+- Driver: codex-a
+- Reviewer: codex-b
