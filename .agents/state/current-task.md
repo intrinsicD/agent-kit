@@ -12,7 +12,7 @@ Cross-repository agent workflow adoption assessment
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -96,7 +96,7 @@ from agent-kit.
 
 ## Status
 
-In review
+Accepted
 
 ## Human Decisions
 
@@ -523,3 +523,142 @@ Yes
 #### Recommended next action
 
 Reviewer independently evaluates the revised artifact at commit `2b8d392`.
+
+### Review (codex-b, Reviewer, Round 2)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The revision satisfies all six required changes from Round 1:
+
+1. It records the fixed source commit and exact collision, tracked-set
+   difference, and archive-enumeration commands.
+2. It distinguishes review norms, recorded review practice, persisted
+   evidence, and mechanically enforced identity/verdict state, and incorporates
+   the alternate evidence path from every target.
+3. It removes unsupported `High`/`Highest` adoption rankings and makes
+   Prospect and realtime-gs bounded pilots with explicit measurements rather
+   than adoption decisions.
+4. It limits universal P0 to a clean allowlisted payload boundary and
+   disposable fresh-target/collision/no-history regression. Authority adapters,
+   skill names, and target CI are correctly target-conditioned.
+5. It retains the independently recurring three-repository results-audit
+   pattern as P1 and demotes the single-source maturity, periodic-audit, and
+   micro-task ideas to P2 hypotheses with falsifiable promotion triggers.
+6. The Decision Summary, per-repository recommendations, competing method,
+   priority sections, decision sequence, and conclusion consistently separate
+   safe pilots from adoption.
+
+The durable decision is appropriately narrow: do not install or replace any
+target workflow now; first repair agent-kit's distribution boundary, then use
+bounded pilots to decide whether selected coordination invariants earn their
+cost.
+
+#### Evidence Quality
+
+- Running the report's filesystem collision command against source
+  `d8d649512f454c219dba55dd12f4d0398cb742e9` reproduced Prospect 11,
+  StructSplat 12, realtime-gs 11, and IntrinsicEngine 12.
+- Running its tracked-set command for all four targets reproduced the
+  non-colliding active state, state summary, Task 001/002 archives, audit,
+  workflow test, and dated ARA-session payload.
+- Enumerating the actual archive confirmed those history paths are present in
+  the install artifact.
+- The review-practice matrix agrees with the independently inspected Prospect
+  `e41b22e`/`bde6266`, realtime-gs `095313d`/`ca11378`, StructSplat
+  FIT-042/FIT-043, and IntrinsicEngine RUNTIME-190/RUNTIME-191 evidence while
+  preserving the targets' lack of identity enforcement.
+- The common claim-table, raw-recomputation, source/config binding, control
+  audit, accounting, and disposition requirements are present in all three
+  target results-audit skills and absent as mandatory structure from
+  agent-kit's generic experiment/review pair. P1 is therefore supported by
+  more than one implementation.
+- `git diff --check 37c3a1f..2b8d392`, all 31 workflow tests, and live state
+  validation pass.
+- All target working trees remain exactly in their recorded initial states.
+
+#### Simplicity
+
+The revision specifies P0 behavior and tests without preselecting a generator
+platform. It proposes only one task record and the narrow validator needed for
+each pilot, avoids a parallel task authority in StructSplat and IntrinsicEngine,
+and conditions broader enforcement on measured value. No speculative
+extension point is required for acceptance.
+
+#### Missing Cases
+
+Remote-only policy and unrecorded human practice remain outside the inspected
+scope. Pilot cost, coordination defects, and defect-detection benefit remain
+unmeasured. The report now states these as limitations and decision inputs
+rather than treating them as evidence, so they do not block the assessment.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+- If the task's four-label disposition vocabulary is used mechanically in a
+  later summary, render each present-state pilot recommendation as
+  `leave unchanged pending a bounded pilot`; this does not change the current
+  decision.
+- Add the newly inspected review artifacts to `Key Sources` if the note later
+  becomes a standalone evidence index rather than a decision record.
+
+### Session Completion (codex-b, Reviewer, Round 2)
+
+#### Work completed
+
+Independently checked every Round 1 required change against revised artifact
+commit `2b8d392fbf0326f36790c9c7655c1ab87212c9da`, reproduced its central
+commands, challenged the P1/P2 evidence split, and returned an Accepted
+verdict.
+
+#### Evidence
+
+All six corrections are present and internally consistent. Exact collision
+counts, history contamination, archive contents, and three-source P1 support
+were independently reproduced.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- Four verbatim filesystem collision probes: `11/12/11/12`.
+- Four tracked-set history-contamination probes and one archive enumeration.
+- `git diff --check 37c3a1f..2b8d392`.
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`:
+  31/31 passed.
+- `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py`:
+  passed with 10 skills and two archived tasks.
+- Read-only target status checks; no target changed.
+
+#### Known limitations
+
+No adoption pilot or remote-policy inspection was performed. Those are
+explicitly deferred decision evidence, not claims approved by this review.
+
+#### Unresolved questions
+
+Whether either pilot earns adoption remains unresolved by design and must be
+decided from the report's stated cost, handoff, duplicate-state, and material-
+finding measurements.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver follows the accepted-flow repository completion procedure: merge the
+task branch, archive Task 003, update repository state, and preserve the
+assessment's no-install decision.
