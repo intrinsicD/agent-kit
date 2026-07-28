@@ -27,3 +27,11 @@ Record correctness, quality, performance, or product metrics currently used.
 ## Immediate Next Step
 
 State one most important next action.
+
+## Last Completed Task
+
+Roles from the most recently archived task, so the next task can swap them.
+
+- Task ID:
+- Driver:
+- Reviewer:

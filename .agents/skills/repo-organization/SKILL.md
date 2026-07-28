@@ -12,8 +12,10 @@ state and documentation drift.
 
 - `README.md`: purpose, current capabilities, quick start, reproduction.
 - `AGENTS.md`: routing and universal rules.
-- `.agents/state/state.md`: compact current state.
-- `.agents/state/current-task.md`: only the active task, with its Handoff Log.
+- `.agents/state/state.md`: compact current state, including the roles of the
+  last completed task.
+- `.agents/state/current-task.md`: only the active task, with its Handoff Log
+  and any recorded human decisions.
 - `.agents/state/backlog.md`: validated future work.
 - `.agents/state/ideas.md`: unvalidated possibilities.
 - `docs/decisions/`: durable consequential decisions.
@@ -56,12 +58,19 @@ Status: Proposed / Accepted / Superseded / Rejected
 
 ## Completion update
 
-At the end of substantial work:
+The Driver runs this at the end of substantial work, after the Reviewer has
+returned a verdict and passed the turn back:
 
 1. Archive the finished task: copy `.agents/state/current-task.md`, including
-   its Handoff Log and final status, to `docs/tasks/<task-id>-<slug>.md`, then
-   reset `current-task.md` to its template.
-2. Update `.agents/state/state.md`.
+   its Handoff Log, human decisions, and final status, to
+   `docs/tasks/<task-id>-<slug>.md`. Set `Turn` to `none` in the archived copy,
+   then reset `current-task.md` to its template.
+2. Update `.agents/state/state.md`, including `## Last Completed Task` with the
+   archived task's id and its Driver and Reviewer, so the next task can swap
+   the roles.
 3. Update the relevant decision, experiment, research, or audit record.
 4. Update backlog or ideas only when justified.
 5. Run `scripts/validate_agent_workflow.py` and fix anything it reports.
+
+Archive rejected and inconclusive tasks the same way. Their record is what
+prevents the next task from repeating the attempt.

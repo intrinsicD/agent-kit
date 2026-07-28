@@ -1,4 +1,4 @@
-# Current Task
+# Task Record 000
 
 This is an illustrative example of a completed task record, not real project
 history. It shows the level of detail the workflow expects.
@@ -15,7 +15,7 @@ Replace brute-force neighbor search with a uniform grid
 
 - Driver: agent-a
 - Reviewer: agent-b
-- Turn: driver
+- Turn: none
 
 ## Mode
 
@@ -69,6 +69,10 @@ Profiling on the 100k-particle benchmark shows 78% of frame time in
 
 Accepted with follow-up
 
+## Human Decisions
+
+None. Nothing in this task required a product, risk, or cost judgement.
+
 ## Handoff Log
 
 ### Handoff (agent-a, Driver)
@@ -87,6 +91,9 @@ Accepted with follow-up
 
 #### Verdict
 Accepted with follow-up
+
+#### Self-reviewed
+No
 
 #### Correctness
 Equivalence holds on existing inputs and on a new randomized test with
