@@ -1,0 +1,69 @@
+tree:
+  - id: N01
+    type: question
+    title: "Audit the repository's agentic workflow"
+    provenance: user
+    timestamp: "2026-07-28T20:21+02:00"
+    description: >
+      Determine whether the repository contains problems in its two-agent
+      operating workflow.
+    status: resolved
+    children:
+      - id: N02
+        type: experiment
+        title: "Probe the documented installation command"
+        provenance: ai-executed
+        timestamp: "2026-07-28T20:21+02:00"
+        result: >
+          In a disposable target repository, the documented copy command
+          changed origin from the target URL to the kit URL and changed the
+          active branch and HEAD to the kit's values.
+        evidence:
+          - "docs/audits/agent-workflow-audit.md"
+        status: resolved
+        children: []
+      - id: N03
+        type: experiment
+        title: "Exercise validator edge-state fixtures"
+        provenance: ai-executed
+        timestamp: "2026-07-28T20:21+02:00"
+        result: >
+          Eleven of eleven fixtures disagreed with protocol expectations: one
+          documented valid review form was rejected and ten invalid states were
+          accepted.
+        evidence:
+          - "docs/audits/agent-workflow-audit.md"
+        status: resolved
+        children: []
+      - id: N04
+        type: experiment
+        title: "Independently falsify audit findings"
+        provenance: ai-executed
+        timestamp: "2026-07-28T20:21+02:00"
+        result: >
+          A second agent reproduced F1, F2, all eleven validator mismatches,
+          and the rejected-branch closeout failure; it returned Accepted with
+          follow-up.
+        evidence:
+          - "docs/tasks/001-agent-workflow-audit.md"
+        status: resolved
+        children: []
+      - id: N05
+        type: decision
+        title: "Accept and archive the workflow audit"
+        provenance: ai-executed
+        timestamp: "2026-07-28T20:21+02:00"
+        choice: >
+          Merge and archive the reviewed audit while leaving workflow fixes for
+          follow-up work.
+        alternatives:
+          - "Require revision of the audit"
+          - "Reject the audit"
+          - "Implement fixes in the review task"
+        evidence:
+          - "N02"
+          - "N03"
+          - "N04"
+          - "docs/audits/agent-workflow-audit.md"
+        status: resolved
+        children: []

@@ -1,0 +1,6 @@
+entries:
+  - turn: "2026-07-28_001#1"
+    notes:
+      - "Routed the installation, validator, and independent-review probes as direct experiment events."
+      - "Staged six audit findings as claims, then crystallized them through artifact commitment after independent acceptance and merge."
+      - "Preserved ai-suggested provenance because the user requested the audit but did not affirm individual findings."

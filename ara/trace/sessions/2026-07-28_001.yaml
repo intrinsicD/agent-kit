@@ -1,0 +1,122 @@
+session:
+  id: "2026-07-28_001"
+  date: "2026-07-28"
+  started: "2026-07-28T20:21+02:00"
+  last_turn: "2026-07-28T20:21+02:00"
+  turn_count: 1
+  summary: "Two-agent workflow audit found six independently supported failures."
+
+events_logged:
+  - turn: 1
+    type: question
+    id: N01
+    routing: direct
+    provenance: user
+    summary: "Audit the repository's agentic workflow."
+  - turn: 1
+    type: experiment
+    id: N02
+    routing: direct
+    provenance: ai-executed
+    summary: "Install probe showed target Git metadata replacement."
+  - turn: 1
+    type: experiment
+    id: N03
+    routing: direct
+    provenance: ai-executed
+    summary: "Validator matrix produced eleven protocol mismatches."
+  - turn: 1
+    type: experiment
+    id: N04
+    routing: direct
+    provenance: ai-executed
+    summary: "Independent reviewer reproduced the important findings."
+  - turn: 1
+    type: decision
+    id: N05
+    routing: direct
+    provenance: ai-executed
+    summary: "Accepted and archived the reviewed audit."
+  - turn: 1
+    type: claim
+    id: O01
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Installation command overwrites target Git metadata."
+  - turn: 1
+    type: claim
+    id: O02
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Review template conflicts with validator parsing."
+  - turn: 1
+    type: claim
+    id: O03
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Approval and turn invariants are not enforced."
+  - turn: 1
+    type: claim
+    id: O04
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Rejected branches lack a documented safe closeout."
+  - turn: 1
+    type: claim
+    id: O05
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Malformed task state can bypass validation."
+  - turn: 1
+    type: claim
+    id: O06
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Illustrative task is treated as operational history."
+
+ai_actions:
+  - turn: 1
+    action: "Inspected workflow rules, skills, state, history, and validator."
+    provenance: ai-executed
+    files_changed: []
+  - turn: 1
+    action: "Ran disposable installation and validator fixture probes."
+    provenance: ai-executed
+    files_changed: []
+  - turn: 1
+    action: "Created, independently reviewed, merged, and archived task 001."
+    provenance: ai-executed
+    files_changed:
+      - "docs/audits/agent-workflow-audit.md"
+      - "docs/tasks/001-agent-workflow-audit.md"
+      - ".agents/state/state.md"
+      - ".agents/state/current-task.md"
+
+claims_touched:
+  - id: C01
+    action: crystallized
+    turn: 1
+  - id: C02
+    action: crystallized
+    turn: 1
+  - id: C03
+    action: crystallized
+    turn: 1
+  - id: C04
+    action: crystallized
+    turn: 1
+  - id: C05
+    action: crystallized
+    turn: 1
+  - id: C06
+    action: crystallized
+    turn: 1
+
+key_context:
+  - turn: 1
+    excerpt: "The user asked for a repository review focused on problems with the agentic workflow."
+
+open_threads:
+  - "Fix F1-F4 before recommending adoption."
+
+ai_suggestions_pending: []

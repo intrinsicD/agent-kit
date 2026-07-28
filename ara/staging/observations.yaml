@@ -1,0 +1,67 @@
+observations:
+  - id: O01
+    timestamp: "2026-07-28T20:21+02:00"
+    provenance: ai-suggested
+    content: "The documented installation command copies and overwrites target Git metadata."
+    context: "Disposable installation probe during workflow audit."
+    potential_type: claim
+    bound_to: [N02, N04, N05]
+    promoted: true
+    promoted_to: "logic/claims.md:C01"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O02
+    timestamp: "2026-07-28T20:21+02:00"
+    provenance: ai-suggested
+    content: "The documented level-two Review template conflicts with validator parsing."
+    context: "Validator fixture and independent reproduction."
+    potential_type: claim
+    bound_to: [N03, N04, N05]
+    promoted: true
+    promoted_to: "logic/claims.md:C02"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O03
+    timestamp: "2026-07-28T20:21+02:00"
+    provenance: ai-suggested
+    content: "The validator does not enforce independent approval or most turn transitions."
+    context: "Eleven-case validator matrix and independent reproduction."
+    potential_type: claim
+    bound_to: [N03, N04, N05]
+    promoted: true
+    promoted_to: "logic/claims.md:C03"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O04
+    timestamp: "2026-07-28T20:21+02:00"
+    provenance: ai-suggested
+    content: "Rejected task branches have no documented safe closeout when they contain rejected changes."
+    context: "Branch lifecycle trace and independent falsification probe."
+    potential_type: claim
+    bound_to: [N04, N05]
+    promoted: true
+    promoted_to: "logic/claims.md:C04"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O05
+    timestamp: "2026-07-28T20:21+02:00"
+    provenance: ai-suggested
+    content: "Partial active state and malformed archives can bypass validation."
+    context: "Malformed-state fixtures and independent reproduction."
+    potential_type: claim
+    bound_to: [N03, N04, N05]
+    promoted: true
+    promoted_to: "logic/claims.md:C05"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O06
+    timestamp: "2026-07-28T20:21+02:00"
+    provenance: ai-suggested
+    content: "The illustrative task is treated as operational history on a fresh kit."
+    context: "Static workflow trace confirmed by independent review."
+    potential_type: claim
+    bound_to: [N01, N04, N05]
+    promoted: true
+    promoted_to: "logic/claims.md:C06"
+    crystallized_via: artifact-commitment
+    stale: false
