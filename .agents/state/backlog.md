@@ -7,4 +7,4 @@ Only add work that has evidence, a clear motivation, or an accepted dependency.
   - Priority:
   - Dependencies:
   - Evidence:
-  - Suggested skill:
+  - Suggested skills:

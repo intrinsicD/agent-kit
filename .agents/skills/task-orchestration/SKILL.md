@@ -9,7 +9,7 @@ Use this skill at the beginning of any non-trivial task.
 
 ## Procedure
 
-1. Read `.agent/state.md` and `.agent/current-task.md`.
+1. Read `.agents/state/state.md` and `.agents/state/current-task.md`.
 2. Inspect relevant code, tests, decisions, experiments, and open failures.
 3. Classify the task:
    - Explore
@@ -18,13 +18,16 @@ Use this skill at the beginning of any non-trivial task.
    - Validate
    - Stabilize
    - Productize
-4. Confirm who is Driver and who is Reviewer.
+4. Confirm the role assignment and turn recorded in
+   `.agents/state/current-task.md`. If roles are unassigned, apply the role
+   assignment rules in `AGENTS.md` and record the result, including any role
+   swap from the previous task.
 5. Define observable success criteria.
 6. Write explicit non-goals.
 7. Select the fewest applicable skills.
 8. Propose the smallest sequence that can resolve the task.
 9. Identify the main uncertainty and the cheapest way to reduce it.
-10. Update `.agent/current-task.md`.
+10. Update `.agents/state/current-task.md`.
 
 ## Routing guidance
 
@@ -52,9 +55,10 @@ Reject or shrink plans that cannot answer these questions.
 
 ## Output
 
-Update `.agent/current-task.md` with:
+Update `.agents/state/current-task.md` with:
 
-- role assignment,
+- task id,
+- role assignment and turn,
 - mode,
 - selected skills,
 - measurable success criteria,

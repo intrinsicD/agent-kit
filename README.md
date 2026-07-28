@@ -28,33 +28,49 @@ Expected layout:
 repository/
 ├── AGENTS.md
 ├── .agents/
-│   └── skills/
-├── .agent/
-│   ├── current-task.md
-│   ├── state.md
-│   ├── backlog.md
-│   └── ideas.md
+│   ├── skills/
+│   └── state/
+│       ├── current-task.md
+│       ├── state.md
+│       ├── backlog.md
+│       └── ideas.md
 ├── docs/
 │   ├── decisions/
 │   ├── research/
 │   ├── experiments/
-│   └── audits/
+│   ├── audits/
+│   └── tasks/
 └── scripts/
     └── validate_agent_workflow.py
 ```
 
+Run `python3 scripts/validate_agent_workflow.py` after installation and after
+any structural change. It checks the required files, the skill frontmatter, and
+that the skill routing in `AGENTS.md` matches the skills on disk.
+
 Most agent harnesses automatically discover `AGENTS.md`. For harnesses with
-native skill discovery, point them to `.agents/skills/`.
+native skill discovery, point them to `.agents/skills/`. For Claude Code:
+
+```bash
+mkdir -p .claude && ln -s ../.agents/skills .claude/skills
+```
 
 ## Recommended first use
 
-1. Fill in `.agent/state.md`.
-2. Create the first task in `.agent/current-task.md`.
-3. Assign one agent as Driver and the other as Reviewer.
+1. Fill in `.agents/state/state.md`.
+2. Assign one agent as Driver and the other as Reviewer. If you do not,
+   the first agent to start a task becomes the Driver and records both role
+   assignments, following the role assignment rules in `AGENTS.md`.
+3. Create the first task in `.agents/state/current-task.md`.
 4. The Driver begins with `task-orchestration`.
 5. The Reviewer uses `review-and-falsification` and, when appropriate,
    `code-audit`.
 6. Switch roles for the next substantial task.
+
+Agents exchange work through the repository: each handoff and verdict is
+appended to the Handoff Log in `.agents/state/current-task.md`, and completed
+tasks are archived under `docs/tasks/`. See
+`docs/tasks/000-example-task.md` for a filled-in example of a completed task.
 
 ## Design principle
 

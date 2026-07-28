@@ -12,14 +12,15 @@ state and documentation drift.
 
 - `README.md`: purpose, current capabilities, quick start, reproduction.
 - `AGENTS.md`: routing and universal rules.
-- `.agent/state.md`: compact current state.
-- `.agent/current-task.md`: only the active task.
-- `.agent/backlog.md`: validated future work.
-- `.agent/ideas.md`: unvalidated possibilities.
+- `.agents/state/state.md`: compact current state.
+- `.agents/state/current-task.md`: only the active task, with its Handoff Log.
+- `.agents/state/backlog.md`: validated future work.
+- `.agents/state/ideas.md`: unvalidated possibilities.
 - `docs/decisions/`: durable consequential decisions.
 - `docs/research/`: research that affects the repository.
 - `docs/experiments/`: experiment plans and interpretations.
 - `docs/audits/`: durable audit results.
+- `docs/tasks/`: archived records of completed tasks.
 
 Chat history is not a source of truth.
 
@@ -55,9 +56,12 @@ Status: Proposed / Accepted / Superseded / Rejected
 
 ## Completion update
 
-At the end of substantial work, update:
+At the end of substantial work:
 
-1. `.agent/current-task.md`
-2. `.agent/state.md`
-3. relevant decision, experiment, research, or audit record
-4. backlog or ideas only when justified
+1. Archive the finished task: copy `.agents/state/current-task.md`, including
+   its Handoff Log and final status, to `docs/tasks/<task-id>-<slug>.md`, then
+   reset `current-task.md` to its template.
+2. Update `.agents/state/state.md`.
+3. Update the relevant decision, experiment, research, or audit record.
+4. Update backlog or ideas only when justified.
+5. Run `scripts/validate_agent_workflow.py` and fix anything it reports.
