@@ -5,13 +5,19 @@ This repository is operated by two cooperating agents.
 The full workflow is implemented through reusable skills under `.agents/skills/`.
 Do not duplicate those instructions in task prompts.
 
+Substantial work is anything that changes behavior, interfaces, dependencies,
+or recorded repository state, or that produces a durable artifact. Only pure
+formatting and typo-level fixes are trivial. All substantial work follows the
+rules below.
+
 ## Mandatory startup
 
 Before doing substantial work:
 
-1. Read `.agent/state.md`.
-2. Read `.agent/current-task.md`.
-3. Identify whether you are the `driver` or `reviewer`.
+1. Read `.agents/state/state.md`.
+2. Read `.agents/state/current-task.md`.
+3. Determine your role from the task's role assignment. If roles are
+   unassigned, apply the role assignment rules below.
 4. Select the smallest applicable skill or skill sequence.
 5. Read only those skill files.
 6. Inspect the relevant code, tests, decisions, and experiment records.
@@ -29,6 +35,34 @@ returns a verdict.
 
 The same agent must not be the sole proposer and final approver of a substantial
 research claim, architecture decision, or critical implementation.
+
+### Role assignment
+
+- Humans assign roles when they start a task. Otherwise the agent that starts
+  the task is the Driver and records both role assignments in
+  `.agents/state/current-task.md`.
+- Identify agents by stable labels (names given by the human, or `agent-a` and
+  `agent-b`) so role assignments stay unambiguous across sessions.
+- Swap roles between substantial tasks. The Driver of the new task records the
+  swap during `task-orchestration`.
+- If only one agent is available, it may drive and then self-review in a
+  separate pass, but it must label the verdict as self-reviewed, and
+  substantial claims stay unapproved until an independent agent or a human
+  confirms them.
+
+## Coordination
+
+- Work is turn-based. The `Turn` field in `.agents/state/current-task.md`
+  records which role acts next. Only the agent whose turn it is writes files
+  under `.agents/state/`.
+- The repository is the only transport between agents. To pass the turn:
+  commit your work, append your handoff or review block to the Handoff Log in
+  `.agents/state/current-task.md`, set the `Turn` field to the other role, and
+  commit. The receiving agent starts by reading the Handoff Log.
+- Do substantial work on a task branch when the hosting setup supports
+  branches. The Reviewer reproduces results from that branch. Merge only after
+  the verdict is Accepted or Accepted with follow-up.
+- Never rely on chat to carry claims, verdicts, or task state.
 
 ## Skill routing
 
@@ -70,3 +104,6 @@ substantial cost, publication strategy, licensing, legal constraints, aesthetics
 or genuinely incompatible goals.
 
 Provide options, evidence, consequences, and a recommendation before escalating.
+Record the escalation in the Handoff Log, set the task status to
+`Blocked on human decision`, and raise it through the channel the humans
+already watch, such as the task conversation, an issue, or a pull request.

@@ -7,6 +7,16 @@ description: Transfer work between Driver and Reviewer using structured claims, 
 
 Use whenever responsibility passes between agents.
 
+## Transport
+
+Handoffs travel through the repository, never through chat alone:
+
+1. Commit your work on the task branch.
+2. Append your block to the Handoff Log in `.agents/state/current-task.md`.
+3. Set the `Turn` field to the other role and commit.
+
+The receiving agent starts by reading the Handoff Log.
+
 ## Driver handoff
 
 ```markdown
@@ -56,7 +66,7 @@ explicit human decision.
 
 ## Session completion
 
-Before an agent stops, record:
+Before an agent stops, append to the Handoff Log:
 
 ```markdown
 ## Session Completion

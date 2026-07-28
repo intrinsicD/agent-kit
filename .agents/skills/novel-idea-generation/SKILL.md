@@ -89,19 +89,7 @@ information gain
 
 ## Artifact
 
-Record serious ideas in `.agent/ideas.md` or a dedicated file:
-
-```markdown
-# Idea: <name>
-
-## Observation
-## Hypothesis
-## Mechanism
-## Relation to Existing Work
-## Cheapest Falsification
-## Expected Benefit
-## Risks
-## Status
-```
+Record serious ideas in `.agents/state/ideas.md` using the template that file
+provides.
 
 Select no more than a small number of ideas for active testing.

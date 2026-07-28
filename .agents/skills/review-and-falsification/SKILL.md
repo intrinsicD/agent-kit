@@ -40,7 +40,7 @@ complexity, not to restyle the Driver's work.
 
 Required changes must be separated from optional improvements.
 
-## Artifact or response format
+## Artifact and placement
 
 ```markdown
 ## Review
@@ -53,6 +53,9 @@ Required changes must be separated from optional improvements.
 ### Required Changes
 ### Optional Improvements
 ```
+
+Append the review to the Handoff Log in `.agents/state/current-task.md`.
+Record durable findings that outlive the task in `docs/audits/`.
 
 Do not approve substantial work solely because tests pass. Check whether the
 tests and success criteria are meaningful.

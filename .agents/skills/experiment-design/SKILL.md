@@ -61,7 +61,9 @@ Create `docs/experiments/<experiment>.md`:
 ### Decision
 ```
 
-Place raw data under `experiments/results/` if that directory exists.
+Store raw machine-readable outputs under `docs/experiments/results/<experiment>/`,
+creating the directory when first needed. Keep prose interpretation in the
+experiment record.
 
 ## Reviewer obligations
 
@@ -74,4 +76,6 @@ The Reviewer checks:
 - whether the result is reproducible,
 - whether conclusions exceed the evidence.
 
-A result may be accepted, rejected, refined, repeated, or inconclusive.
+The Reviewer returns one of the standard verdicts: Accepted, Accepted with
+follow-up, Revision required (refine or repeat the experiment), Rejected, or
+Inconclusive.
