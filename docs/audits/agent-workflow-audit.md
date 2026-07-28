@@ -23,6 +23,30 @@ replace a target repository's Git metadata, the handoff skill emits review
 markup that the validator rejects, and the validator accepts states that bypass
 independent approval.
 
+## Remediation Status
+
+Task 002 contains a candidate remediation for all six findings, pending
+independent review:
+
+- installation now exports only tracked files with `git archive` and documents
+  collision preflight and overwrite behavior;
+- Handoff Log templates use nested `###` entries and `####` fields;
+- active and archived records share explicit role, mode, status, turn,
+  structured-verdict, and self-review validation;
+- accepted branches have a merge flow, while Rejected, closed Inconclusive, and
+  Superseded branches use a tested metadata-only closeout commit;
+- only the complete untouched task template bypasses active validation, and
+  archives require a complete schema, matching id, terminal status, and
+  `Turn: none`; and
+- the illustrative record now lives under `docs/examples/`, outside operational
+  history.
+
+The candidate passes 21 automated regression tests, including the eleven-case
+audit matrix, valid active/archive lifecycles, tracked-only installation, and
+accepted/non-merge Git closeout probes. The findings and original verdict below
+remain the historical assessment of the pre-remediation workflow until the
+Reviewer returns a verdict on Task 002.
+
 ## Findings
 
 ### F1 — Critical: the installation command copies `.git/` into the target

@@ -82,6 +82,21 @@ otherwise identical.
   reading the Handoff Log.
 - Never rely on chat to carry claims, verdicts, or task state.
 
+The active Status and Turn must stay paired:
+
+- `Not started` and `In progress` → `driver`;
+- `In review` → `reviewer`;
+- `Revision required`, `Accepted`, `Accepted with follow-up`,
+  `Provisionally accepted (self-reviewed)`, `Rejected`, `Inconclusive`, and
+  `Superseded` → `driver`; and
+- `Blocked on human decision` → `human`.
+
+Archived records use `Turn: none`. `Revision required`, both accepted statuses,
+`Rejected`, and `Inconclusive` require a structured Review entry whose Verdict
+matches the Status. Independent verdicts use distinct Driver and Reviewer
+labels and `Self-reviewed: No`. `Self-reviewed: Yes` can produce only
+`Provisionally accepted (self-reviewed)`.
+
 ### Branches
 
 Do substantial work on a task branch. The Reviewer reproduces results from that
@@ -94,14 +109,20 @@ fixed state.
 1. The Reviewer records the verdict in the Handoff Log and sets `Turn` to
    `driver`.
 2. On Accepted or Accepted with follow-up, the Driver merges the task branch and
-   runs the `repo-organization` completion update.
+   runs the accepted-flow `repo-organization` completion update on the default
+   branch.
 3. On Revision required, the Driver revises and hands back. After two full
    revision rounds without an accepting verdict, escalate to a human rather than
    starting a third.
-4. On Rejected, the Driver archives the task without merging and records what
-   the attempt ruled out.
-5. On Inconclusive, the Driver either defines the cheapest experiment that would
-   resolve the question, or escalates.
+4. On Rejected, the Driver records what the attempt ruled out and uses the
+   metadata-only non-merge closeout in `repo-organization`. Never merge the
+   rejected task branch.
+5. On Inconclusive, the Driver either returns the task to `In progress` with the
+   cheapest resolving experiment, escalates to a human, or closes it with the
+   metadata-only non-merge flow.
+6. On Superseded, the Driver names the replacement or reason in the Handoff Log
+   and uses the metadata-only non-merge flow. A Reviewer verdict is not required
+   when no claim is being approved.
 
 ## Skill routing
 

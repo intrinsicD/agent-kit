@@ -25,15 +25,15 @@ move it is, but it does not prevent concurrent writes.
 ## Driver handoff
 
 ```markdown
-## Handoff
+### Handoff
 
-### Objective
-### Changes
-### Evidence
-### Assumptions
-### Uncertainties
-### Review Focus
-### Recommended Next Action
+#### Objective
+#### Changes
+#### Evidence
+#### Assumptions
+#### Uncertainties
+#### Review Focus
+#### Recommended Next Action
 ```
 
 The Driver must identify weak points rather than hide them.
@@ -41,23 +41,23 @@ The Driver must identify weak points rather than hide them.
 ## Reviewer response
 
 ```markdown
-## Review
+### Review
 
-### Verdict
+#### Verdict
 Accepted / Accepted with follow-up / Revision required / Rejected / Inconclusive
 
-### Self-reviewed
+#### Self-reviewed
 Yes / No. Yes means the Driver reviewed their own work because no second agent
 was available. Pair it with the status
 `Provisionally accepted (self-reviewed)`; the claim stays unapproved until an
 independent agent or a human confirms it.
 
-### Correctness
-### Evidence Quality
-### Simplicity
-### Missing Cases
-### Required Changes
-### Optional Improvements
+#### Correctness
+#### Evidence Quality
+#### Simplicity
+#### Missing Cases
+#### Required Changes
+#### Optional Improvements
 ```
 
 ## Disagreement protocol
@@ -84,14 +84,16 @@ escalate rather than start a third.
 Before an agent stops, append to the Handoff Log:
 
 ```markdown
-## Session Completion
+### Session Completion
 
-Work completed:
-Evidence:
-Files changed:
-Tests or experiments run:
-Known limitations:
-Unresolved questions:
-Repository state updated: Yes / No
-Recommended next action:
+#### Work completed
+#### Evidence
+#### Files changed
+#### Tests or experiments run
+#### Known limitations
+#### Unresolved questions
+#### Repository state updated
+Yes / No
+
+#### Recommended next action
 ```

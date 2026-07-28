@@ -1,4 +1,4 @@
-# Task Record 000
+# Example Completed Task Record
 
 This is an illustrative example of a completed task record, not real project
 history. It shows the level of detail the workflow expects.
@@ -77,15 +77,35 @@ None. Nothing in this task required a product, risk, or cost judgement.
 
 ### Handoff (agent-a, Driver)
 
-- Objective: grid-based neighbor search, same results, 10x faster.
-- Changes: `src/neighbors.py` (grid implementation), `tests/test_neighbors.py`
-  (equivalence and boundary tests).
-- Evidence: equivalence test passes on all existing inputs; benchmark shows
-  23x speedup at 100k particles; peak memory 1.1x baseline.
-- Assumptions: query radius never exceeds twice the mean particle spacing.
-- Uncertainties: behavior when all particles fall into one cell is untested.
-- Review Focus: cell-boundary correctness, the radius assumption.
-- Recommended Next Action: review, then merge.
+#### Objective
+
+Grid-based neighbor search with identical results and at least 10x speedup.
+
+#### Changes
+
+`src/neighbors.py` contains the grid implementation and
+`tests/test_neighbors.py` contains equivalence and boundary tests.
+
+#### Evidence
+
+The equivalence test passes on all existing inputs; the benchmark shows 23x
+speedup at 100k particles; peak memory is 1.1x baseline.
+
+#### Assumptions
+
+The query radius never exceeds twice the mean particle spacing.
+
+#### Uncertainties
+
+Behavior when all particles fall into one cell is untested.
+
+#### Review Focus
+
+Cell-boundary correctness and the radius assumption.
+
+#### Recommended Next Action
+
+Review, then merge.
 
 ### Review (agent-b, Reviewer)
 
@@ -117,11 +137,34 @@ Add the degenerate-density case to the backlog with a measured threshold.
 
 ### Session Completion (agent-a)
 
-- Work completed: grid implementation merged.
-- Evidence: tests and benchmark linked above.
-- Files changed: `src/neighbors.py`, `tests/test_neighbors.py`.
-- Tests or experiments run: full test suite, 100k benchmark.
-- Known limitations: quadratic fallback on degenerate density.
-- Unresolved questions: none.
-- Repository state updated: Yes
-- Recommended next action: backlog item for degenerate density handling.
+#### Work completed
+
+Grid implementation merged.
+
+#### Evidence
+
+Tests and benchmark linked above.
+
+#### Files changed
+
+`src/neighbors.py` and `tests/test_neighbors.py`.
+
+#### Tests or experiments run
+
+Full test suite and 100k benchmark.
+
+#### Known limitations
+
+Quadratic fallback on degenerate density.
+
+#### Unresolved questions
+
+None.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Add a backlog item for degenerate density handling.
