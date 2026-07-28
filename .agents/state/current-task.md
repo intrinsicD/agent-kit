@@ -12,7 +12,7 @@ Fix agent workflow audit findings
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -107,7 +107,7 @@ closeout, archive, and example-history failures that block safe adoption.
 
 ## Status
 
-In review
+Accepted
 
 ## Human Decisions
 
@@ -662,3 +662,105 @@ Yes
 #### Recommended next action
 
 `codex-a` performs the final independent review and records the verdict.
+
+### Review (codex-a, Reviewer, Final)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+All six audited failures are resolved.
+
+- Installation exports tracked files without copying source Git metadata or
+  untracked files and documents collision behavior.
+- Handoff, Review, and Session Completion entries remain nested under the
+  Handoff Log.
+- Active and archived state now enforce exact structure, visible unique role
+  and Review state fields, verdict/self-review semantics, status/turn pairing,
+  terminal archive rules, and matching ids.
+- Accepted and non-merge terminal branch closeouts preserve the intended
+  implementation boundary.
+- Partial, duplicate, fenced, placeholder, and malformed state fixtures fail.
+- The illustrative task is outside operational history.
+
+The final revision closes the fenced-role and duplicate nested-field bypasses
+without weakening legitimate Reviews that contain fenced evidence.
+
+#### Evidence Quality
+
+The complete 31-test suite passed independently. It includes the original
+eleven-case audit matrix, valid active and archive lifecycles, installation Git
+metadata preservation, accepted merge closeout, Rejected/Inconclusive/
+Superseded metadata-only closeout, and all counterexamples from both review
+rounds. The live validator, independent syntax compilation, and diff checks
+also pass.
+
+#### Simplicity
+
+The implementation stays within the Python standard library and the existing
+Markdown workflow. The bounded fence-aware scanner and explicit state maps are
+proportionate to the demonstrated failures; no plugin system, external parser,
+or speculative abstraction was added.
+
+#### Missing Cases
+
+No missing case blocks acceptance. The Turn marker remains cooperative and
+Markdown labels do not authenticate agent identity; both are documented
+non-goals rather than regressions.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+During completion, mark the audit remediation as independently accepted and
+update repository state so the resolved findings are no longer listed as
+current failures.
+
+### Session Completion (codex-a, Reviewer, Final)
+
+#### Work completed
+
+Performed the final independent correctness, regression, API, and simplicity
+audit after two bounded revision rounds.
+
+#### Evidence
+
+All 31 tests, live validation, syntax compilation, diff checks, and prior
+adversarial fixtures pass.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Full unittest discovery; live workflow validator; independent syntax
+compilation; whitespace checks; tracked-only installation; accepted and
+metadata-only closeout; exact-template, duplicate section, fenced Review,
+fenced role, duplicate role, duplicate Review state, placeholder, and terminal
+status probes.
+
+#### Known limitations
+
+Concurrency locking and cryptographic review authorship remain outside scope.
+
+#### Unresolved questions
+
+None.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver merges the accepted branch, finalizes the audit and repository state,
+archives task 002, and runs the completion validation.
