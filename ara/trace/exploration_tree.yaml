@@ -66,4 +66,55 @@ tree:
           - "N04"
           - "docs/audits/agent-workflow-audit.md"
         status: resolved
-        children: []
+        children:
+          - id: N06
+            type: decision
+            title: "Remediate every accepted audit finding"
+            provenance: user
+            timestamp: "2026-07-29T00:07+02:00"
+            choice: >
+              Fix all six independently supported workflow findings rather
+              than leave them as follow-up work.
+            alternatives:
+              - "Leave the accepted findings unresolved"
+              - "Remediate only a subset"
+            evidence:
+              - "docs/audits/agent-workflow-audit.md"
+              - "docs/tasks/001-agent-workflow-audit.md"
+            status: resolved
+            children:
+              - id: N07
+                type: experiment
+                title: "Adversarially validate the workflow remediation"
+                provenance: ai-executed
+                timestamp: "2026-07-29T00:07+02:00"
+                result: >
+                  Two independent review revision rounds added ten regression
+                  cases beyond the initial suite. The final 31 tests passed,
+                  the repository validator accepted both archives, and the
+                  reviewer returned Accepted.
+                evidence:
+                  - "docs/tasks/002-fix-workflow-audit-findings.md"
+                  - "tests/test_agent_workflow.py"
+                  - "scripts/validate_agent_workflow.py"
+                  - "c879ad7"
+                status: resolved
+                children:
+                  - id: N08
+                    type: decision
+                    title: "Merge and archive the accepted remediation"
+                    provenance: ai-executed
+                    timestamp: "2026-07-29T00:07+02:00"
+                    choice: >
+                      Merge task 002 into main, archive its complete handoff
+                      history, and reset current-task.md to the exact template.
+                    alternatives:
+                      - "Require another revision without new contrary evidence"
+                      - "Leave the accepted task unmerged"
+                    evidence:
+                      - "N07"
+                      - "docs/tasks/002-fix-workflow-audit-findings.md"
+                      - "b444f6c"
+                      - "f198163"
+                    status: resolved
+                    children: []

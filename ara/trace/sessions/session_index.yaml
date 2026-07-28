@@ -6,3 +6,10 @@ sessions:
     events_count: 11
     claims_touched: [C01, C02, C03, C04, C05, C06]
     open_threads: 1
+  - id: "2026-07-29_001"
+    date: "2026-07-29"
+    summary: "All six workflow findings were remediated, independently accepted, and merged."
+    turn_count: 1
+    events_count: 4
+    claims_touched: [C01, C02, C03, C04, C05, C06, C07]
+    open_threads: 0

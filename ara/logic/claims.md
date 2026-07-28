@@ -96,3 +96,19 @@ present.
 - **Dependencies**: []
 - **Tags**: role-assignment, example-data, task-history
 - **From staging**: O06
+
+## C07: The accepted remediation closes all six audit findings
+- **Statement**: At remediation completion commit `f198163`, all six findings
+  from task 001 have committed fixes, task 002 has an independent `Accepted`
+  verdict, all 31 workflow regression tests pass, and the repository validator
+  accepts the active and archived task state.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: Reproduce any original audit failure at
+  `f198163`, fail a committed workflow regression test there, or show that
+  task 002 lacks an independent accepting verdict.
+- **Proof**: [docs/audits/agent-workflow-audit.md, docs/tasks/002-fix-workflow-audit-findings.md, tests/test_agent_workflow.py, scripts/validate_agent_workflow.py]
+- **Dependencies**: [C01, C02, C03, C04, C05, C06]
+- **Tags**: remediation, independent-review, regression-tests
+- **From staging**: O07
