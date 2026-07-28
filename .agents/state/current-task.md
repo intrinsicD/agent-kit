@@ -12,7 +12,7 @@ Cross-repository agent workflow adoption assessment
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -96,7 +96,7 @@ from agent-kit.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -412,3 +412,114 @@ Yes
 
 Driver makes the six bounded report revisions and returns the same artifact for
 a second independent review.
+
+### Handoff (codex-a, Driver, Revision Round 1)
+
+#### Objective
+
+Verify that the revised assessment now distinguishes observed review practice
+from mechanical enforcement, limits universal P0 to the reproduced
+distribution failure, and consistently recommends experiments rather than
+unsupported adoption.
+
+#### Changes
+
+- Added the exact source commit and deterministic commands for filesystem
+  collision counts, tracked-set history differences, and archive enumeration.
+- Added a five-repository matrix separating review norms, recorded distinct
+  review practice, persisted evidence, and identity/verdict enforcement.
+- Replaced Prospect and realtime-gs adoption/ranking claims with bounded pilots
+  and explicit measurements; changed StructSplat and IntrinsicEngine to
+  conditional in-place experiments.
+- Restricted P0 to a clean allowlisted payload boundary plus disposable
+  fresh-target, collision-refusal, no-history, and no-partial-write tests.
+- Reclassified authority redirects, skill naming, and CI as
+  target-conditioned; no live skill collision is claimed.
+- Kept the three-source results-audit pattern as P1 and demoted maturity
+  vocabulary, periodic audits, and micro-task records to P2 hypotheses with
+  falsifiable promotion criteria.
+- Reconciled the summary, per-repository sections, competing methods, priority
+  list, decision sequence, and conclusion around pilot-versus-adoption status.
+
+#### Evidence
+
+- Revised artifact commit:
+  `2b8d392fbf0326f36790c9c7655c1ab87212c9da`.
+- The exact collision method remains bound to source commit
+  `d8d649512f454c219dba55dd12f4d0398cb742e9`.
+- The report incorporates the Reviewer's independent Prospect
+  `e41b22e`/`bde6266`, realtime-gs `095313d`/`ca11378`, StructSplat
+  FIT-042/FIT-043, and IntrinsicEngine RUNTIME-190 evidence.
+- All 31 workflow regression tests pass.
+- Live workflow validation and `git diff --check` pass.
+
+#### Assumptions
+
+- A repository label is mechanically distinct when the validator rejects equal
+  nonempty Driver/Reviewer labels; neither agent-kit nor the targets
+  authenticate the human or process behind a label.
+- The clean payload behavior is established before choosing a static manifest
+  or generator implementation.
+
+#### Uncertainties
+
+- Pilot process cost and defect-detection benefit remain unmeasured by design.
+- No remote-only policy, private issue tracker, or unrecorded human practice
+  was inspected.
+- No live multi-repository skill-name collision was reproduced.
+
+#### Review Focus
+
+- Check all six required changes against the revised report rather than the
+  original decision table.
+- Confirm the exact commands can reproduce both collision and
+  history-contamination evidence.
+- Look for any remaining language that silently promotes a pilot to adoption
+  or treats a target-conditioned integration choice as universal P0.
+- Challenge whether the P1 results-audit recommendation has broader support
+  than the three P2 single-source hypotheses.
+
+#### Recommended Next Action
+
+Review commit `2b8d392`, rerun the agent-kit workflow checks, and return an
+independent terminal verdict or a precisely bounded remaining correction.
+
+### Session Completion (codex-a, Driver, Revision Round 1)
+
+#### Work completed
+
+Addressed all six required changes from Review round 1, validated the revised
+assessment, committed it, and returned the turn to the Reviewer.
+
+#### Evidence
+
+Revision commit `2b8d392`; all 31 workflow tests and live validation pass.
+
+#### Files changed
+
+- `docs/research/cross-repository-agent-workflow-adoption.md`
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`
+- `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py`
+- `git diff --check`
+
+#### Known limitations
+
+This assessment makes no target-repository changes and supplies pilot decision
+rules rather than adoption outcomes.
+
+#### Unresolved questions
+
+The operating value and cost of mechanically enforced final-review identity
+remain pilot questions.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer independently evaluates the revised artifact at commit `2b8d392`.
