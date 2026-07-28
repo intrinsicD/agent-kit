@@ -12,7 +12,7 @@ Fix agent workflow audit findings
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -96,7 +96,7 @@ closeout, archive, and example-history failures that block safe adoption.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -118,3 +118,120 @@ blocks here in chronological order. Entries use `###` headings and their fields
 use `####` headings so every entry remains nested under this Handoff Log. Do
 not delete earlier entries. On task completion this file is archived to
 `docs/tasks/<task-id>-<slug>.md`.
+
+### Handoff (codex-b, Driver)
+
+#### Objective
+
+Resolve all six independently confirmed workflow audit findings without
+expanding the repository beyond its lightweight Markdown and standard-library
+design.
+
+#### Changes
+
+- Replaced the destructive copy command with a tracked-file `git archive`
+  export, collision preflight, and overwrite/recovery guidance.
+- Nested Handoff Log templates at `###`/`####` and made the documented example
+  use the same shape.
+- Replaced heading-presence checks with explicit active/archive task,
+  structured-review, verdict, self-review, role, status, turn, mode, and id
+  validation.
+- Defined accepted merge closeout and metadata-only cherry-pick closeout for
+  Rejected, closed Inconclusive, and Superseded branches.
+- Made only the exact complete task template exempt from active validation and
+  applied the full task schema to archives.
+- Moved the illustrative record from `docs/tasks/` to `docs/examples/`.
+- Added a 21-test standard-library regression suite covering the audit matrix,
+  valid lifecycle/archive cases, installation safety, and all four terminal
+  closeout classes.
+
+#### Evidence
+
+- Implementation commit: `f2474e9172d55aa58915dadd730674594752044f`.
+- The corrected pre-fix fixture run exposed 13 expected failures; the
+  implementation passes 21 of 21 tests.
+- `python3 scripts/validate_agent_workflow.py` passes with ten routed skills and
+  one operational archive.
+- Syntax compilation passes for `scripts/validate_agent_workflow.py` and
+  `tests/test_agent_workflow.py`.
+- `git diff --check` passes.
+- Disposable Git tests preserve a target's remote, branch, and HEAD during
+  installation; exclude untracked source files; merge accepted implementation;
+  and keep task implementation off the default branch for Rejected,
+  Inconclusive, and Superseded closeouts.
+
+#### Assumptions
+
+- `Superseded` closes work without approving a claim, so it does not need a
+  Reviewer verdict but does require a recorded reason.
+- `Provisionally accepted (self-reviewed)` remains active until independent or
+  human promotion and is therefore not an archive-terminal status.
+- Cherry-picking a closeout commit whose diff is limited to the active-task
+  reset, repository state, and one archive is the smallest safe way to preserve
+  negative evidence without merging implementation ancestors.
+
+#### Uncertainties
+
+- The cooperative `Turn` marker still cannot prevent two concurrently started
+  agents from editing one worktree; this was explicitly outside scope.
+- Markdown validation can enforce distinct labels and structured fields, but it
+  cannot cryptographically authenticate which agent authored a review.
+
+#### Review Focus
+
+- Attempt to bypass review detection with `Review Focus`, malformed nested
+  fields, earlier versus latest Review blocks, identical labels, or
+  self-reviewed acceptance.
+- Reproduce the tracked-file installation and metadata-only closeout probes
+  independently.
+- Challenge exact-template recognition and archive validation with partial,
+  mismatched, duplicate, nonterminal, and wrong-turn records.
+- Check that the terminal-flow documentation and tests agree and that no
+  unnecessary abstraction or dependency was introduced.
+
+#### Recommended Next Action
+
+Review commit `f2474e9`, rerun the focused suite and full validator, and append
+an independent structured verdict.
+
+### Session Completion (codex-b, Driver)
+
+#### Work completed
+
+Implemented and self-audited the six audit remediations, committed the reviewed
+candidate, and passed the repository turn to the independent Reviewer.
+
+#### Evidence
+
+Implementation commit `f2474e9`; 21/21 regression tests; full validation,
+syntax compilation, and diff checks pass.
+
+#### Files changed
+
+Workflow validator and tests; README and AGENTS contract; handoff, review, and
+repository-organization skills; audit/task documentation; task state; and the
+relocated illustrative example.
+
+#### Tests or experiments run
+
+Eleven-case audit matrix, valid active/archive lifecycle fixtures,
+tracked-file installation probe, accepted merge closeout, non-merge closeout
+for three terminal statuses, full workflow validation, syntax compilation, and
+diff checks.
+
+#### Known limitations
+
+The Turn field remains cooperative rather than a lock, and review authorship is
+not cryptographically authenticated.
+
+#### Unresolved questions
+
+None blocking independent review.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+`codex-a` independently falsifies the implementation and returns a verdict.
