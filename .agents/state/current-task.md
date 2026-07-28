@@ -12,7 +12,7 @@ Fix agent workflow audit findings
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -107,7 +107,7 @@ closeout, archive, and example-history failures that block safe adoption.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -558,3 +558,107 @@ Yes
 
 Driver completes the second revision round and returns the branch for the final
 allowed acceptance check.
+
+### Handoff (codex-b, Driver, Revision Round 2)
+
+#### Objective
+
+Complete the final allowed revision by closing only the structured Role
+Assignment and Review-field bypasses from Review round 2.
+
+#### Changes
+
+- Role Assignment extraction now removes fenced code before reading fields, so
+  fenced Driver, Reviewer, or Turn examples cannot supply live state.
+- Driver, Reviewer, and Turn are collected explicitly and any duplicate field
+  invalidates active and archived task records.
+- Every Review block now preserves duplicate-heading metadata and rejects
+  duplicate Verdict or Self-reviewed fields, including malformed earlier
+  Reviews followed by a valid latest Review.
+- Three focused regression methods cover fenced-only and real-plus-fenced role
+  fields, all three duplicate role fields, both duplicate Review state fields,
+  and the earlier-Review case.
+
+#### Evidence
+
+- Final revision implementation commit:
+  `74b73237f57120243a5f0f5a352d9f2f846d90dd`.
+- Before the implementation change, the six reproduced field bypass fixtures
+  passed validation and all focused assertions failed.
+- After the change, all three focused methods and the complete 31-test suite
+  pass.
+- `python3 scripts/validate_agent_workflow.py` passes with ten routed skills and
+  one validated operational archive.
+- Syntax compilation and `git diff --check` pass.
+- The implementation diff is limited to the validator, focused regressions,
+  and current-task evidence.
+
+#### Assumptions
+
+- Role Assignment values and Review state are defined only by visible,
+  exact-schema fields; fenced examples are documentation rather than state.
+- Duplicate structured state is invalid even when repeated values agree,
+  avoiding first-value and last-value ambiguity.
+
+#### Uncertainties
+
+- No blocking uncertainty remains within the three required changes. Markdown
+  labels still cannot authenticate authorship cryptographically, as already
+  recorded.
+
+#### Review Focus
+
+- Reproduce fenced-only Role Assignment fields and confirm real fields remain
+  valid when fenced examples follow them.
+- Exercise duplicate Driver, Reviewer, and Turn in both active and archived
+  records, including duplicates inside fences that should be ignored.
+- Exercise duplicate Verdict and Self-reviewed in the latest and in earlier
+  Review blocks, including fenced duplicates that should be ignored.
+- Confirm all prior audit, lifecycle, archive, installation, and closeout
+  regressions remain green.
+
+#### Recommended Next Action
+
+Review commit `74b7323`, run the final 31-test and validator checks, and append
+the final independent verdict. If acceptance is not possible, follow the
+two-round rule and escalate to a human rather than requesting a third revision.
+
+### Session Completion (codex-b, Driver, Revision Round 2)
+
+#### Work completed
+
+Implemented the three final required changes, added focused regression
+coverage, committed the implementation, and returned the task for the final
+allowed acceptance check.
+
+#### Evidence
+
+Final revision commit `74b7323`; three focused methods covering six bypasses;
+31/31 tests, full validation, syntax compilation, and diff checks pass.
+
+#### Files changed
+
+`scripts/validate_agent_workflow.py`, `tests/test_agent_workflow.py`, and
+`.agents/state/current-task.md`.
+
+#### Tests or experiments run
+
+Focused structured-field regressions, full unittest discovery, live repository
+validation, Python syntax compilation, and whitespace checks.
+
+#### Known limitations
+
+Review authorship remains cooperative rather than cryptographically
+authenticated; no new limitation was introduced.
+
+#### Unresolved questions
+
+None within the final bounded revision.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+`codex-a` performs the final independent review and records the verdict.
