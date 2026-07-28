@@ -19,3 +19,11 @@ the independently reviewed audit of the repository's two-agent workflow.
 
 The reader-facing result is
 [`docs/audits/agent-workflow-audit.md`](../docs/audits/agent-workflow-audit.md).
+
+## Additional Artifacts
+
+- [`docs/tasks/002-fix-workflow-audit-findings.md`](../docs/tasks/002-fix-workflow-audit-findings.md):
+  independently reviewed remediation and regression evidence.
+- [`docs/research/cross-repository-agent-workflow-adoption.md`](../docs/research/cross-repository-agent-workflow-adoption.md):
+  independently reviewed assessment of four target workflows and reciprocal
+  integration candidates.

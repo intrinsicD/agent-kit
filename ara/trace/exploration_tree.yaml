@@ -111,10 +111,91 @@ tree:
                     alternatives:
                       - "Require another revision without new contrary evidence"
                       - "Leave the accepted task unmerged"
-                    evidence:
-                      - "N07"
-                      - "docs/tasks/002-fix-workflow-audit-findings.md"
-                      - "b444f6c"
-                      - "f198163"
-                    status: resolved
-                    children: []
+                evidence:
+                  - "N07"
+                  - "docs/tasks/002-fix-workflow-audit-findings.md"
+                  - "b444f6c"
+                  - "f198163"
+                status: resolved
+                children: []
+  - id: N09
+    type: question
+    title: "Assess cross-repository workflow adoption"
+    provenance: user
+    timestamp: "2026-07-29T00:55+02:00"
+    description: >
+      Determine whether Prospect, StructSplat, realtime-gs, and
+      IntrinsicEngine should add or replace their workflows with agent-kit,
+      and identify workflow mechanisms worth bringing back into agent-kit.
+    status: resolved
+    children:
+      - id: N10
+        type: experiment
+        title: "Probe target compatibility and workflow evidence"
+        provenance: ai-executed
+        timestamp: "2026-07-29T00:55+02:00"
+        result: >
+          Read-only inventory and executable checks found 11, 12, 11, and 12
+          tracked-path collisions respectively; the payload also contains
+          non-colliding agent-kit state and research history. Target structural
+          checks passed and each target recorded real review practice without
+          general identity/verdict enforcement.
+        evidence:
+          - "docs/research/cross-repository-agent-workflow-adoption.md"
+          - "docs/tasks/003-cross-repository-agent-workflow-adoption.md"
+          - "d8d649512f454c219dba55dd12f4d0398cb742e9"
+        status: resolved
+        children: []
+      - id: N11
+        type: experiment
+        title: "Falsify the first adoption assessment"
+        provenance: ai-executed
+        timestamp: "2026-07-29T00:55+02:00"
+        result: >
+          Independent review reproduced the collision and history findings but
+          rejected unsupported adoption rankings, an overbroad P0, and
+          conflation of review norms, recorded practice, and enforcement.
+        evidence:
+          - "docs/tasks/003-cross-repository-agent-workflow-adoption.md"
+          - "37c3a1f"
+        status: resolved
+        children: []
+      - id: N12
+        type: experiment
+        title: "Validate the calibrated assessment"
+        provenance: ai-executed
+        timestamp: "2026-07-29T00:55+02:00"
+        result: >
+          After six bounded revisions, independent review reproduced the exact
+          collision counts and history payload, accepted the review taxonomy
+          and P0/P1/P2 split, and returned Accepted. All 31 workflow tests and
+          live validation passed.
+        evidence:
+          - "docs/research/cross-repository-agent-workflow-adoption.md"
+          - "docs/tasks/003-cross-repository-agent-workflow-adoption.md"
+          - "849b02e"
+        status: resolved
+        children: []
+      - id: N13
+        type: decision
+        title: "Leave target workflows unchanged pending bounded pilots"
+        provenance: ai-executed
+        timestamp: "2026-07-29T00:55+02:00"
+        choice: >
+          Do not install agent-kit into or replace any assessed target
+          workflow. First create a clean distribution boundary in agent-kit;
+          then measure minimal coordination pilots in realtime-gs and
+          Prospect, with only failure-triggered in-place experiments for
+          StructSplat and IntrinsicEngine.
+        alternatives:
+          - "Install the full workflow in one or more targets now"
+          - "Replace the targets' existing workflows"
+          - "Add a parallel agent-kit task authority"
+          - "Make no reciprocal improvements to agent-kit"
+        evidence:
+          - "N10"
+          - "N11"
+          - "N12"
+          - "docs/research/cross-repository-agent-workflow-adoption.md"
+        status: resolved
+        children: []

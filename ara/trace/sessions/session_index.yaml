@@ -8,8 +8,8 @@ sessions:
     open_threads: 1
   - id: "2026-07-29_001"
     date: "2026-07-29"
-    summary: "All six workflow findings were remediated, independently accepted, and merged."
-    turn_count: 1
-    events_count: 4
-    claims_touched: [C01, C02, C03, C04, C05, C06, C07]
-    open_threads: 0
+    summary: "Workflow defects were remediated; four target workflows were then assessed without replacement or installation."
+    turn_count: 2
+    events_count: 12
+    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10]
+    open_threads: 2

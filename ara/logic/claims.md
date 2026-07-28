@@ -112,3 +112,57 @@ present.
 - **Dependencies**: [C01, C02, C03, C04, C05, C06]
 - **Tags**: remediation, independent-review, regression-tests
 - **From staging**: O07
+
+## C08: The tracked-tree installer is not a clean distribution boundary
+- **Statement**: At agent-kit source
+  `d8d649512f454c219dba55dd12f4d0398cb742e9`, the documented tracked-tree
+  installer has 11 filesystem collisions with Prospect, 12 with StructSplat,
+  11 with realtime-gs, and 12 with IntrinsicEngine at their inspected commits;
+  its non-colliding payload also includes agent-kit's active state, completed
+  tasks, audit, workflow test, and dated ARA history.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: The assessment's fixed-source commands fail to
+  reproduce any stated collision count or show that the actual archive
+  excludes all stated non-colliding history paths.
+- **Proof**: [docs/research/cross-repository-agent-workflow-adoption.md, docs/tasks/003-cross-repository-agent-workflow-adoption.md]
+- **Dependencies**: [C07]
+- **Tags**: installation, distribution, collisions, history-contamination
+- **From staging**: O08
+
+## C09: Review practice exceeds target identity enforcement
+- **Statement**: At the inspected commits, Prospect, StructSplat, realtime-gs,
+  and IntrinsicEngine each contain a review norm and recorded independent or
+  non-author review practice, but none has a general task validator that
+  requires distinct proposer/reviewer labels together with valid terminal
+  verdict state.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: Any inspected target lacks the recorded practice
+  cited in the assessment, or a general target task validator at the inspected
+  commit rejects equal proposer/reviewer labels and invalid terminal verdict
+  state.
+- **Proof**: [docs/research/cross-repository-agent-workflow-adoption.md, docs/tasks/003-cross-repository-agent-workflow-adoption.md]
+- **Dependencies**: []
+- **Tags**: independent-review, identity, validation, cross-repository
+- **From staging**: O09
+
+## C10: Three targets share stronger results-audit invariants
+- **Statement**: At the inspected commits, Prospect, StructSplat, and
+  realtime-gs each require a results-audit pattern covering claim disposition,
+  raw recomputation, exact source/config binding, controls or accounting, and
+  evidence scope; agent-kit's generic experiment-design and
+  review-and-falsification skills do not require that complete result-audit
+  structure.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: Fewer than three inspected target audit skills
+  contain the stated common structure, or agent-kit's inspected generic skill
+  pair already requires the complete structure.
+- **Proof**: [docs/research/cross-repository-agent-workflow-adoption.md, docs/tasks/003-cross-repository-agent-workflow-adoption.md]
+- **Dependencies**: []
+- **Tags**: results-audit, evidence, reciprocal-integration
+- **From staging**: O10

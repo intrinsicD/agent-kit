@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T00:07+02:00"
-  turn_count: 1
-  summary: "All six workflow findings were remediated, independently accepted, and merged."
+  last_turn: "2026-07-29T00:55+02:00"
+  turn_count: 2
+  summary: "Workflow defects were remediated; four target workflows were then assessed without replacement or installation."
 
 events_logged:
   - turn: 1
@@ -31,6 +31,54 @@ events_logged:
     routing: crystallized
     provenance: ai-suggested
     summary: "Task 002 closes all six findings at the verified completion commit."
+  - turn: 2
+    type: question
+    id: N09
+    routing: direct
+    provenance: user
+    summary: "Assess workflow adoption and reciprocal integration across four repositories."
+  - turn: 2
+    type: experiment
+    id: N10
+    routing: direct
+    provenance: ai-executed
+    summary: "Inventory and probes found 11/12/11/12 collisions, history contamination, and target review practices."
+  - turn: 2
+    type: experiment
+    id: N11
+    routing: direct
+    provenance: ai-executed
+    summary: "First independent review rejected unsupported adoption ranking and overbroad priorities."
+  - turn: 2
+    type: experiment
+    id: N12
+    routing: direct
+    provenance: ai-executed
+    summary: "Second review reproduced the revised evidence and returned Accepted."
+  - turn: 2
+    type: decision
+    id: N13
+    routing: direct
+    provenance: ai-executed
+    summary: "Leave all target workflows unchanged pending clean packaging and bounded pilots."
+  - turn: 2
+    type: claim
+    id: O08
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Tracked-tree installation is not a clean target distribution boundary."
+  - turn: 2
+    type: claim
+    id: O09
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "All targets record review practice but lack general distinct-identity/verdict enforcement."
+  - turn: 2
+    type: claim
+    id: O10
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Three targets share stronger reusable results-audit invariants."
 
 ai_actions:
   - turn: 1
@@ -57,6 +105,23 @@ ai_actions:
       - ".agents/state/current-task.md"
       - ".agents/state/state.md"
       - "docs/tasks/002-fix-workflow-audit-findings.md"
+  - turn: 2
+    action: "Inventoried five workflow surfaces and ran read-only validators, tests, collision probes, and history inspection."
+    provenance: ai-executed
+    files_changed: []
+  - turn: 2
+    action: "Wrote and calibrated the cross-repository assessment through two independent review rounds."
+    provenance: ai-executed
+    files_changed:
+      - "docs/research/cross-repository-agent-workflow-adoption.md"
+      - ".agents/state/current-task.md"
+  - turn: 2
+    action: "Merged the accepted assessment, archived Task 003, and updated compact repository state."
+    provenance: ai-executed
+    files_changed:
+      - "docs/tasks/003-cross-repository-agent-workflow-adoption.md"
+      - ".agents/state/current-task.md"
+      - ".agents/state/state.md"
 
 claims_touched:
   - id: C01
@@ -80,11 +145,25 @@ claims_touched:
   - id: C07
     action: crystallized
     turn: 1
+  - id: C08
+    action: crystallized
+    turn: 2
+  - id: C09
+    action: crystallized
+    turn: 2
+  - id: C10
+    action: crystallized
+    turn: 2
 
 key_context:
   - turn: 1
     excerpt: "The user asked to fix all problems identified by the accepted workflow audit."
+  - turn: 2
+    excerpt: "The user asked whether agent-kit should be added to or replace four sibling workflows, and what should flow back into agent-kit."
 
-open_threads: []
+open_threads:
+  - "Implement and independently review the clean payload boundary and disposable distribution regression."
+  - "After packaging is safe, measure whether the realtime-gs and Prospect pilots earn adoption."
 
-ai_suggestions_pending: []
+ai_suggestions_pending:
+  - "Evaluate a generic research-results audit as the leading reciprocal P1 addition after the distribution blocker."

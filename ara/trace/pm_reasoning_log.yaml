@@ -9,3 +9,9 @@ entries:
       - "Routed the user's request to fix every finding as a direct decision and the two-round independent validation as an experiment."
       - "Staged O07 as a remediation claim, then crystallized C07 through artifact commitment after acceptance and merge."
       - "Kept C01-C06 as supported historical-baseline claims; their explicit baseline scope avoids contradiction with C07."
+  - turn: "2026-07-29_001#2"
+    notes:
+      - "Routed the user's cross-repository assessment request, compatibility probes, two review outcomes, and accepted disposition as journey facts."
+      - "Crystallized O08-O10 through artifact commitment because the independently accepted report and repository state now depend on them."
+      - "Kept adoption benefit and process-cost questions open; no pilot ran, so no target-adoption claim was created."
+      - "Scoped C08 to the post-remediation tracked-tree installer so it does not contradict the historical metadata-overwrite claim C01."

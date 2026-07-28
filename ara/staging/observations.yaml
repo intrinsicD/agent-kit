@@ -76,3 +76,36 @@ observations:
     promoted_to: "logic/claims.md:C07"
     crystallized_via: artifact-commitment
     stale: false
+  - id: O08
+    timestamp: "2026-07-29T00:55+02:00"
+    provenance: ai-suggested
+    content: "The tracked-tree installer collides with every assessed target and exports agent-kit's own non-colliding operational and research history."
+    context: "Four deterministic collision probes, tracked-set differences, archive enumeration, and independent reproduction."
+    potential_type: claim
+    bound_to: [N10, N12, N13]
+    promoted: true
+    promoted_to: "logic/claims.md:C08"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O09
+    timestamp: "2026-07-29T00:55+02:00"
+    provenance: ai-suggested
+    content: "All four targets record meaningful independent-review practice, but none generally validates distinct proposer/reviewer labels plus terminal verdict state."
+    context: "Cross-repository review inventory corrected after independent falsification and committed in the accepted assessment."
+    potential_type: claim
+    bound_to: [N10, N11, N12, N13]
+    promoted: true
+    promoted_to: "logic/claims.md:C09"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O10
+    timestamp: "2026-07-29T00:55+02:00"
+    provenance: ai-suggested
+    content: "Prospect, StructSplat, and realtime-gs independently implement stronger results-audit invariants that agent-kit's generic experiment and review skills do not require."
+    context: "Three-source reciprocal-integration comparison accepted after independent review."
+    potential_type: claim
+    bound_to: [N10, N12, N13]
+    promoted: true
+    promoted_to: "logic/claims.md:C10"
+    crystallized_via: artifact-commitment
+    stale: false
