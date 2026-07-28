@@ -12,7 +12,7 @@ Cross-repository agent workflow adoption assessment
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -96,7 +96,7 @@ from agent-kit.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -227,3 +227,188 @@ Yes
 #### Recommended next action
 
 Reviewer independently falsifies the assessment at commit `4576828`.
+
+### Review (codex-b, Reviewer, Round 1)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The central negative conclusion is correct: the documented tracked-tree
+installer is not a safe distribution boundary, none of the four target
+workflows should be replaced wholesale, and existing task, evidence, and
+domain-specific authorities must remain authoritative.
+
+The adoption strengths and priorities do not yet follow from the evidence.
+Prospect and realtime-gs both lack validator-enforced author/reviewer identity,
+but recent history shows durable non-author/referee handoffs that found real
+defects. That is a narrower gap than "missing independent review" and does not
+by itself establish `High`/`Highest` adoption priority or justify moving from a
+pilot to an adoption decision. StructSplat and IntrinsicEngine likewise record
+review practices without enforcing identity separation. The report needs to
+distinguish a review norm, a recorded reviewer label, and mechanically enforced
+independence before ranking the repositories.
+
+The P0/P1 split is also too broad. Clean packaging plus a disposable proof that
+blank state is emitted and development history is excluded is the reproduced
+deployment blocker. Skill prefixing, authority redirects, and target CI wiring
+may be useful, but the report does not demonstrate a live multi-repository
+skill collision or show that each is required before a safe pilot. An
+"optional CI gate" cannot simultaneously be a universal P0 deployment
+requirement.
+
+#### Evidence Quality
+
+- Against source commit `d8d6495`, direct tracked-path intersections reproduced
+  the report's exact collision counts: Prospect 11, StructSplat 12, realtime-gs
+  11, and IntrinsicEngine 12.
+- `git archive d8d6495` contains agent-kit's active state, both completed task
+  archives, audit, workflow test, and dated ARA sessions. A tracked-set
+  difference confirmed the same non-colliding development-history paths would
+  be added to every target.
+- Prospect history `e41b22e` -> `bde6266` records a handoff to a next
+  non-author reviewer and a third adversarial review; earlier non-author
+  reviews found blocking defects. Its Q1 schema still accepts any nonempty
+  reviewer string and cannot enforce identity separation.
+- realtime-gs history `095313d` -> `ca11378` records a separate fresh-workspace
+  scientist pass, with a different Git author and a machine-readable audit,
+  before claims C25-C27 were promoted. Its results-audit skill requires a
+  referee stance, but no task/state validator binds reviewer identity.
+- StructSplat's FIT-042 acceptance criteria require an independent artifact
+  audit, and completed FIT-043 records an independent cold audit. Its task
+  checker does not require proposer/reviewer identities or a terminal review
+  verdict.
+- IntrinsicEngine's RUNTIME-190 clean-workshop record names `Reviewer: Codex`,
+  and its role guide assigns a Review Agent before merge. The root task
+  sequence nevertheless ends in self-review, and the clean-workshop guide says
+  that scorecard is not a per-PR blocker; no validator enforces identity
+  separation.
+- agent-kit's 31 workflow regression tests and live validator pass on the
+  reviewed branch.
+- The four target working trees remained unchanged from their recorded initial
+  states.
+
+These observations support a narrow independent-identity enforcement gap. They
+do not supply measured coordination failures, duplicate-state incidents, or
+process-cost baselines sufficient to rank full-profile adoption.
+
+#### Simplicity
+
+The smallest evidenced P0 is an explicit clean payload boundary with blank
+project state, collision refusal, development-history exclusions, and a
+disposable-repository test. A broad configurable generator may be a valid
+implementation, but target naming, harness selection, verification-command
+configuration, overwrite support, authority mirroring, skill renaming, and CI
+injection should not all be precommitted as one deployment blocker.
+
+Several P1 imports are derived only from IntrinsicEngine and have no recorded
+agent-kit failure or measured process cost. Maturity vocabulary, periodic
+cross-task audits, and a micro-task profile should remain optional hypotheses
+or P2 candidates unless the revision supplies independent evidence for their
+current priority. The three-repository results-audit pattern has stronger
+support and can remain the leading P1 candidate.
+
+#### Missing Cases
+
+- The report does not separate normative review language, observed
+  non-author/reviewer practice, and validator-enforced identity.
+- It gives no observed coordination failure or pilot result supporting the
+  `High`/`Highest` Prospect and realtime-gs rankings.
+- It does not reproduce a live skill-name collision, despite treating skill
+  prefixing as universally deployment-blocking.
+- The central collision result lacks the exact tracked-set/preflight command,
+  making its exact counts harder to reproduce from the note alone.
+- The decision table says "adopt" while the body and safe sequence require a
+  pilot before wider adoption.
+
+#### Required Changes
+
+1. Add the exact deterministic collision/preflight method, source commit, and
+   enough command detail to reproduce both the four counts and the
+   non-colliding history payload.
+2. Revise the per-repository review inventory to distinguish review norms,
+   recorded reviewer practice, and enforced identity separation. Incorporate
+   the recent Prospect, realtime-gs, StructSplat, and IntrinsicEngine evidence
+   above.
+3. Reconcile the Prospect/realtime-gs decision-table dispositions and priority
+   labels with the unresolved pilot. Either recommend a selective pilot, or
+   provide evidence that supports an adoption decision and the relative
+   `High`/`Highest` ranking. Keep observations separate from that inference.
+4. Restrict universal P0 to the evidenced distribution boundary and its
+   disposable no-history/collision regression. Reclassify authority redirects,
+   skill prefixing, and CI integration as target-conditioned requirements or
+   follow-ups unless additional evidence proves they block every safe pilot.
+5. Demote the single-source, unmeasured IntrinsicEngine-derived additions from
+   P1 to optional hypotheses/P2, or tie each to an observed agent-kit failure
+   and a falsifiable adoption criterion. Avoid building a platform from one
+   implementation.
+6. Make the Decision Summary, repository recommendations, P0/P1 list, and
+   Smallest Safe Adoption Sequence use one consistent adopt-versus-pilot
+   decision.
+
+#### Optional Improvements
+
+- Add a compact matrix with columns for review trigger, persisted evidence,
+  distinct identity recorded, and distinct identity enforced.
+- Name the minimal coordination invariant proposed for each target instead of
+  referring to a single "clean coordination profile" whose contents vary by
+  repository.
+
+### Session Completion (codex-b, Reviewer, Round 1)
+
+#### Work completed
+
+Independently reviewed commit `4576828`, reproduced the distribution finding,
+inspected a distinct recent workflow path in every target, searched for
+overlooked review enforcement, and challenged the repository dispositions and
+reverse-integration priorities.
+
+#### Evidence
+
+Exact collision counts and non-colliding history contamination were reproduced
+from tracked sets and the archive payload. Recent review/task history was
+checked at Prospect `e41b22e`/`bde6266`, realtime-gs
+`095313d`/`ca11378`, StructSplat FIT-042/FIT-043, and IntrinsicEngine
+RUNTIME-190/RUNTIME-191.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`:
+  31/31 passed.
+- `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py`:
+  passed with 10 skills and two archived tasks.
+- Four tracked-path collision probes and four history-payload difference
+  probes.
+- Read-only Git history, policy, task, audit, and review inspection in all four
+  targets.
+
+#### Known limitations
+
+No remote-only branch protection, issue tracker, or unrecorded human practice
+was inspected. Heavy target test suites were not rerun because the review
+question was workflow evidence and every target was kept read-only.
+
+#### Unresolved questions
+
+The operational cost and defect-detection benefit of adding task-level
+Driver/Reviewer turns to Prospect or realtime-gs remain unmeasured and require
+a pilot rather than an adoption claim.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver makes the six bounded report revisions and returns the same artifact for
+a second independent review.
