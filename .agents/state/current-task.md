@@ -82,6 +82,12 @@ closeout, archive, and example-history failures that block safe adoption.
   Rejected, Inconclusive, and Superseded branches.
 - Full validation now reports ten routed skills, one operational archive, and
   no active-state issues; the illustrative record is outside `docs/tasks/`.
+- Review round 1 at `0e1e708` reproduced exact-structure, duplicate-section,
+  fenced-review, Superseded-reason, and Selected Skills placeholder bypasses
+  and returned `Revision required`.
+- The bounded revision adds seven regression methods (including active and
+  archived placeholder cases), checks fenced Review entries and nested fields,
+  and passes all 28 tests plus full validation.
 
 ## Minimal Plan
 

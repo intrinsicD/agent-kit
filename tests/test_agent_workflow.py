@@ -13,6 +13,13 @@ import unittest
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
+STOCK_HANDOFF_LOG = """\
+Append Driver handoffs, Reviewer verdicts, escalations, and session completion
+blocks here in chronological order. Entries use `###` headings and their fields
+use `####` headings so every entry remains nested under this Handoff Log. Do
+not delete earlier entries. On task completion this file is archived to
+`docs/tasks/<task-id>-<slug>.md`."""
+
 UNFILLED_TASK = """\
 # Current Task
 
@@ -143,8 +150,12 @@ def task_record(
     reviewer="reviewer",
     turn="driver",
     status="In progress",
+    selected_skills="- `task-orchestration`",
     handoff_log="",
 ):
+    indented_selected_skills = textwrap.indent(
+        selected_skills.strip(), "        "
+    )
     indented_handoff_log = textwrap.indent(handoff_log.strip(), "        ")
     return textwrap.dedent(
         f"""\
@@ -190,7 +201,7 @@ def task_record(
 
         ## Selected Skills
 
-        - `task-orchestration`
+{indented_selected_skills}
 
         ## Current Evidence
 
@@ -353,6 +364,92 @@ class AuditMatrixTests(WorkflowFixture):
         self.assert_invalid("missing `## Title` section")
 
 
+class ReviewerRegressionTests(WorkflowFixture):
+    def test_template_rejects_extra_level_two_section(self):
+        self.write_current_task(
+            UNFILLED_TASK + "\n## Unexpected\n\nMust not be ignored.\n"
+        )
+        self.assert_invalid("unexpected `## Unexpected` section")
+
+    def test_template_requires_root_heading(self):
+        self.write_current_task(
+            UNFILLED_TASK.removeprefix("# Current Task\n\n")
+        )
+        self.assert_invalid("root heading must be exactly '# Current Task'")
+
+    def test_active_task_rejects_duplicate_sections(self):
+        self.write_current_task(
+            task_record() + "\n## Status\n\nIn progress\n"
+        )
+        self.assert_invalid("duplicate `## Status` section")
+
+    def test_fenced_review_example_cannot_approve_task(self):
+        fenced_review = textwrap.dedent(
+            """\
+            ### Handoff (driver, Driver)
+
+            #### Evidence
+
+            ```markdown
+            ### Review
+
+            #### Verdict
+
+            Accepted
+
+            #### Self-reviewed
+
+            No
+
+            ### End Example
+            ```
+            """
+        )
+        self.write_current_task(
+            task_record(
+                status="Accepted",
+                handoff_log=fenced_review,
+            )
+        )
+        self.assert_invalid("requires a structured Review block")
+
+        fenced_fields = textwrap.dedent(
+            """\
+            ### Review (reviewer, Reviewer)
+
+            ```markdown
+            #### Verdict
+
+            Accepted
+
+            #### Self-reviewed
+
+            No
+            ```
+            """
+        )
+        self.write_current_task(
+            task_record(
+                status="Accepted",
+                handoff_log=fenced_fields,
+            )
+        )
+        self.assert_invalid("Review 1 Verdict")
+
+    def test_superseded_rejects_stock_handoff_instructions(self):
+        self.write_current_task(
+            task_record(
+                status="Superseded",
+                handoff_log=STOCK_HANDOFF_LOG,
+            )
+        )
+        self.assert_invalid("requires a meaningful reason in the Handoff Log")
+
+    def test_active_task_rejects_selected_skills_placeholder(self):
+        self.write_current_task(task_record(selected_skills="-"))
+        self.assert_invalid("must replace the '-' placeholder")
+
+
 class ValidLifecycleTests(WorkflowFixture):
     def test_active_lifecycle_states(self):
         cases = [
@@ -385,7 +482,7 @@ class ValidLifecycleTests(WorkflowFixture):
                 self.assert_valid()
 
         self.write_current_task(task_record(status="Superseded"))
-        self.assert_invalid("requires a reason in the Handoff Log")
+        self.assert_invalid("requires a meaningful reason in the Handoff Log")
 
     def test_provisional_self_review_is_valid(self):
         self.write_current_task(
@@ -465,6 +562,10 @@ class ArchiveValidationTests(WorkflowFixture):
     def test_archive_requires_none_turn(self):
         self.write_archive("010", "live-turn", turn="driver")
         self.assert_invalid("archived task requires Turn 'none'")
+
+    def test_archive_rejects_selected_skills_placeholder(self):
+        self.write_archive("010", "placeholder-skills", selected_skills="-")
+        self.assert_invalid("must replace the '-' placeholder")
 
 
 class GitWorkflowTests(unittest.TestCase):

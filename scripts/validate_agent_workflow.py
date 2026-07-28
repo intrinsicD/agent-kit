@@ -176,25 +176,68 @@ REVIEW_BLOCK = re.compile(
     r"(.*?)(?=^### |\Z)",
     re.MULTILINE | re.DOTALL | re.IGNORECASE,
 )
+FENCE_OPEN = re.compile(r"^[ ]{0,3}(`{3,}|~{3,}).*$")
 ARCHIVE_NAME = re.compile(r"^(\d{3,})-[a-z0-9-]+\.md$")
 
 
-def sections(text, level=2):
+def markdown_lines(text):
+    """Yield each line with whether it belongs to a fenced code block."""
+    fence_character = None
+    fence_length = 0
+    for line in text.splitlines():
+        if fence_character is not None:
+            yield line, True
+            closing_fence = re.fullmatch(
+                rf"[ ]{{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[^\S\n]*",
+                line,
+            )
+            if closing_fence:
+                fence_character = None
+                fence_length = 0
+            continue
+
+        opening_fence = FENCE_OPEN.match(line)
+        if opening_fence:
+            marker = opening_fence.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            yield line, True
+        else:
+            yield line, False
+
+
+def without_fenced_code(text):
+    """Blank fenced code while preserving line boundaries for Markdown scans."""
+    return "\n".join(
+        "" if is_fenced else line
+        for line, is_fenced in markdown_lines(text)
+    )
+
+
+def sections(text, level=2, *, with_duplicates=False):
     """Split Markdown into a {heading: body} map at one heading level."""
     prefix = "#" * level + " "
     found = {}
+    duplicates = set()
     heading = None
     body = []
-    for line in text.splitlines():
-        if line.startswith(prefix) and not line.startswith(prefix + "#"):
+    for line, is_fenced in markdown_lines(text):
+        if not is_fenced and line.startswith(prefix):
             if heading is not None:
+                if heading in found:
+                    duplicates.add(heading)
                 found[heading] = "\n".join(body).strip()
             heading = line[len(prefix) :].strip()
             body = []
         elif heading is not None:
             body.append(line)
     if heading is not None:
+        if heading in found:
+            duplicates.add(heading)
         found[heading] = "\n".join(body).strip()
+    if with_duplicates:
+        return found, duplicates
     return found
 
 
@@ -209,7 +252,8 @@ def field(body, name):
 def review_blocks(handoff_log):
     """Return structured values from exact `### Review` log entries."""
     parsed = []
-    for match in REVIEW_BLOCK.finditer(handoff_log):
+    review_text = without_fenced_code(handoff_log)
+    for match in REVIEW_BLOCK.finditer(review_text):
         nested = sections(match.group(1), level=4)
         parsed.append(
             {
@@ -224,10 +268,38 @@ def review_blocks(handoff_log):
 
 def is_unfilled_task_template(task):
     """Recognize only the complete, unchanged active-task template."""
-    return all(
+    return set(task) == set(TASK_TEMPLATE_SECTIONS) and all(
         task.get(heading) == expected
         for heading, expected in TASK_TEMPLATE_SECTIONS.items()
     )
+
+
+def parse_task_document(text, source, problems):
+    """Parse a task and validate its root and level-two heading structure."""
+    task, duplicates = sections(text, with_duplicates=True)
+    nonblank_lines = [line for line in text.splitlines() if line.strip()]
+    root_headings = [
+        line[2:].strip()
+        for line, is_fenced in markdown_lines(text)
+        if not is_fenced and line.startswith("# ") and not line.startswith("## ")
+    ]
+    if (
+        not nonblank_lines
+        or nonblank_lines[0].strip() != "# Current Task"
+        or root_headings != ["Current Task"]
+    ):
+        problems.append(
+            f"{source}: root heading must be exactly '# Current Task'"
+        )
+
+    for heading in sorted(duplicates):
+        problems.append(f"{source}: duplicate `## {heading}` section")
+
+    unexpected = set(task) - set(REQUIRED_TASK_SECTIONS)
+    for heading in sorted(unexpected):
+        problems.append(f"{source}: unexpected `## {heading}` section")
+
+    return task
 
 
 def validate_reviews(task, source, status, driver, reviewer, problems):
@@ -318,6 +390,11 @@ def validate_task_record(
     if not reviewer:
         problems.append(f"{source}: task has no Reviewer")
 
+    if task.get("Selected Skills", "").strip() == "-":
+        problems.append(
+            f"{source}: Selected Skills must replace the '-' placeholder"
+        )
+
     if not re.fullmatch(r"\d{3,}", task_id):
         found = task_id.splitlines()[0] if task_id else ""
         problems.append(
@@ -368,10 +445,13 @@ def validate_task_record(
 
     if status in STATUSES:
         validate_reviews(task, source, status, driver, reviewer, problems)
-        if status == "Superseded" and not task.get("Handoff Log", ""):
+        handoff_log = task.get("Handoff Log", "").strip()
+        if status == "Superseded" and (
+            not handoff_log or handoff_log == HANDOFF_LOG_TEMPLATE
+        ):
             problems.append(
-                f"{source}: status 'Superseded' requires a reason in the "
-                "Handoff Log"
+                f"{source}: status 'Superseded' requires a meaningful reason "
+                "in the Handoff Log"
             )
 
 
@@ -460,7 +540,9 @@ def validate(root):
             else:
                 archived_ids[filename_task_id] = entry.name
 
-            task = sections(entry.read_text(encoding="utf-8"))
+            task = parse_task_document(
+                entry.read_text(encoding="utf-8"), source, problems
+            )
             validate_task_record(
                 task,
                 source,
@@ -471,7 +553,11 @@ def validate(root):
 
     task_file = root / ".agents/state/current-task.md"
     if task_file.is_file():
-        task = sections(task_file.read_text(encoding="utf-8"))
+        task = parse_task_document(
+            task_file.read_text(encoding="utf-8"),
+            "current-task.md",
+            problems,
+        )
         if not is_unfilled_task_template(task):
             validate_task_record(
                 task,
