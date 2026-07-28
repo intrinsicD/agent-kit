@@ -10,7 +10,7 @@ Next unused number in `docs/tasks/`, zero-padded (for example `007`).
 
 - Driver:
 - Reviewer:
-- Turn: driver / reviewer
+- Turn: driver / reviewer / human
 
 ## Mode
 
@@ -37,8 +37,21 @@ Explore / Decide / Implement / Validate / Stabilize / Productize
 ## Status
 
 Not started / In progress / In review / Revision required /
-Blocked on human decision / Accepted / Accepted with follow-up / Rejected /
-Inconclusive / Superseded
+Blocked on human decision / Accepted / Accepted with follow-up /
+Provisionally accepted (self-reviewed) / Rejected / Inconclusive / Superseded
+
+## Human Decisions
+
+Escalated questions and the answers humans gave. An answer that exists only in
+chat is not recorded. Use one block per decision:
+
+```markdown
+### Question
+### Options
+### Recommendation
+### Decision
+### Date
+```
 
 ## Handoff Log
 

@@ -5,11 +5,13 @@ description: Frame a repository task, assign Driver and Reviewer roles, define m
 
 # Task Orchestration
 
-Use this skill at the beginning of any non-trivial task.
+Use this skill at the beginning of any substantial task, as `AGENTS.md` defines
+substantial.
 
 ## Procedure
 
-1. Read `.agents/state/state.md` and `.agents/state/current-task.md`.
+1. Read `.agents/state/state.md`, including `## Last Completed Task`, and
+   `.agents/state/current-task.md`.
 2. Inspect relevant code, tests, decisions, experiments, and open failures.
 3. Classify the task:
    - Explore
@@ -20,8 +22,9 @@ Use this skill at the beginning of any non-trivial task.
    - Productize
 4. Confirm the role assignment and turn recorded in
    `.agents/state/current-task.md`. If roles are unassigned, apply the role
-   assignment rules in `AGENTS.md` and record the result, including any role
-   swap from the previous task.
+   assignment rules in `AGENTS.md` and record the result. Swap the roles listed
+   under `## Last Completed Task` in `.agents/state/state.md`; when that block
+   is empty, fall back to the most recent record in `docs/tasks/`.
 5. Define observable success criteria.
 6. Write explicit non-goals.
 7. Select the fewest applicable skills.
