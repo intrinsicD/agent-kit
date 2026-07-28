@@ -12,7 +12,7 @@ Cross-repository agent workflow adoption assessment
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -70,7 +70,17 @@ from agent-kit.
 ## Current Evidence
 
 - Task 002 independently accepted the hardened agent-kit workflow.
-- The target repositories have not yet been inventoried in this task.
+- The assessment is committed at `4576828`.
+- The documented archive installer has 11 exact path collisions with
+  prospect, 12 with structsplat, 11 with realtime-gs, and 12 with
+  IntrinsicEngine, and would also copy non-colliding agent-kit task/ARA
+  history.
+- StructSplat's structural workflow checks and seven regression tests pass.
+- realtime-gs's structural checks and 12 workflow-checker tests pass.
+- IntrinsicEngine's task policy, 811-ID state links, generated brief, skill
+  mirrors, ARA checker, and portable agentkit self-test pass.
+- Prospect's diagnostic gate runs and explicitly refuses unsupported
+  capability claims.
 
 ## Minimal Plan
 
@@ -86,7 +96,7 @@ from agent-kit.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -108,3 +118,112 @@ blocks here in chronological order. Entries use `###` headings and their fields
 use `####` headings so every entry remains nested under this Handoff Log. Do
 not delete earlier entries. On task completion this file is archived to
 `docs/tasks/<task-id>-<slug>.md`.
+
+### Handoff (codex-a, Driver)
+
+#### Objective
+
+Independently falsify the cross-repository adoption assessment and determine
+whether its deployment blocker, per-repository dispositions, and reverse
+integration priorities follow from the inspected repositories.
+
+#### Changes
+
+- Added
+  `docs/research/cross-repository-agent-workflow-adoption.md`.
+- Indexed the note from `docs/research/README.md`.
+- Recorded the current commit and working-tree condition of all five
+  repositories.
+- Compared authority, task state, independent review, evidence discipline,
+  validation, CI, migration compatibility, and process proportionality.
+
+#### Evidence
+
+- Reviewed artifact commit: `4576828`.
+- agent-kit: 31/31 workflow tests and live validation pass.
+- Prospect: `make epistemic-diagnostics` exits zero while correctly retaining
+  `claim_supported: false` dispositions.
+- StructSplat: docs, ARA, task, and script structural checks pass; workflow
+  checker tests pass 7/7.
+- realtime-gs: docs, ARA, and script checks pass; workflow checker tests pass
+  12/12 with `PYTHONPATH=src`.
+- IntrinsicEngine: strict task policy, task state links, generated session
+  brief, skill mirrors, and ARA checks pass; its agentkit disposable-repository
+  self-test passes.
+- Direct installation collision preflight counts are recorded in the report.
+
+#### Assumptions
+
+- Checked-in local workflow files are the available authority.
+- The target ARA and task histories must not be overwritten or renumbered.
+- The intended operating topology remains two cooperating agents.
+
+#### Uncertainties
+
+- Private branch protection, issue trackers, and unrecorded human practices
+  were not inspected.
+- The cost of mandatory independent review in Prospect and realtime-gs needs a
+  pilot.
+- The report recommends adapting IntrinsicEngine's generator model; it does not
+  yet prove which implementation should be ported or rewritten.
+
+#### Review Focus
+
+- Reproduce the archive collision/history-contamination finding independently.
+- Search a meaningfully different path through each target, especially recent
+  process tasks, CI, or history that could contradict the report.
+- Challenge whether realtime-gs and Prospect need the full coordination
+  profile or only selected invariants.
+- Check whether StructSplat or IntrinsicEngine already enforce independent
+  per-task approval in a surface the Driver missed.
+- Separate required agent-kit changes from attractive but nonessential imports.
+
+#### Recommended Next Action
+
+Return an evidence-based verdict. Required corrections should name the report
+section and the contradictory repository evidence.
+
+### Session Completion (codex-a, Driver)
+
+#### Work completed
+
+Completed the five-repository workflow inventory, executable structural probes,
+adoption matrix, reverse-integration ranking, migration risks, and smallest
+safe adoption sequence.
+
+#### Evidence
+
+Commit `4576828` plus the command results summarized in the handoff.
+
+#### Files changed
+
+- `docs/research/cross-repository-agent-workflow-adoption.md`
+- `docs/research/README.md`
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- agent-kit: 31 workflow regression tests and live validator.
+- Prospect: epistemic diagnostic gate.
+- StructSplat: four structural checks and seven workflow-checker tests.
+- realtime-gs: three structural checks and 12 workflow-checker tests.
+- IntrinsicEngine: five structural/state checks and the agentkit self-test.
+- Four direct collision-preflight probes.
+
+#### Known limitations
+
+No target repository was modified, no remote-only policy was inspected, and no
+adoption pilot was run.
+
+#### Unresolved questions
+
+Whether the target-specific review threshold should cover every substantial
+task or only high-risk classes remains a pilot/policy question.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer independently falsifies the assessment at commit `4576828`.
