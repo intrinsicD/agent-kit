@@ -12,7 +12,7 @@ Fix agent workflow audit findings
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -96,7 +96,7 @@ closeout, archive, and example-history failures that block safe adoption.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -235,3 +235,112 @@ Yes
 #### Recommended next action
 
 `codex-a` independently falsifies the implementation and returns a verdict.
+
+### Review (codex-a, Reviewer)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The implementation resolves the six original happy-path reproductions and the
+Driver's 21 tests pass, but the validator still accepts malformed states that
+violate the stated exact-template, structured-review, and recorded-reason
+invariants:
+
+- the untouched task template plus an extra `##` section is treated as the
+  untouched template;
+- the task template with its `# Current Task` heading removed is treated as the
+  untouched template;
+- an active task with duplicate `## Status` sections is accepted using only the
+  last value;
+- an Accepted task can obtain approval from a syntactically complete
+  `### Review` embedded inside a fenced Markdown example; and
+- Superseded accepts the stock instructional Handoff Log as its recorded
+  reason, while an active task also accepts the `-` Selected Skills placeholder.
+
+These are not speculative schema extensions. They are counterexamples to F3,
+F4, F5, and Task 002's explicit success criteria.
+
+#### Evidence Quality
+
+The full 21-test suite, validator, syntax compilation, and diff checks pass.
+Five independent disposable fixtures then reproduced the invalid acceptances
+above. The fenced-review fixture was bounded by a following fake `###` heading
+inside the fence, demonstrating that raw regular-expression scanning can treat
+example content as an approval block.
+
+#### Simplicity
+
+The implementation remains standard-library-only and the documented
+metadata-only closeout is appropriately small. The validator refactor is
+justified by the audited state machine; no unnecessary architecture or
+dependency was introduced.
+
+#### Missing Cases
+
+Regression coverage does not yet include duplicate task sections, headings
+inside fenced code blocks, exact-template extra/missing structure, meaningful
+Superseded reasons, or active placeholder Selected Skills.
+
+#### Required Changes
+
+1. Make untouched-template recognition genuinely exact: require the root
+   heading and exactly the expected level-two section set, and reject duplicate
+   task sections rather than silently taking the last value.
+2. Ignore fenced code blocks when identifying Review entries and nested Review
+   fields; add a regression proving fenced examples cannot approve work.
+3. Reject the stock Handoff Log text as a Superseded reason and reject the
+   Selected Skills `-` placeholder in active or archived records.
+4. Add the counterexamples above to the regression suite and rerun focused and
+   full validation.
+
+#### Optional Improvements
+
+After acceptance, change the audit's remediation status from “candidate,
+pending independent review” to the final reviewed outcome and bind historical
+line references to the pre-remediation commit where useful.
+
+### Session Completion (codex-a, Reviewer)
+
+#### Work completed
+
+Independently audited the validator, documentation, templates, tests, install
+path, and terminal branch-closeout flow.
+
+#### Evidence
+
+The Driver's 21 tests reproduced successfully; five additional malformed-state
+classes passed when they should fail.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Full unittest discovery, full workflow validation, syntax compilation, diff
+checks, and disposable exact-template, duplicate-section, fenced-review,
+Superseded-reason, and placeholder-field probes.
+
+#### Known limitations
+
+This review did not modify Driver-owned implementation files.
+
+#### Unresolved questions
+
+None. The required changes are bounded by executable counterexamples.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver implements the four required changes and returns the branch for a second
+review round.
