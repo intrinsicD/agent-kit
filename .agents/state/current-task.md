@@ -12,7 +12,7 @@ Fix agent workflow audit findings
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -102,7 +102,7 @@ closeout, archive, and example-history failures that block safe adoption.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -350,3 +350,107 @@ Yes
 
 Driver implements the four required changes and returns the branch for a second
 review round.
+
+### Handoff (codex-b, Driver, Revision Round 1)
+
+#### Objective
+
+Close the four bounded validator gaps from Review round 1 and preserve all
+previously valid lifecycle behavior.
+
+#### Changes
+
+- Task parsing now requires the exact `# Current Task` root, rejects unexpected
+  or duplicate level-two sections, and includes the exact section set in fresh
+  template recognition.
+- A small fence-aware Markdown line scanner prevents fenced examples from
+  supplying Review entries or nested Verdict/Self-reviewed fields while
+  preserving fenced content in task section bodies.
+- Superseded rejects blank or stock instructional Handoff Logs, and active or
+  archived tasks reject the `-` Selected Skills placeholder.
+- Seven regression methods cover the Reviewer's counterexamples, including
+  both fenced Review entries and fenced nested fields and both active and
+  archived Selected Skills placeholders.
+
+#### Evidence
+
+- Revision implementation commit:
+  `876fe17164f4cc7bd196855300a58d2f1492243f`.
+- Before the validator change, all seven new regression methods failed against
+  independently reproduced accepted states.
+- After the change, all 28 tests pass.
+- `python3 scripts/validate_agent_workflow.py` passes with ten routed skills and
+  one validated operational archive.
+- Syntax compilation and `git diff --check` pass.
+- The implementation diff is limited to the validator, regression suite, and
+  current-task evidence.
+
+#### Assumptions
+
+- For mechanically enforceable Superseded closeout, a meaningful reason is any
+  nonblank Handoff Log content other than the unchanged stock instructions;
+  semantic truth remains a review concern.
+- Fenced code follows standard backtick or tilde fences indented by at most
+  three spaces; blockquoted headings already cannot match the workflow heading
+  syntax.
+
+#### Uncertainties
+
+- This is intentionally a bounded Markdown scanner, not a full CommonMark
+  parser. It handles the fenced-code bypass demonstrated by the Reviewer
+  without adding a dependency.
+
+#### Review Focus
+
+- Re-run the six malformed fixture classes and attempt variants using tilde
+  fences, longer closing fences, duplicate archived sections, and fenced nested
+  Review fields.
+- Confirm genuine Review blocks containing fenced evidence still validate when
+  Verdict and Self-reviewed fields remain outside the fence.
+- Check that exact-template validation rejects missing, extra, and duplicate
+  structure without rejecting the canonical untouched template.
+- Verify no behavior beyond the four required changes was introduced.
+
+#### Recommended Next Action
+
+Review commit `876fe17`, rerun the 28-test suite and full validator, and append
+the second independent verdict.
+
+### Session Completion (codex-b, Driver, Revision Round 1)
+
+#### Work completed
+
+Implemented all four required changes from Review round 1, added the reproduced
+counterexamples, committed the revision, and returned the turn to the Reviewer.
+
+#### Evidence
+
+Revision commit `876fe17`; seven new regression methods and all 28 tests pass;
+full validation, syntax compilation, and diff checks pass.
+
+#### Files changed
+
+`scripts/validate_agent_workflow.py`, `tests/test_agent_workflow.py`, and
+`.agents/state/current-task.md`.
+
+#### Tests or experiments run
+
+Reviewer counterexample fixtures, complete unittest discovery, live repository
+validation, Python syntax compilation, and whitespace checks.
+
+#### Known limitations
+
+The scanner handles the workflow's ATX headings and fenced code, not the full
+CommonMark grammar.
+
+#### Unresolved questions
+
+None blocking the second independent review.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+`codex-a` independently verifies the bounded revision and returns a verdict.
