@@ -9,28 +9,26 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 ## Working System
 
 - Ten reusable skills are present and match the routing in `AGENTS.md`.
-- The repository includes task/state templates, durable documentation
-  locations, a worked example, and an installation/state validator.
-- The baseline validator runs successfully on the current repository.
+- Installation exports only tracked files, preserves target Git metadata, and
+  documents collision handling.
+- Active and archived task state is validated for exact structure, unique
+  visible fields, review semantics, status/turn pairing, terminal status, and
+  matching ids.
+- Accepted merge closeout and metadata-only non-merge closeout are documented
+  and covered by executable Git probes.
+- The regression suite and live validator pass on the completed repository.
 
 ## Experimental Components
 
-- The full branch lifecycle has not been validated end to end.
-- Operating-state enforcement is incomplete and must not be treated as a
-  concurrency or approval lock.
+- The `Turn` field remains a cooperative protocol marker rather than a
+  concurrency lock.
+- Markdown role labels do not cryptographically authenticate agent identity.
 
 ## Known Failures
 
-The independently reviewed
-[workflow audit](../../docs/audits/agent-workflow-audit.md) records six
-demonstrated failures:
-
-- the installation command copies `.git/` into an existing target;
-- documented Handoff Log headings conflict with the validator;
-- invalid approval and turn states pass validation;
-- rejected branch closeout has no documented safe path;
-- partial and malformed archived state can bypass validation; and
-- the illustrative task is treated as operational history.
+None currently recorded. Task 002 resolved all six findings from the
+[historical workflow audit](../../docs/audits/agent-workflow-audit.md) and
+received an independent `Accepted` verdict after two bounded revision rounds.
 
 ## Important Decisions
 
@@ -39,17 +37,18 @@ None recorded.
 ## Current Metrics
 
 - Routed skills: 10.
-- Independently reproduced protocol/validator mismatches: 11 of 11 tested.
-- Audit findings: 1 Critical, 3 High, 2 Medium.
-- Independent audit verdict: Accepted with follow-up.
+- Workflow regression tests: 31.
+- Archived operational tasks: 2.
+- Remediated audit findings: 6 of 6.
+- Task 002 independent verdict: Accepted.
 
 ## Immediate Next Step
 
-Replace the destructive installation command before recommending or
-distributing the kit.
+No adoption-blocking workflow fix remains. The next substantial task swaps the
+roles recorded below and starts with `task-orchestration`.
 
 ## Last Completed Task
 
-- Task ID: 001
-- Driver: codex-a
-- Reviewer: codex-b
+- Task ID: 002
+- Driver: codex-b
+- Reviewer: codex-a

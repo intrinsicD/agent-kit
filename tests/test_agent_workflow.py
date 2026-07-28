@@ -144,7 +144,7 @@ def superseded_reason():
 
 def task_record(
     *,
-    task_id="002",
+    task_id="900",
     title="Exercise workflow validation",
     driver="driver",
     reviewer="reviewer",
@@ -786,7 +786,11 @@ class GitWorkflowTests(unittest.TestCase):
         self.write("implementation.txt", "accepted behavior\n")
         self.write(
             ".agents/state/current-task.md",
-            task_record(status="Accepted", handoff_log=review()),
+            task_record(
+                task_id="002",
+                status="Accepted",
+                handoff_log=review(),
+            ),
         )
         self.commit_all("accepted implementation and review")
 
@@ -795,6 +799,7 @@ class GitWorkflowTests(unittest.TestCase):
         self.write(
             "docs/tasks/002-accepted.md",
             task_record(
+                task_id="002",
                 turn="none",
                 status="Accepted",
                 handoff_log=review(),
@@ -855,6 +860,7 @@ class GitWorkflowTests(unittest.TestCase):
                 )
                 current_path.write_text(
                     task_record(
+                        task_id="002",
                         status=status,
                         handoff_log=(
                             superseded_reason()
@@ -874,6 +880,7 @@ class GitWorkflowTests(unittest.TestCase):
                 archive_path.parent.mkdir(parents=True, exist_ok=True)
                 archive_path.write_text(
                     task_record(
+                        task_id="002",
                         turn="none",
                         status=status,
                         handoff_log=(

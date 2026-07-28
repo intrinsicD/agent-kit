@@ -14,38 +14,42 @@ can follow the documented lifecycle without inventing missing steps, and
 whether the validator rejects states that violate the workflow's core
 single-writer and independent-review guarantees.
 
-## Overall Assessment
+## Historical Assessment (Pre-remediation)
 
-**Revision required.** The workflow has a clear, deliberately small conceptual
-model, and the baseline installation validator passes. It is not safe to
-recommend in its current form, however: the documented installation command can
-replace a target repository's Git metadata, the handoff skill emits review
-markup that the validator rejects, and the validator accepts states that bypass
+At audited baseline `ffbf949`, the verdict was **Revision required**. The
+workflow had a clear, deliberately small conceptual model, and the baseline
+installation validator passed. It was not safe to recommend in that form,
+however: the documented installation command could replace a target
+repository's Git metadata, the handoff skill emitted review markup that the
+validator rejected, and the validator accepted states that bypassed
 independent approval.
 
 ## Remediation Status
 
-Task 002 contains a candidate remediation for all six findings, pending
-independent review:
+**Independently accepted.** [Task 002](../tasks/002-fix-workflow-audit-findings.md)
+resolved all six findings and received the final independent `Accepted` verdict
+at `c879ad7` after two bounded revision rounds. The accepted branch was merged
+into local `main` at `b444f6c`:
 
 - installation now exports only tracked files with `git archive` and documents
   collision preflight and overwrite behavior;
 - Handoff Log templates use nested `###` entries and `####` fields;
-- active and archived records share explicit role, mode, status, turn,
-  structured-verdict, and self-review validation;
+- active and archived records enforce exact structure, visible unique role and
+  Review state fields, mode, status, turn, verdict, and self-review semantics;
 - accepted branches have a merge flow, while Rejected, closed Inconclusive, and
   Superseded branches use a tested metadata-only closeout commit;
-- only the complete untouched task template bypasses active validation, and
-  archives require a complete schema, matching id, terminal status, and
-  `Turn: none`; and
+- only the exact untouched task template bypasses active validation; duplicate,
+  fenced, placeholder, partial, and malformed state fails; archives require a
+  complete schema, matching id, terminal status, and `Turn: none`; and
 - the illustrative record now lives under `docs/examples/`, outside operational
   history.
 
-The candidate passes 21 automated regression tests, including the eleven-case
-audit matrix, valid active/archive lifecycles, tracked-only installation, and
-accepted/non-merge Git closeout probes. The findings and original verdict below
-remain the historical assessment of the pre-remediation workflow until the
-Reviewer returns a verdict on Task 002.
+The final implementation passes 31 automated regression tests, including the
+eleven-case audit matrix, valid active/archive lifecycles, tracked-only
+installation, accepted/non-merge Git closeout probes, and every adversarial
+fixture from both review rounds. The findings below remain the historical
+assessment of baseline `ffbf949`; they are preserved as evidence rather than
+rewritten as current defects.
 
 ## Findings
 
@@ -248,7 +252,8 @@ cross-machine races as push conflicts; it cannot prevent concurrent writes in
 one working tree. Any deployment that cannot guarantee sequential invocation
 needs an external lock or compare-and-swap mechanism.
 
-## Verdict
+## Historical Verdict (Pre-remediation)
 
-**Revision required.** The design is understandable and salvageable without a
-large rewrite, but F1-F4 block safe adoption.
+**Revision required.** At baseline `ffbf949`, the design was understandable and
+salvageable without a large rewrite, but F1-F4 blocked safe adoption. The
+independently accepted remediation outcome is recorded above.
