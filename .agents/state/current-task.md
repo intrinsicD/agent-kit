@@ -69,11 +69,19 @@ closeout, archive, and example-history failures that block safe adoption.
 
 - `docs/audits/agent-workflow-audit.md` records six findings and eleven
   reproduced validator mismatches.
-- `scripts/validate_agent_workflow.py` currently treats only a non-empty title
-  as active, recognizes review text by a broad heading regex, and validates
-  archives only by filename/id uniqueness.
-- `README.md` currently installs with `cp -r agent-kit/.`, which includes
+- The audited validator treated only a non-empty title as active, recognized
+  review text by a broad heading regex, and validated archives only by
+  filename/id uniqueness.
+- The audited README installed with `cp -r agent-kit/.`, which included
   `.git/`.
+- The pre-fix regression run produced 13 expected failures across the audited
+  invalid states and archive requirements.
+- The candidate implementation passes all 21 tests, including the eleven-case
+  audit matrix, valid active/archive lifecycles, target Git-metadata
+  preservation, accepted merge closeout, and metadata-only closeout for
+  Rejected, Inconclusive, and Superseded branches.
+- Full validation now reports ten routed skills, one operational archive, and
+  no active-state issues; the illustrative record is outside `docs/tasks/`.
 
 ## Minimal Plan
 
@@ -106,5 +114,7 @@ chat is not recorded. Use one block per decision:
 ## Handoff Log
 
 Append Driver handoffs, Reviewer verdicts, escalations, and session completion
-blocks here in chronological order. Do not delete earlier entries. On task
-completion this file is archived to `docs/tasks/<task-id>-<slug>.md`.
+blocks here in chronological order. Entries use `###` headings and their fields
+use `####` headings so every entry remains nested under this Handoff Log. Do
+not delete earlier entries. On task completion this file is archived to
+`docs/tasks/<task-id>-<slug>.md`.

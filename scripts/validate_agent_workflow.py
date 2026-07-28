@@ -1,21 +1,10 @@
 #!/usr/bin/env python3
-"""Validate the two-agent workflow installation and internal consistency.
-
-Two groups of checks:
-
-1. Installation: required files and directories, skill frontmatter, and
-   agreement between the skill routing in AGENTS.md and the skills on disk.
-2. Operating state: when a task is active, that its Turn, Status, and Task ID
-   are legal and mutually consistent, and that archived task records are
-   uniquely numbered.
-
-The operating-state checks are skipped while `current-task.md` is an unfilled
-template, so a fresh installation validates cleanly.
-"""
+"""Validate installation and operating state for the two-agent workflow."""
 
 from pathlib import Path
 import re
 import sys
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -55,7 +44,25 @@ REQUIRED_TASK_SECTIONS = [
     "Handoff Log",
 ]
 
-TURNS = {"driver", "reviewer", "human"}
+REQUIRED_FILLED_TASK_SECTIONS = [
+    "Title",
+    "Goal",
+    "Motivation",
+    "Success Criteria",
+    "Constraints",
+    "Non-Goals",
+    "Selected Skills",
+    "Minimal Plan",
+]
+
+MODES = {
+    "Explore",
+    "Decide",
+    "Implement",
+    "Validate",
+    "Stabilize",
+    "Productize",
+}
 
 STATUSES = {
     "Not started",
@@ -71,32 +78,118 @@ STATUSES = {
     "Superseded",
 }
 
-REVIEWED_STATUSES = {
+ACTIVE_STATUS_TURNS = {
+    "Not started": "driver",
+    "In progress": "driver",
+    "In review": "reviewer",
+    "Revision required": "driver",
+    "Blocked on human decision": "human",
+    "Accepted": "driver",
+    "Accepted with follow-up": "driver",
+    "Provisionally accepted (self-reviewed)": "driver",
+    "Rejected": "driver",
+    "Inconclusive": "driver",
+    "Superseded": "driver",
+}
+
+TERMINAL_STATUSES = {
     "Accepted",
     "Accepted with follow-up",
-    "Provisionally accepted (self-reviewed)",
+    "Rejected",
+    "Inconclusive",
+    "Superseded",
+}
+
+REVIEW_VERDICTS = {
+    "Accepted",
+    "Accepted with follow-up",
+    "Revision required",
+    "Rejected",
+    "Inconclusive",
+}
+
+STATUS_REVIEW_VERDICTS = {
+    "Accepted": {"Accepted"},
+    "Accepted with follow-up": {"Accepted with follow-up"},
+    "Provisionally accepted (self-reviewed)": {
+        "Accepted",
+        "Accepted with follow-up",
+    },
+    "Revision required": {"Revision required"},
+    "Rejected": {"Rejected"},
+    "Inconclusive": {"Inconclusive"},
+}
+
+TASK_ID_TEMPLATE = (
+    "Next unused number in `docs/tasks/`, zero-padded (for example `007`)."
+)
+MODE_TEMPLATE = "Explore / Decide / Implement / Validate / Stabilize / Productize"
+STATUS_TEMPLATE = """\
+Not started / In progress / In review / Revision required /
+Blocked on human decision / Accepted / Accepted with follow-up /
+Provisionally accepted (self-reviewed) / Rejected / Inconclusive / Superseded"""
+ROLE_ASSIGNMENT_TEMPLATE = """\
+- Driver:
+- Reviewer:
+- Turn: driver / reviewer / human"""
+HUMAN_DECISIONS_TEMPLATE = """\
+Escalated questions and the answers humans gave. An answer that exists only in
+chat is not recorded. Use one block per decision:
+
+```markdown
+### Question
+### Options
+### Recommendation
+### Decision
+### Date
+```"""
+HANDOFF_LOG_TEMPLATE = """\
+Append Driver handoffs, Reviewer verdicts, escalations, and session completion
+blocks here in chronological order. Entries use `###` headings and their fields
+use `####` headings so every entry remains nested under this Handoff Log. Do
+not delete earlier entries. On task completion this file is archived to
+`docs/tasks/<task-id>-<slug>.md`."""
+TASK_TEMPLATE_SECTIONS = {
+    "Title": "",
+    "Task ID": TASK_ID_TEMPLATE,
+    "Role Assignment": ROLE_ASSIGNMENT_TEMPLATE,
+    "Mode": MODE_TEMPLATE,
+    "Goal": "",
+    "Motivation": "",
+    "Success Criteria": "",
+    "Constraints": "",
+    "Non-Goals": "",
+    "Selected Skills": "-",
+    "Current Evidence": "",
+    "Minimal Plan": "",
+    "Status": STATUS_TEMPLATE,
+    "Human Decisions": HUMAN_DECISIONS_TEMPLATE,
+    "Handoff Log": HANDOFF_LOG_TEMPLATE,
 }
 
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 ROUTING_SECTION = re.compile(
     r"^## Skill routing$(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL
 )
-REVIEW_HEADING = re.compile(r"^#{2,4}\s*Review\b", re.MULTILINE | re.IGNORECASE)
+REVIEW_BLOCK = re.compile(
+    r"^### Review(?:[^\S\n]+\([^()\n]*\))?[^\S\n]*$\n?"
+    r"(.*?)(?=^### |\Z)",
+    re.MULTILINE | re.DOTALL | re.IGNORECASE,
+)
 ARCHIVE_NAME = re.compile(r"^(\d{3,})-[a-z0-9-]+\.md$")
 
-problems = []
 
-
-def sections(text):
-    """Split markdown into a {heading: body} map of its level-two sections."""
+def sections(text, level=2):
+    """Split Markdown into a {heading: body} map at one heading level."""
+    prefix = "#" * level + " "
     found = {}
     heading = None
     body = []
     for line in text.splitlines():
-        if line.startswith("## "):
+        if line.startswith(prefix) and not line.startswith(prefix + "#"):
             if heading is not None:
                 found[heading] = "\n".join(body).strip()
-            heading = line[3:].strip()
+            heading = line[len(prefix) :].strip()
             body = []
         elif heading is not None:
             body.append(line)
@@ -106,161 +199,312 @@ def sections(text):
 
 
 def field(body, name):
-    """Read a `- Name: value` field out of a section body.
-
-    Horizontal whitespace only: `\\s*` would match the newline after an empty
-    field and capture the following line as its value.
-    """
+    """Read a `- Name: value` field from a section body."""
     match = re.search(
         rf"^-[^\S\n]*{re.escape(name)}:[^\S\n]*(.*)$", body, re.MULTILINE
     )
     return match.group(1).strip() if match else ""
 
 
-def is_placeholder(value):
-    """Template alternatives such as `driver / reviewer / human` are unfilled."""
-    return not value or "/" in value
+def review_blocks(handoff_log):
+    """Return structured values from exact `### Review` log entries."""
+    parsed = []
+    for match in REVIEW_BLOCK.finditer(handoff_log):
+        nested = sections(match.group(1), level=4)
+        parsed.append(
+            {
+                "Verdict": nested.get("Verdict", "").strip(),
+                "Self-reviewed": nested.get("Self-reviewed", "")
+                .strip()
+                .removesuffix("."),
+            }
+        )
+    return parsed
 
 
-# Installation ---------------------------------------------------------------
+def is_unfilled_task_template(task):
+    """Recognize only the complete, unchanged active-task template."""
+    return all(
+        task.get(heading) == expected
+        for heading, expected in TASK_TEMPLATE_SECTIONS.items()
+    )
 
-for relative in REQUIRED_FILES:
-    if not (ROOT / relative).is_file():
-        problems.append(f"missing file: {relative}")
 
-for relative in REQUIRED_DIRS:
-    if not (ROOT / relative).is_dir():
-        problems.append(f"missing directory: {relative}")
+def validate_reviews(task, source, status, driver, reviewer, problems):
+    """Validate review structure and its relationship to task state."""
+    reviews = review_blocks(task.get("Handoff Log", ""))
 
-skills_dir = ROOT / ".agents/skills"
-disk_skills = set()
-if skills_dir.is_dir():
-    for entry in sorted(skills_dir.iterdir()):
-        if not entry.is_dir():
-            continue
-        disk_skills.add(entry.name)
-        skill_file = entry / "SKILL.md"
-        if not skill_file.is_file():
-            problems.append(f"missing file: .agents/skills/{entry.name}/SKILL.md")
-            continue
-        match = FRONTMATTER.match(skill_file.read_text(encoding="utf-8"))
-        if not match:
-            problems.append(f"{entry.name}: SKILL.md has no frontmatter block")
-            continue
-        frontmatter = match.group(1)
-        name = re.search(r"^name:\s*(\S+)\s*$", frontmatter, re.MULTILINE)
-        description = re.search(r"^description:\s*(.+)$", frontmatter, re.MULTILINE)
-        if not name or name.group(1) != entry.name:
+    for index, parsed_review in enumerate(reviews, start=1):
+        verdict = parsed_review["Verdict"]
+        self_reviewed = parsed_review["Self-reviewed"]
+        if verdict not in REVIEW_VERDICTS:
             problems.append(
-                f"{entry.name}: frontmatter name must match the directory name"
+                f"{source}: Review {index} Verdict must be one of "
+                f"{sorted(REVIEW_VERDICTS)}, found {verdict!r}"
             )
-        if not description or not description.group(1).strip():
-            problems.append(f"{entry.name}: frontmatter description is missing")
-
-agents_file = ROOT / "AGENTS.md"
-if agents_file.is_file():
-    routing = ROUTING_SECTION.search(agents_file.read_text(encoding="utf-8"))
-    if not routing:
-        problems.append("AGENTS.md: no `## Skill routing` section found")
-    else:
-        routed = set(re.findall(r"^- `([a-z0-9-]+)`:", routing.group(1), re.MULTILINE))
-        for skill in sorted(disk_skills - routed):
-            problems.append(f"{skill}: on disk but not listed in AGENTS.md skill routing")
-        for skill in sorted(routed - disk_skills):
-            problems.append(f"{skill}: listed in AGENTS.md skill routing but not on disk")
-
-# Archived task records ------------------------------------------------------
-
-archived_ids = {}
-tasks_dir = ROOT / "docs/tasks"
-if tasks_dir.is_dir():
-    for entry in sorted(tasks_dir.glob("*.md")):
-        if entry.name == "README.md":
-            continue
-        match = ARCHIVE_NAME.match(entry.name)
-        if not match:
+        if self_reviewed not in {"Yes", "No"}:
             problems.append(
-                f"docs/tasks/{entry.name}: name must be <task-id>-<slug>.md, "
-                "with a zero-padded id and a lowercase slug"
+                f"{source}: Review {index} Self-reviewed must be 'Yes' or 'No', "
+                f"found {self_reviewed!r}"
             )
-            continue
-        task_id = match.group(1)
-        if task_id in archived_ids:
-            problems.append(
-                f"docs/tasks/{entry.name}: task id {task_id} already used by "
-                f"{archived_ids[task_id]}"
-            )
-        else:
-            archived_ids[task_id] = entry.name
 
-# Active task ----------------------------------------------------------------
+    expected_verdicts = STATUS_REVIEW_VERDICTS.get(status)
+    if not expected_verdicts:
+        return
+    if not reviews:
+        problems.append(
+            f"{source}: status {status!r} requires a structured Review block "
+            "in the Handoff Log"
+        )
+        return
 
-task_file = ROOT / ".agents/state/current-task.md"
-if task_file.is_file():
-    task = sections(task_file.read_text(encoding="utf-8"))
+    latest = reviews[-1]
+    verdict = latest["Verdict"]
+    self_reviewed = latest["Self-reviewed"]
+    if verdict not in expected_verdicts:
+        problems.append(
+            f"{source}: status {status!r} requires latest Review Verdict "
+            f"in {sorted(expected_verdicts)}, found {verdict!r}"
+        )
 
+    provisional = status == "Provisionally accepted (self-reviewed)"
+    if self_reviewed == "Yes" and not provisional:
+        problems.append(
+            f"{source}: Self-reviewed 'Yes' requires status "
+            "'Provisionally accepted (self-reviewed)'"
+        )
+    if provisional and self_reviewed != "Yes":
+        problems.append(
+            f"{source}: status 'Provisionally accepted (self-reviewed)' "
+            "requires Self-reviewed 'Yes'"
+        )
+    if self_reviewed == "No" and driver and reviewer and driver == reviewer:
+        problems.append(
+            f"{source}: independent review requires distinct Driver and Reviewer"
+        )
+
+
+def validate_task_record(
+    task,
+    source,
+    problems,
+    *,
+    archived,
+    filename_task_id=None,
+):
+    """Validate the shared schema for an active or archived task."""
     for heading in REQUIRED_TASK_SECTIONS:
         if heading not in task:
-            problems.append(f"current-task.md: missing `## {heading}` section")
+            problems.append(f"{source}: missing `## {heading}` section")
 
-    title = task.get("Title", "")
+    for heading in REQUIRED_FILLED_TASK_SECTIONS:
+        if not task.get(heading, ""):
+            if heading == "Title":
+                kind = "archived" if archived else "active"
+                problems.append(f"{source}: {kind} task has no Title")
+            else:
+                problems.append(f"{source}: task has no {heading}")
+
     roles = task.get("Role Assignment", "")
+    driver = field(roles, "Driver")
+    reviewer = field(roles, "Reviewer")
     turn = field(roles, "Turn").lower()
     status = task.get("Status", "")
     task_id = task.get("Task ID", "")
+    mode = task.get("Mode", "")
 
-    # A titled task is an active one; an untitled file is still the template.
-    if title:
-        if not field(roles, "Driver"):
-            problems.append("current-task.md: active task has no Driver")
-        if not field(roles, "Reviewer"):
-            problems.append("current-task.md: active task has no Reviewer")
+    if not driver:
+        problems.append(f"{source}: task has no Driver")
+    if not reviewer:
+        problems.append(f"{source}: task has no Reviewer")
 
-        if is_placeholder(turn) or turn not in TURNS:
+    if not re.fullmatch(r"\d{3,}", task_id):
+        found = task_id.splitlines()[0] if task_id else ""
+        problems.append(
+            f"{source}: Task ID must be a zero-padded number, found {found!r}"
+        )
+    elif archived and filename_task_id != task_id:
+        problems.append(
+            f"{source}: Task ID {task_id!r} does not match filename id "
+            f"{filename_task_id!r}"
+        )
+
+    if mode not in MODES:
+        found = mode.splitlines()[0] if mode else ""
+        problems.append(
+            f"{source}: Mode must be one of {sorted(MODES)}, found {found!r}"
+        )
+
+    if status not in STATUSES:
+        found = status.splitlines()[0] if status else ""
+        problems.append(
+            f"{source}: Status must be one of the documented values, "
+            f"found {found!r}"
+        )
+    elif archived:
+        if status not in TERMINAL_STATUSES:
             problems.append(
-                f"current-task.md: Turn must be one of {sorted(TURNS)}, found "
-                f"{field(roles, 'Turn')!r}"
+                f"{source}: archived task Status must be terminal, found "
+                f"{status!r}"
+            )
+    else:
+        expected_turn = ACTIVE_STATUS_TURNS[status]
+        if turn != expected_turn:
+            problems.append(
+                f"{source}: status {status!r} requires Turn "
+                f"{expected_turn!r}, found {turn!r}"
             )
 
-        if is_placeholder(status) or status not in STATUSES:
-            found = status.splitlines()[0] if status else ""
+    if archived:
+        if turn != "none":
             problems.append(
-                "current-task.md: Status must be one of the documented values, "
-                f"found {found!r}"
+                f"{source}: archived task requires Turn 'none', found {turn!r}"
             )
+    elif turn not in {"driver", "reviewer", "human"}:
+        problems.append(
+            f"{source}: Turn must be 'driver', 'reviewer', or 'human', "
+            f"found {turn!r}"
+        )
+
+    if status in STATUSES:
+        validate_reviews(task, source, status, driver, reviewer, problems)
+        if status == "Superseded" and not task.get("Handoff Log", ""):
+            problems.append(
+                f"{source}: status 'Superseded' requires a reason in the "
+                "Handoff Log"
+            )
+
+
+def validate(root):
+    """Return problems plus installation counts for one repository root."""
+    problems = []
+
+    for relative in REQUIRED_FILES:
+        if not (root / relative).is_file():
+            problems.append(f"missing file: {relative}")
+
+    for relative in REQUIRED_DIRS:
+        if not (root / relative).is_dir():
+            problems.append(f"missing directory: {relative}")
+
+    skills_dir = root / ".agents/skills"
+    disk_skills = set()
+    if skills_dir.is_dir():
+        for entry in sorted(skills_dir.iterdir()):
+            if not entry.is_dir():
+                continue
+            disk_skills.add(entry.name)
+            skill_file = entry / "SKILL.md"
+            if not skill_file.is_file():
+                problems.append(
+                    f"missing file: .agents/skills/{entry.name}/SKILL.md"
+                )
+                continue
+            match = FRONTMATTER.match(skill_file.read_text(encoding="utf-8"))
+            if not match:
+                problems.append(f"{entry.name}: SKILL.md has no frontmatter block")
+                continue
+            frontmatter = match.group(1)
+            name = re.search(r"^name:\s*(\S+)\s*$", frontmatter, re.MULTILINE)
+            description = re.search(
+                r"^description:\s*(.+)$", frontmatter, re.MULTILINE
+            )
+            if not name or name.group(1) != entry.name:
+                problems.append(
+                    f"{entry.name}: frontmatter name must match the directory name"
+                )
+            if not description or not description.group(1).strip():
+                problems.append(
+                    f"{entry.name}: frontmatter description is missing"
+                )
+
+    agents_file = root / "AGENTS.md"
+    if agents_file.is_file():
+        routing = ROUTING_SECTION.search(agents_file.read_text(encoding="utf-8"))
+        if not routing:
+            problems.append("AGENTS.md: no `## Skill routing` section found")
         else:
-            if status in REVIEWED_STATUSES and not REVIEW_HEADING.search(
-                task.get("Handoff Log", "")
-            ):
-                problems.append(
-                    f"current-task.md: status {status!r} requires a Review block "
-                    "in the Handoff Log"
+            routed = set(
+                re.findall(
+                    r"^- `([a-z0-9-]+)`:", routing.group(1), re.MULTILINE
                 )
-            if (status == "Blocked on human decision") != (turn == "human"):
+            )
+            for skill in sorted(disk_skills - routed):
                 problems.append(
-                    "current-task.md: status 'Blocked on human decision' and "
-                    "Turn 'human' must be set together"
+                    f"{skill}: on disk but not listed in AGENTS.md skill routing"
+                )
+            for skill in sorted(routed - disk_skills):
+                problems.append(
+                    f"{skill}: listed in AGENTS.md skill routing but not on disk"
                 )
 
-        if not re.fullmatch(r"\d{3,}", task_id):
-            found = task_id.splitlines()[0] if task_id else ""
-            problems.append(
-                "current-task.md: Task ID must be a zero-padded number, found "
-                f"{found!r}"
-            )
-        elif task_id in archived_ids:
-            problems.append(
-                f"current-task.md: task id {task_id} is already archived as "
-                f"docs/tasks/{archived_ids[task_id]}"
+    archived_ids = {}
+    tasks_dir = root / "docs/tasks"
+    if tasks_dir.is_dir():
+        for entry in sorted(tasks_dir.glob("*.md")):
+            if entry.name == "README.md":
+                continue
+            source = f"docs/tasks/{entry.name}"
+            match = ARCHIVE_NAME.match(entry.name)
+            filename_task_id = match.group(1) if match else None
+            if not match:
+                problems.append(
+                    f"{source}: name must be <task-id>-<slug>.md, with a "
+                    "zero-padded id and a lowercase slug"
+                )
+            elif filename_task_id in archived_ids:
+                problems.append(
+                    f"{source}: task id {filename_task_id} already used by "
+                    f"{archived_ids[filename_task_id]}"
+                )
+            else:
+                archived_ids[filename_task_id] = entry.name
+
+            task = sections(entry.read_text(encoding="utf-8"))
+            validate_task_record(
+                task,
+                source,
+                problems,
+                archived=True,
+                filename_task_id=filename_task_id,
             )
 
-if problems:
-    print("Agent workflow validation failed:")
-    for problem in problems:
-        print(f"  - {problem}")
-    sys.exit(1)
+    task_file = root / ".agents/state/current-task.md"
+    if task_file.is_file():
+        task = sections(task_file.read_text(encoding="utf-8"))
+        if not is_unfilled_task_template(task):
+            validate_task_record(
+                task,
+                "current-task.md",
+                problems,
+                archived=False,
+            )
+            task_id = task.get("Task ID", "")
+            if re.fullmatch(r"\d{3,}", task_id) and task_id in archived_ids:
+                problems.append(
+                    f"current-task.md: task id {task_id} is already archived as "
+                    f"docs/tasks/{archived_ids[task_id]}"
+                )
 
-print("Agent workflow installation is complete and consistent.")
-print(f"Found {len(disk_skills)} skills, all required state files and directories.")
-if archived_ids:
-    print(f"Archived tasks: {len(archived_ids)}. No active task issues found.")
+    return problems, disk_skills, archived_ids
+
+
+def main():
+    problems, disk_skills, archived_ids = validate(ROOT)
+    if problems:
+        print("Agent workflow validation failed:")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+
+    print("Agent workflow installation and state validation passed.")
+    print(
+        f"Found {len(disk_skills)} skills, all required state files and "
+        "directories."
+    )
+    print(f"Validated archived tasks: {len(archived_ids)}.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

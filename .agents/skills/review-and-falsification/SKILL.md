@@ -43,16 +43,16 @@ Required changes must be separated from optional improvements.
 ## Artifact and placement
 
 ```markdown
-## Review
+### Review
 
-### Verdict
-### Self-reviewed
-### Correctness
-### Evidence Quality
-### Simplicity
-### Missing Cases
-### Required Changes
-### Optional Improvements
+#### Verdict
+#### Self-reviewed
+#### Correctness
+#### Evidence Quality
+#### Simplicity
+#### Missing Cases
+#### Required Changes
+#### Optional Improvements
 ```
 
 Append the review to the Handoff Log in `.agents/state/current-task.md`.

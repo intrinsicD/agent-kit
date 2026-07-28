@@ -20,12 +20,34 @@ detailed behavior lives in focused skills under `.agents/skills/`.
 
 ## Installation
 
-Copy the contents of this folder into the root of a repository, including the
-dotfiles. A plain `cp -r agent-kit/* target/` silently skips `.agents/`:
+Export the kit's tracked files into the target repository. `git archive`
+excludes the kit's `.git/` database and all untracked local files:
 
 ```bash
-cp -r agent-kit/. target-repository/
+git -C agent-kit archive --format=tar HEAD |
+  tar -x -C target-repository
 ```
+
+The extractor overwrites target paths that have the same name. Before running
+it, use a clean target branch and preflight collisions:
+
+```bash
+kit_source=agent-kit
+kit_target=target-repository
+git -C "$kit_source" ls-tree -r --name-only HEAD |
+  while IFS= read -r tracked_path; do
+    if [ -e "$kit_target/$tracked_path" ] ||
+       [ -L "$kit_target/$tracked_path" ]; then
+      printf '%s\n' "$tracked_path"
+    fi
+  done
+```
+
+No output means the tracked paths do not collide. If paths are printed, stop
+and merge, rename, or back up those target files before extraction. Afterwards,
+inspect `git status` and `git diff` in the target before committing. Do not use
+`cp -r agent-kit/.`: it also copies `.git/` and can replace the target's Git
+metadata.
 
 Expected layout:
 
@@ -54,12 +76,20 @@ any structural change. It checks two things:
 
 - installation: required files, skill frontmatter, and agreement between the
   skill routing in `AGENTS.md` and the skills on disk;
-- operating state: when a task is active, that its `Turn`, `Status`, and task id
-  are legal and mutually consistent, that an accepted task actually has a review
-  in its Handoff Log, and that archived task ids are unique.
+- operating state: exact fresh-template recognition; active task role, mode,
+  `Turn`, `Status`, task-id, structured-review, and self-review semantics; and
+  complete archived records with unique, filename-matching ids, terminal
+  statuses, `Turn: none`, and the required verdict.
 
-The operating-state checks stay quiet while `current-task.md` is an unfilled
-template, so a fresh installation validates cleanly.
+The operating-state checks stay quiet only while `current-task.md` is the
+complete unfilled template. A partially initialized record fails validation
+instead of being mistaken for a fresh installation.
+
+Run the regression suite after changing workflow behavior:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+```
 
 ## Wiring up the agent tools
 
@@ -112,8 +142,9 @@ identical, with two additions: pull before you start, and push after you set the
 Agents exchange work through the repository: each handoff and verdict is
 appended to the Handoff Log in `.agents/state/current-task.md`, decisions that
 need a human are recorded under `## Human Decisions`, and completed tasks are
-archived under `docs/tasks/`. See `docs/tasks/000-example-task.md` for a
-filled-in example of a completed task.
+archived under `docs/tasks/`. See `docs/examples/completed-task.md` for an
+illustrative completed record that is intentionally outside operational task
+history.
 
 ## Design principle
 

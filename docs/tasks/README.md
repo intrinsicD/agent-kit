@@ -9,9 +9,15 @@ lowercase slug, for example `007-neighbor-search-benchmark.md`. Ids must be
 unique; `scripts/validate_agent_workflow.py` checks this and refuses a new task
 that reuses an archived id.
 
-Archived records carry `Turn: none`, since no role acts next. Rejected and
-inconclusive tasks are archived too — their record is what stops the next task
-from repeating the attempt.
+Archived records carry `Turn: none`, since no role acts next, and use a
+terminal status: `Accepted`, `Accepted with follow-up`, `Rejected`,
+`Inconclusive`, or `Superseded`. The validator applies the complete task schema,
+requires the Task ID to match the filename, and checks the structured review
+semantics for statuses that require a verdict.
 
-`000-example-task.md` is an illustrative example of a filled-in record, not
-real project history.
+Rejected, closed Inconclusive, and Superseded task branches use the
+metadata-only closeout in the `repo-organization` skill. Their archive reaches
+the default branch without merging the discarded implementation.
+
+Illustrative records live under `docs/examples/`, outside this operational
+history and its id allocation.
