@@ -241,12 +241,15 @@ def sections(text, level=2, *, with_duplicates=False):
     return found
 
 
-def field(body, name):
-    """Read a `- Name: value` field from a section body."""
-    match = re.search(
-        rf"^-[^\S\n]*{re.escape(name)}:[^\S\n]*(.*)$", body, re.MULTILINE
+def field_values(body, name):
+    """Read visible `- Name: value` fields from a section body."""
+    visible_body = without_fenced_code(body)
+    matches = re.finditer(
+        rf"^-[^\S\n]*{re.escape(name)}:[^\S\n]*(.*)$",
+        visible_body,
+        re.MULTILINE,
     )
-    return match.group(1).strip() if match else ""
+    return [match.group(1).strip() for match in matches]
 
 
 def review_blocks(handoff_log):
@@ -254,13 +257,17 @@ def review_blocks(handoff_log):
     parsed = []
     review_text = without_fenced_code(handoff_log)
     for match in REVIEW_BLOCK.finditer(review_text):
-        nested = sections(match.group(1), level=4)
+        nested, duplicates = sections(
+            match.group(1), level=4, with_duplicates=True
+        )
         parsed.append(
             {
                 "Verdict": nested.get("Verdict", "").strip(),
                 "Self-reviewed": nested.get("Self-reviewed", "")
                 .strip()
                 .removesuffix("."),
+                "Duplicate state fields": duplicates
+                & {"Verdict", "Self-reviewed"},
             }
         )
     return parsed
@@ -309,6 +316,10 @@ def validate_reviews(task, source, status, driver, reviewer, problems):
     for index, parsed_review in enumerate(reviews, start=1):
         verdict = parsed_review["Verdict"]
         self_reviewed = parsed_review["Self-reviewed"]
+        for name in sorted(parsed_review["Duplicate state fields"]):
+            problems.append(
+                f"{source}: Review {index} has duplicate `#### {name}` field"
+            )
         if verdict not in REVIEW_VERDICTS:
             problems.append(
                 f"{source}: Review {index} Verdict must be one of "
@@ -378,9 +389,18 @@ def validate_task_record(
                 problems.append(f"{source}: task has no {heading}")
 
     roles = task.get("Role Assignment", "")
-    driver = field(roles, "Driver")
-    reviewer = field(roles, "Reviewer")
-    turn = field(roles, "Turn").lower()
+    role_values = {
+        name: field_values(roles, name)
+        for name in ("Driver", "Reviewer", "Turn")
+    }
+    for name, values in role_values.items():
+        if len(values) > 1:
+            problems.append(
+                f"{source}: duplicate Role Assignment field {name!r}"
+            )
+    driver = role_values["Driver"][0] if role_values["Driver"] else ""
+    reviewer = role_values["Reviewer"][0] if role_values["Reviewer"] else ""
+    turn = role_values["Turn"][0].lower() if role_values["Turn"] else ""
     status = task.get("Status", "")
     task_id = task.get("Task ID", "")
     mode = task.get("Mode", "")

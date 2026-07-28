@@ -450,6 +450,84 @@ class ReviewerRegressionTests(WorkflowFixture):
         self.assert_invalid("must replace the '-' placeholder")
 
 
+class StructuredFieldRegressionTests(WorkflowFixture):
+    def test_role_fields_inside_fence_are_ignored(self):
+        role_fields = textwrap.dedent(
+            """\
+            - Driver: driver
+            - Reviewer: reviewer
+            - Turn: driver"""
+        )
+        fenced_roles = textwrap.dedent(
+            """\
+            ```markdown
+            - Driver: driver
+            - Reviewer: reviewer
+            - Turn: driver
+            ```"""
+        )
+        self.write_current_task(task_record().replace(role_fields, fenced_roles))
+        self.assert_invalid("task has no Driver")
+
+        real_and_fenced_roles = role_fields + "\n\n" + fenced_roles
+        self.write_current_task(
+            task_record().replace(role_fields, real_and_fenced_roles)
+        )
+        self.assert_valid()
+
+    def test_duplicate_role_fields_are_rejected(self):
+        cases = [
+            ("Driver", "driver", "other-driver"),
+            ("Reviewer", "reviewer", "other-reviewer"),
+            ("Turn", "driver", "reviewer"),
+        ]
+        for name, original, duplicate in cases:
+            with self.subTest(name=name):
+                field_line = f"- {name}: {original}"
+                self.write_current_task(
+                    task_record().replace(
+                        field_line,
+                        f"{field_line}\n- {name}: {duplicate}",
+                    )
+                )
+                self.assert_invalid(
+                    f"duplicate Role Assignment field {name!r}"
+                )
+
+    def test_duplicate_review_state_fields_are_rejected(self):
+        duplicate_verdict = review(verdict="Rejected").replace(
+            "#### Verdict\n\nRejected",
+            "#### Verdict\n\nRejected\n\n#### Verdict\n\nAccepted",
+        )
+        duplicate_self_reviewed = review(self_reviewed="Yes").replace(
+            "#### Self-reviewed\n\nYes",
+            "#### Self-reviewed\n\nYes\n\n#### Self-reviewed\n\nNo",
+        )
+        cases = [
+            ("Verdict", duplicate_verdict),
+            ("Self-reviewed", duplicate_self_reviewed),
+        ]
+        for name, handoff_log in cases:
+            with self.subTest(name=name):
+                self.write_current_task(
+                    task_record(
+                        status="Accepted",
+                        handoff_log=handoff_log,
+                    )
+                )
+                self.assert_invalid(
+                    f"duplicate `#### {name}` field"
+                )
+
+        self.write_current_task(
+            task_record(
+                status="Accepted",
+                handoff_log=duplicate_verdict + "\n\n" + review(),
+            )
+        )
+        self.assert_invalid("Review 1 has duplicate `#### Verdict` field")
+
+
 class ValidLifecycleTests(WorkflowFixture):
     def test_active_lifecycle_states(self):
         cases = [

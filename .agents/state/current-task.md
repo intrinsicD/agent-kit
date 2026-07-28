@@ -88,6 +88,11 @@ closeout, archive, and example-history failures that block safe adoption.
 - The bounded revision adds seven regression methods (including active and
   archived placeholder cases), checks fenced Review entries and nested fields,
   and passes all 28 tests plus full validation.
+- Review round 2 at `f171162` confirmed the first revision and isolated
+  fence-aware Role Assignment parsing plus duplicate role and Review state
+  fields as the final required changes.
+- The second bounded revision adds three focused regression methods covering
+  six reproduced field bypasses; all 31 tests and full validation pass.
 
 ## Minimal Plan
 
