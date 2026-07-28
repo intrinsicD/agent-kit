@@ -2,43 +2,93 @@
 
 ## Title
 
+Fix agent workflow audit findings
+
 ## Task ID
 
-Next unused number in `docs/tasks/`, zero-padded (for example `007`).
+002
 
 ## Role Assignment
 
-- Driver:
-- Reviewer:
-- Turn: driver / reviewer / human
+- Driver: codex-b
+- Reviewer: codex-a
+- Turn: driver
 
 ## Mode
 
-Explore / Decide / Implement / Validate / Stabilize / Productize
+Stabilize
 
 ## Goal
 
+Make the two-agent workflow safe to install and internally enforce the
+documented task, review, archive, and closeout lifecycle.
+
 ## Motivation
+
+The accepted audit demonstrated six installation, schema, validation, branch
+closeout, archive, and example-history failures that block safe adoption.
 
 ## Success Criteria
 
+- Installation uses a tracked-file export that cannot copy `.git/`, with
+  explicit collision behavior and guidance.
+- Handoff and review templates use headings nested under `## Handoff Log`.
+- The validator rejects all eleven audit matrix failures and enforces role,
+  structured-review, status, and turn semantics while accepting valid
+  independent and self-reviewed lifecycles.
+- Accepted, Rejected, Inconclusive, and Superseded branch closeout paths are
+  explicit and safely preserve metadata without merging rejected changes.
+- Partial active records and malformed archives fail validation; valid archives
+  require matching ids, terminal statuses, `Turn: none`, and valid verdicts.
+- The illustrative task is outside operational history and automated regression
+  tests cover the audit matrix plus valid lifecycle, archive, and closeout cases.
+- Focused tests, full workflow validation, syntax compilation, and diff checks
+  pass.
+
 ## Constraints
+
+- Preserve the existing lightweight Markdown workflow and Python standard
+  library implementation.
+- Avoid external dependencies, speculative redesign, and unrelated changes.
+- Work sequentially in the shared tree and hand the committed branch to the
+  independent Reviewer.
 
 ## Non-Goals
 
+- Turning the cooperative `Turn` marker into a concurrency lock.
+- Automating merges, pushes, or cross-machine coordination.
+- Generalizing the validator beyond this repository's documented schema.
+
 ## Selected Skills
 
--
+- `task-orchestration`
+- `implementation`
+- `handoff`
 
 ## Current Evidence
 
+- `docs/audits/agent-workflow-audit.md` records six findings and eleven
+  reproduced validator mismatches.
+- `scripts/validate_agent_workflow.py` currently treats only a non-empty title
+  as active, recognizes review text by a broad heading regex, and validates
+  archives only by filename/id uniqueness.
+- `README.md` currently installs with `cp -r agent-kit/.`, which includes
+  `.git/`.
+
 ## Minimal Plan
+
+1. Add regression fixtures for the audit matrix and valid lifecycle/archive
+   cases.
+2. Align documented templates and implement structured active/archive
+   validation.
+3. Document safe installation and terminal branch closeout flows, and move the
+   illustrative record outside operational history.
+4. Run focused and full validation, self-audit the diff, and hand the branch to
+   the Reviewer.
 
 ## Status
 
-Not started / In progress / In review / Revision required /
-Blocked on human decision / Accepted / Accepted with follow-up /
-Provisionally accepted (self-reviewed) / Rejected / Inconclusive / Superseded
+In progress
 
 ## Human Decisions
 
