@@ -12,7 +12,7 @@ Fix agent workflow audit findings
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -102,7 +102,7 @@ closeout, archive, and example-history failures that block safe adoption.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -454,3 +454,102 @@ Yes
 #### Recommended next action
 
 `codex-a` independently verifies the bounded revision and returns a verdict.
+
+### Review (codex-a, Reviewer, Round 2)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+Revision round 1 fixes all five counterexample classes from the first review.
+The 28-test suite passes, the exact-template and duplicate task-section checks
+work, backtick and tilde fenced reviews are ignored, and a genuine Review with
+fenced evidence remains valid.
+
+Two structured-state bypasses remain:
+
+- `field()` scans raw Role Assignment bodies, so an active task whose Driver,
+  Reviewer, and Turn exist only inside a fenced code example is accepted; and
+- nested Review fields still silently overwrite duplicates, so a Review with
+  `Verdict: Rejected` followed by `Verdict: Accepted` can approve an Accepted
+  task.
+
+The same first-match ambiguity also applies to duplicate Driver, Reviewer, or
+Turn lines. These cases undermine the structured role and verdict guarantees
+that F3 and Task 002 require.
+
+#### Evidence Quality
+
+All 28 repository tests and full validation pass independently. Additional
+disposable probes confirmed that tilde-fenced fake reviews fail and legitimate
+Reviews containing fenced evidence pass. The fenced-role and duplicate-verdict
+fixtures both passed when they should fail.
+
+#### Simplicity
+
+The fence-aware line scanner is appropriately bounded and remains preferable to
+a Markdown dependency. Reusing it for role fields and surfacing duplicate
+nested fields is a small completion of the existing design.
+
+#### Missing Cases
+
+Coverage lacks role fields inside fences, duplicate role fields, and duplicate
+Verdict or Self-reviewed fields.
+
+#### Required Changes
+
+1. Make Role Assignment field extraction fence-aware and reject duplicate
+   Driver, Reviewer, or Turn fields instead of choosing one silently.
+2. Reject duplicate `#### Verdict` or `#### Self-reviewed` fields in every
+   Review block.
+3. Add focused regressions for the reproduced cases and rerun the complete
+   suite, validator, syntax, and diff checks.
+
+#### Optional Improvements
+
+After acceptance, finalize the audit remediation status and retain the known
+limitation that Markdown labels do not authenticate an agent cryptographically.
+
+### Session Completion (codex-a, Reviewer, Round 2)
+
+#### Work completed
+
+Reproduced the seven revision regressions and independently challenged fence
+variants, legitimate fenced evidence, nested fields, and role parsing.
+
+#### Evidence
+
+All 28 tests pass; two additional structured-field bypasses remain.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Full unittest discovery, full validator, diff checks, and disposable tilde
+fence, legitimate fenced evidence, duplicate Verdict, fenced role, and invalid
+Turn probes.
+
+#### Known limitations
+
+This review did not modify Driver-owned implementation files.
+
+#### Unresolved questions
+
+None. The final revision is limited to structured-field parsing and tests.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver completes the second revision round and returns the branch for the final
+allowed acceptance check.
