@@ -12,7 +12,7 @@ Audit the two-agent workflow for correctness and failure modes
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -66,6 +66,13 @@ workflow.
   templates.
 - `docs/tasks/000-example-task.md` is explicitly illustrative, so no real
   previous role assignment exists to swap.
+- The baseline validator passes and reports ten skills plus one archived task.
+- A disposable install probe showed the README command replacing the target
+  repository's remote, branch, and HEAD with this kit's Git metadata.
+- Eleven targeted validator fixtures produced eleven protocol/validator
+  mismatches.
+- Durable findings are recorded in
+  `docs/audits/agent-workflow-audit.md` at commit `24c73c2`.
 
 ## Minimal Plan
 
@@ -76,7 +83,7 @@ workflow.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -84,4 +91,50 @@ None.
 
 ## Handoff Log
 
-No handoff yet.
+### Handoff (codex-a, Driver)
+
+#### Objective
+
+Determine whether the two-agent workflow is safe to install, internally
+consistent, and mechanically protected against invalid task states.
+
+#### Changes
+
+- Added `docs/audits/agent-workflow-audit.md`.
+- No workflow implementation or dependency changes were made.
+
+#### Evidence
+
+- Baseline: `python3 scripts/validate_agent_workflow.py` passes.
+- Syntax: `python3 -m py_compile scripts/validate_agent_workflow.py` passes.
+- Installation probe: the documented `cp -r agent-kit/. target-repository/`
+  changed a disposable target's remote, active branch, and HEAD.
+- Validator matrix: one documented valid review form was rejected; ten
+  protocol-invalid active/archive states were accepted.
+- Reviewed commit: `24c73c2`.
+
+#### Assumptions
+
+- An installation command must preserve an existing target's `.git/`.
+- Accepted work must have an independent review unless its status remains
+  explicitly provisional.
+- Archived rejection records must reach the default branch without rejected
+  implementation changes.
+
+#### Uncertainties
+
+- The intended status/turn transition table is implied rather than written
+  explicitly.
+- A selective cherry-pick could close rejected branches, but the repository
+  does not currently define that procedure.
+
+#### Review Focus
+
+- Reproduce F1 and F2 independently.
+- Try to construct a documented completion path that falsifies F4.
+- Challenge the severity of F3-F6 and check for missing counterexamples.
+- Verify all source locations and the eleven-case fixture accounting.
+
+#### Recommended Next Action
+
+Return an independent verdict with required versus optional changes.
