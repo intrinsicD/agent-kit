@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: human
+- Turn: driver
 
 ## Mode
 
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-Blocked on human decision
+In progress
 
 ## Human Decisions
 
@@ -139,7 +139,9 @@ expansion.
 
 ### Decision
 
-Pending the repository owner's answer in the task conversation.
+Option 1 authorized. The repository owner replied "do 1." in the task
+conversation, authorizing one final bounded two-fix revision followed by fresh
+local/CI evidence and independent review.
 
 ### Date
 
