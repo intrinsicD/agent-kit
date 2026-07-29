@@ -12,7 +12,7 @@ Refactor distribution boundary and add results-audit skill
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -111,7 +111,7 @@ generic skill set.
 
 ## Status
 
-In review
+Accepted
 
 ## Human Decisions
 
@@ -524,3 +524,106 @@ Yes
 
 Reviewer `codex-a` should reproduce the corrected evidence and record the
 terminal Task 004 verdict.
+
+### Review (codex-a, Reviewer, Round 2)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The fixed implementation at `92148b4` remains unchanged and satisfies every
+Task 004 success criterion. It provides an explicit clean payload, blank
+operational templates, complete stable-target collision refusal before writes,
+exclusive destination creation, owned-path rollback, preserved target Git
+metadata, installed-state validation, and an optional generic results-audit
+procedure with no target-specific or P2 scope.
+
+#### Evidence Quality
+
+- The audit correction at `0b1bd0a` now distinguishes four-path Ruff lint,
+  two-new-file Ruff formatting, and the identical two-legacy-file formatting
+  failure at setup and implementation commits.
+- Six of six focused distribution tests and all 36 repository tests pass.
+- Live validation passes with 11 routed skills and three task archives.
+- Ruff lint, new-file Ruff format validation, and whitespace checks pass.
+- `git diff --quiet 92148b4..HEAD -- AGENTS.md README.md .agents/skills
+  distribution scripts tests` confirms no implementation, routing,
+  documentation, template, or test behavior changed during the evidence
+  revision.
+- Round 1 independently validated all 22 simultaneous collisions, preservation
+  of unrelated content under existing parents, and installation from the
+  committed Git archive.
+
+#### Simplicity
+
+The implementation remains the smallest coherent integration supported by the
+accepted cross-repository assessment: one fixed manifest, one installer, blank
+templates, one optional skill, and focused tests. It adds no speculative
+configuration or target-specific workflow layer.
+
+#### Missing Cases
+
+Concurrent adversarial filesystem mutation, uncatchable termination,
+non-POSIX behavior, and alternate Python versions remain outside the approved
+evidence. The README states the stable-target concurrency assumption; the task
+and audit record the exercised Python/Linux boundary.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+- Reject internal destination ancestor/descendant conflicts when loading a
+  future edited manifest.
+- Document a minimum Python version when the project adopts a compatibility
+  policy.
+
+### Session Completion (codex-a, Reviewer, Round 2)
+
+#### Work completed
+
+Verified the bounded evidence correction, confirmed implementation immutability,
+reran the focused and full validation set, and returned an independent
+Accepted verdict.
+
+#### Evidence
+
+Correction `0b1bd0a`; implementation `92148b4`; 6/6 focused and 36/36 full
+tests pass; live validator, Ruff lint, new-file formatting, and whitespace
+checks pass.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+Focused distribution suite, full unittest discovery, live workflow validation,
+four-path Ruff lint, two-new-file Ruff formatting, implementation immutability
+diff, and whitespace validation.
+
+#### Known limitations
+
+The accepted behavior is deliberately non-overwriting and stable-target only;
+update, uninstall, concurrent-adversary, portability-matrix, and target-profile
+features are not implied.
+
+#### Unresolved questions
+
+None blocking completion.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver merges the accepted task branch, archives Task 004, updates repository
+state to 11 skills and 36 tests, and runs final post-merge validation.
