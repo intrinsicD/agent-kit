@@ -276,4 +276,42 @@ tree:
                           - ".agents/state/current-task.md"
                           - "O13"
                         status: resolved
-                        children: []
+                        children:
+                          - id: N18
+                            type: experiment
+                            title: "Accept the corrected Task 004 implementation"
+                            provenance: ai-executed
+                            timestamp: "2026-07-29T09:18+02:00"
+                            result: >
+                              Round 2 independently verified the bounded
+                              evidence correction, confirmed the implementation
+                              remained unchanged, reran six focused and 36 full
+                              tests plus validation and static checks, and
+                              returned Accepted with no required changes.
+                            evidence:
+                              - "ea69ea5"
+                              - "docs/tasks/004-refactor-distribution-results-audit.md"
+                              - "C11"
+                              - "C12"
+                            status: resolved
+                            children:
+                              - id: N19
+                                type: decision
+                                title: "Merge and archive accepted Task 004"
+                                provenance: ai-executed
+                                timestamp: "2026-07-29T09:18+02:00"
+                                choice: >
+                                  Merge the accepted branch into main, archive
+                                  the complete Task 004 record, restore the
+                                  exact current-task template, and update
+                                  compact repository state.
+                                alternatives:
+                                  - "Require another revision without contrary evidence"
+                                  - "Leave the independently accepted task unmerged"
+                                evidence:
+                                  - "N18"
+                                  - "93324a7"
+                                  - "6384e36"
+                                  - "docs/tasks/004-refactor-distribution-results-audit.md"
+                                status: resolved
+                                children: []

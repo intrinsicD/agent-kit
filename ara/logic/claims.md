@@ -173,14 +173,14 @@ present.
   skills and no task archives, retains its pre-existing Git HEAD, branch, and
   remote, and exact or blocking-ancestor collision fixtures exit nonzero
   without changing the target.
-- **Status**: testing
+- **Status**: supported
 - **Provenance**: ai-suggested
 - **Crystallized via**: artifact-commitment
 - **Falsification criteria**: Reproduce an undeclared installed file, leaked
   live/history artifact, overwritten collision, changed tested Git metadata,
   invalid fresh target, or failure to report all fixture collisions at
   `92148b4`.
-- **Proof**: [tests/test_distribution.py, docs/audits/distribution-installer.md, 92148b4c19b84614301c03ff77b736de54cb65d7]
+- **Proof**: [tests/test_distribution.py, docs/audits/distribution-installer.md, docs/tasks/004-refactor-distribution-results-audit.md, 92148b4c19b84614301c03ff77b736de54cb65d7, ea69ea5]
 - **Dependencies**: [C08]
 - **Tags**: installation, distribution, collisions, regression-tests
 - **From staging**: O11
@@ -191,13 +191,13 @@ present.
   recomputation, source/config binding, controls and accounting checks,
   evidence-boundary classification, and explicit claim dispositions while
   leaving domain-specific rules local.
-- **Status**: testing
+- **Status**: supported
 - **Provenance**: ai-suggested
 - **Crystallized via**: artifact-commitment
 - **Falsification criteria**: Any stated generic invariant is absent from the
   installed skill, the skill is not routed or optional, or repository-specific
   policy is imposed as generic core at `92148b4`.
-- **Proof**: [.agents/skills/results-audit/SKILL.md, AGENTS.md, tests/test_distribution.py, 92148b4c19b84614301c03ff77b736de54cb65d7]
+- **Proof**: [.agents/skills/results-audit/SKILL.md, AGENTS.md, tests/test_distribution.py, docs/tasks/004-refactor-distribution-results-audit.md, 92148b4c19b84614301c03ff77b736de54cb65d7, ea69ea5]
 - **Dependencies**: [C10]
 - **Tags**: results-audit, reciprocal-integration, evidence
 - **From staging**: O12

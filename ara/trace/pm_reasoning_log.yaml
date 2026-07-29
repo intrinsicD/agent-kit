@@ -27,3 +27,9 @@ entries:
       - "Crystallized O13 as C13 through empirical resolution because both agents reproduced identical fixed-commit Ruff output."
       - "Advanced but did not promote C11 or C12 to supported: Round 1 passed functionality, but the terminal independent verdict remains open."
       - "Recorded the overbroad Ruff statement as corrected evidence scope, not a Task 004 behavior dead end."
+  - turn: "2026-07-29_001#5"
+    notes:
+      - "Routed independent Round 2 acceptance as N18 and accepted-flow merge/archive closeout as N19."
+      - "Advanced C11 and C12 from testing to supported because independent empirical review and merged artifact commitment now provide terminal closure."
+      - "Did not create a target-adoption claim: no target pilot ran, and the no-install decision remains in force."
+      - "Reduced open threads to the optional bounded pilot question; Task 004 itself is closed."
