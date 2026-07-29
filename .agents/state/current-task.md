@@ -12,11 +12,11 @@ Implement Installer v2 configuration and diagnostics
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: human
+- Turn: driver
 
 ## Mode
 
-Decide
+Implement
 
 ## Goal
 
@@ -146,7 +146,7 @@ overwrite-capable behavior remains explicitly excluded.
 
 ## Status
 
-Blocked on human decision
+In progress
 
 ## Human Decisions
 
@@ -185,11 +185,13 @@ unprefixed installation should require an intentional choice.
 
 ### Decision
 
-Pending.
+Option 1 selected. The repository owner replied "1, 1", requiring `--slug`
+for the normal install path and retaining `--no-prefix` as the explicit escape
+hatch.
 
 ### Date
 
-Raised 2026-07-29.
+Decided 2026-07-29.
 
 ### Question
 
@@ -222,11 +224,13 @@ respecting target ownership after installation.
 
 ### Decision
 
-Pending.
+Option 1 selected. The repository owner replied "1, 1", authorizing
+`.agents/kit-install.json` with immutable-payload hashes, presence-only checks
+for user-owned templates, and the missing-receipt unknown-install fallback.
 
 ### Date
 
-Raised 2026-07-29.
+Decided 2026-07-29.
 
 ## Handoff Log
 
