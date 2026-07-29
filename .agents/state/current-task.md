@@ -12,7 +12,7 @@ Implement Installer v2 configuration and diagnostics
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -146,7 +146,7 @@ overwrite-capable behavior remains explicitly excluded.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -558,3 +558,150 @@ Yes
 Driver `codex-a` implements the three bounded validation fixes, updates the
 durable audit, collects fresh local/CI evidence, and returns Task 007 for Round
 2 independent review.
+
+### Handoff (codex-a, Driver, Round 2)
+
+#### Objective
+
+Independently reproduce Reviewer Round 1's three counterexamples against fixed
+implementation tip `337e5b9` and attempt to falsify their bounded corrections:
+Unicode-aware exact-token guards, hierarchy-safe complete write plans, and
+file-only template presence.
+
+#### Changes
+
+- Commit `49db6a5` changes the inline token guards from ASCII lowercase/digits
+  to Unicode `\w` plus hyphen boundaries. Uppercase, underscore, and Unicode
+  word-character adjacency no longer rewrites; punctuation and path separators
+  still do; an existing slug prefix prevents a second prefix.
+- The same commit adds one destination-hierarchy invariant at all three
+  relevant boundaries: raw manifest plus reserved receipt, rendered payload,
+  and complete rendered write plan including generated receipt. Exact
+  duplicates and ancestor/descendant pairs now raise `ManifestError`; install
+  and dry-run return exit 2 before output or target writes.
+- Template and missing-receipt presence now require destinations that resolve
+  to files. Directories and dangling symlinks are `MISSING` findings; a symlink
+  that resolves to a file remains presence-valid under the recorded
+  user-ownership policy.
+- Four focused regression methods cover every Reviewer reproducer, both
+  install and dry-run configuration classification, intended
+  punctuation/path rewrites, idempotence, and filesystem no-write snapshots.
+- Commit `337e5b9` updates `docs/audits/installer-v2.md` with the independent
+  Round 1 findings, their dispositions, severity, and fresh evidence. No
+  README, manifest payload, dependency, interface, or ARA file changed.
+
+#### Evidence
+
+- Before the fix, the new tests reproduced twelve failing subcases: both
+  non-file template replacements returned false-clean exit 0; all three raw
+  hierarchy manifests loaded; slug/receipt plans returned clean dry-runs or
+  operational failures; and every recorded adjacent identifier variant was
+  rewritten.
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`: 28/28
+  focused tests passed after `49db6a5`.
+- `./scripts/verify.sh`: all five local gates passed at `337e5b9`; Ruff lint
+  and format were clean, workflow state and 14 ARA claims validated, and 86/86
+  regressions passed.
+- Fresh GitHub Actions run `30446106512`, tied to `337e5b9`, passed the verbatim
+  gate on CPython 3.11, 3.12, and 3.13.
+- Disposable Git target: slugged install wrote the 22 payload files plus
+  receipt; installed validation found 11 skills and zero archives; doctor
+  exited 0 clean; replacing `current-task.md` with a directory produced
+  `MISSING` and exit 1; Git HEAD and `main` remained unchanged.
+- Sorting and diffing baseline `5262f9d`'s v1 rows against the current v2
+  `core` rows produced no difference; `core-count=22`.
+- `git diff --check 206ef8d..337e5b9` passed. The revision changes only
+  `scripts/install_agent_workflow.py`, `tests/test_distribution.py`, and
+  `docs/audits/installer-v2.md`; no `ara/` or `.ara/` path changed.
+
+#### Assumptions
+
+- “Unicode word character” follows Python's default Unicode `\w` semantics;
+  hyphen is additionally guarded because it separates an existing slug prefix
+  from the skill token.
+- “PRESENT when the destination resolves to a file” intentionally accepts a
+  non-dangling symlink whose target is a file and rejects directories,
+  dangling symlinks, and absent paths.
+- Hierarchy safety is lexical over already validated relative `Path` values;
+  target-time symlink and node-type changes remain covered by collision and
+  doctor checks.
+
+#### Uncertainties
+
+- The existing accepted-scope residuals remain: unsigned receipt integrity,
+  presence-only unknown fallback without a receipt, cooperative rather than
+  transactional filesystem preflight, and no Windows-specific evidence.
+- No further correctness uncertainty was identified in the three revised
+  boundaries. Independent Round 2 falsification remains required.
+
+#### Review Focus
+
+1. Re-run the exact `Ximplementation`, `implementationX`,
+   `implementation_detail`, and `préimplementation` reproducers alongside
+   punctuation/path and already-prefixed controls.
+2. Challenge raw cross-group, reserved-receipt, and post-slug
+   ancestor/descendant paths in both ordering directions; confirm exit 2 and
+   unchanged targets for dry-run and install.
+3. Replace a receipt-owned template with a directory, dangling symlink, and
+   symlink to a real file; confirm the first two are `MISSING` findings and the
+   last is `PRESENT`, all read-only.
+4. Reproduce 28 focused tests, the 86-test full gate, exact 22-row mapping, and
+   inspect the three-file revision diff for expansion beyond required fixes.
+
+#### Recommended Next Action
+
+Reviewer `codex-b` performs independent Round 2 review at fixed implementation
+tip `337e5b9`, records a structured verdict, and returns `Turn` to `driver`.
+
+### Session Completion (codex-a, Driver, Round 2)
+
+#### Work completed
+
+Implemented only the three required Reviewer corrections, added reproducing
+regressions, updated the durable audit, completed the Driver revision audit,
+and collected fresh local, disposable-target, mapping, scope, and CI evidence.
+
+#### Evidence
+
+28/28 focused tests; 86/86 full local tests; CI run `30446106512` green on
+Python 3.11/3.12/3.13; disposable install/validator/doctor/non-file-template
+probe passed; exact 22-row `core` mapping preserved; no ARA changes.
+
+#### Files changed
+
+- `scripts/install_agent_workflow.py`
+- `tests/test_distribution.py`
+- `docs/audits/installer-v2.md`
+- `.agents/state/current-task.md` (Round 2 handoff metadata only)
+
+#### Tests or experiments run
+
+- Pre-fix focused regression run reproducing every Reviewer counterexample
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`
+- `./scripts/verify.sh`
+- Disposable slugged Git install, installed validator, clean doctor,
+  directory-template finding, and Git HEAD/branch comparison
+- Baseline-v1/current-v2 mapping diff, core count, revision scope and
+  whitespace checks
+- GitHub Actions run `30446106512`
+
+#### Known limitations
+
+Receipt authenticity, missing-receipt profile inference, adversarial
+filesystem transactions, uncatchable termination, Windows-specific behavior,
+and update/uninstall/repair remain outside the accepted task scope.
+
+#### Unresolved questions
+
+None for the Driver. Round 2 independent verdict remains pending.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer `codex-b` begins from this Round 2 handoff and fixed implementation
+tip `337e5b9`, reproduces the three corrected boundaries, and records the
+verdict before Driver closeout.
