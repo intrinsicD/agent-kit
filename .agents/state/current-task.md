@@ -12,7 +12,7 @@ Implement Installer v2 configuration and diagnostics
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -146,7 +146,7 @@ overwrite-capable behavior remains explicitly excluded.
 
 ## Status
 
-In review
+Accepted
 
 ## Human Decisions
 
@@ -705,3 +705,121 @@ Yes
 Reviewer `codex-b` begins from this Round 2 handoff and fixed implementation
 tip `337e5b9`, reproduces the three corrected boundaries, and records the
 verdict before Driver closeout.
+
+### Review (codex-b, Reviewer, Round 2)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+Implementation tip `337e5b9` closes every Round 1 counterexample without
+weakening the accepted Installer v2 behavior:
+
+- Unicode `\w` plus hyphen guards rewrite exact skill tokens at punctuation
+  and path boundaries while preserving uppercase-, underscore-, Unicode-, and
+  existing-prefix-adjacent forms. A second application is idempotent.
+- One hierarchy invariant now rejects exact and ancestor/descendant
+  destinations in raw manifests, after slug rendering, and after the generated
+  receipt joins the plan. Parent-first, child-first, cross-group,
+  receipt-descendant, and slug-created conflicts all fail as configuration
+  errors before dry-run or install writes.
+- Receipt-backed and fallback presence checks now require a destination that
+  resolves to a file. Directories and dangling symlinks are `MISSING`
+  findings; a symlink resolving to a real file remains `PRESENT` under the
+  recorded user-ownership decision.
+
+The original slugged/no-prefix install paths, complete dry-run report,
+receipt-backed immutable hashing, user-template content ownership, doctor
+classifications, collision refusal, exclusive creation, rollback, installed
+validation, and target Git preservation remain intact.
+
+#### Evidence Quality
+
+- Independent local focused suite: 28/28 tests pass.
+- Independent local `./scripts/verify.sh`: all five gates and 86/86 tests pass;
+  workflow validation finds six archives and the ARA checker accepts 14
+  claims.
+- Independent variants confirm both hierarchy orderings, a cross-group
+  conflict, a receipt-descendant conflict, ASCII/Unicode exact-token controls,
+  idempotence, directory/dangling-template findings, a live file symlink
+  control, and unchanged doctor snapshots.
+- GitHub Actions runs `30446106512` at implementation tip `337e5b9` and
+  `30446215181` at handoff tip `570f08e` each pass the verbatim gate on Python
+  3.11, 3.12, and 3.13.
+- Baseline v1 and current v2 `core` mappings remain identical at 22 files;
+  `git diff --check 206ef8d..337e5b9` passes, and the revision changes only the
+  installer, its tests, and its durable audit.
+
+#### Simplicity
+
+The revision reuses one small lexical hierarchy check at the three real plan
+boundaries, tightens one regex, and replaces generic node existence with the
+existing `Path.is_file()` primitive. It adds no dependency, abstraction layer,
+repair mode, speculative profile content, or new interface.
+
+#### Missing Cases
+
+Receipt signing, cross-version receipt provenance comparison, Windows-specific
+paths, concurrent adversarial mutation, uncatchable termination,
+missing-receipt profile inference, update, uninstall, and repair remain
+explicitly outside Task 007. The accepted implementation and audit state these
+boundaries without promoting claims beyond the evidence.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+- Control-character rejection for receipt paths can remain a later
+  machine-output hardening item if a consumer requires it.
+- Cross-version provenance comparison should remain a separate product
+  decision rather than changing the approved local-baseline receipt semantics.
+
+### Session Completion (codex-b, Reviewer, Round 2)
+
+#### Work completed
+
+Independently reproduced all Round 1 fixes and nearby variants, reran focused,
+full, mapping, scope, no-write, and CI evidence, and accepted the bounded
+Installer v2 implementation without modifying product files.
+
+#### Evidence
+
+The 28 focused tests, 86-test unified gate, two green CI matrices, hierarchy
+order/cross-group controls, Unicode token controls, file-node diagnostics, and
+unchanged 22-row mapping are recorded in the Review above.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Focused distribution suite; full verification; both CI run inspections;
+Unicode/exact/idempotent token probes; reversed and cross-group hierarchy
+probes; receipt hierarchy probe; directory, dangling-link, and live-file-link
+template probes; core mapping and revision diff checks.
+
+#### Known limitations
+
+Only the explicitly documented out-of-scope boundaries remain.
+
+#### Unresolved questions
+
+None.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-a` merges the accepted Task 007 branch and runs the accepted-flow
+`repo-organization` completion update on the default branch.
