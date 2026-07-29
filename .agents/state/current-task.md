@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -334,3 +334,66 @@ Yes
 
 Driver `codex-b` implements the four bounded validation/test corrections,
 collects fresh local and CI evidence, and returns task 006 for Round 2 review.
+
+### Handoff (codex-b, Driver, Round 2)
+
+#### Objective
+
+Verify that commit `04322dc` closes all four Round 1 bypasses without widening
+task scope or weakening any original gate.
+
+#### Changes
+
+1. Added `status_disposition()` and use it for both status allowlisting and
+   disposed-claim proof enforcement.
+2. Resolve every recognized proof path with `strict=True`, require the resolved
+   target to remain under the repository root, and reject both traversal and
+   symlink escapes.
+3. Parse any bold field-like bullet with a colon, including punctuated names
+   and whitespace before the colon, then reject names outside the required and
+   optional field allowlists.
+4. Require each of the five exact gate commands to occur once in
+   `scripts/verify.sh`, in addition to checking stage order.
+5. Added four focused checker regressions plus traversal and symlink variants;
+   the full suite grows from 57 to 61 tests.
+
+#### Evidence
+
+- Focused ARA suite: 21/21 pass; focused verification suite: 4/4 pass.
+- Clean `./scripts/verify.sh`: exit 0 with 61/61 tests and all five gates.
+- Disposable copies of `04322dc`: the punctuated-status/no-path bypass,
+  `/etc/passwd` traversal, punctuated unknown field, and duplicate ARA gate
+  each exit 1 at the expected ARA or unit-test stage.
+- The original five induced failures still exit 1 at stages 1 through 5.
+- GitHub Actions run
+  `https://github.com/intrinsicD/agent-kit/actions/runs/30439177610` succeeds on
+  Python 3.11, 3.12, and 3.13 at `04322dc`.
+- `distribution/manifest.json` remains unchanged.
+
+#### Assumptions
+
+No new assumption. Repository containment is evaluated on resolved paths, so a
+symlink to an in-repository artifact is allowed and a symlink out of the
+repository is rejected.
+
+#### Uncertainties
+
+The explicitly accepted limitations from Round 1 remain: reference-style PAPER
+links, Git resolution of commit-shaped proofs, Windows support, and immutable
+action SHA pinning are out of scope.
+
+#### Review Focus
+
+- Re-run the four exact Round 1 counterexamples and try nearby punctuation,
+  path-normalization, and symlink variants.
+- Mutate `verify.sh` with a duplicate expected command and confirm the
+  verification regression fails.
+- Confirm the shared status normalization cannot diverge between validation
+  and proof enforcement.
+- Reproduce the clean suite and inspect CI run `30439177610`.
+
+#### Recommended Next Action
+
+Perform Round 2 independent review. If the four required changes are closed,
+record `Accepted`, return `Turn: driver`, and let the Driver run the accepted
+closeout flow.

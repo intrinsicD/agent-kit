@@ -20,31 +20,38 @@ maturity-plan corrections.
 4. The live environment used to reproduce and clear the format debt is Ruff
    0.15.20, not the plan author's 0.15.8 probe. The implemented toolchain pins
    0.15.20.
-5. No open correctness, API, or maintainability defect was found in the
-   implemented slice after focused fixtures, the full suite, and induced
-   failures.
+5. Round 1 independent review found four bypasses: inconsistent punctuated
+   status handling, proof paths escaping through traversal or symlinks,
+   punctuated unknown fields being ignored, and duplicate gate commands
+   escaping the stage-list regression. Commit `04322dc` closes each bypass
+   with a focused regression.
+6. No further correctness, API, or maintainability defect was found in the
+   Driver's revision audit after 21 checker fixtures, four verification tests,
+   the full suite, and disposable counterexample probes.
 
 ## Severity
 
-The four plan mismatches were blocking for literal execution but were corrected
-before handoff. No unresolved blocking finding remains.
+The four plan mismatches and four Round 1 review findings were blocking but are
+corrected in the reviewed branch history. No unresolved Driver-audit finding
+remains; independent Round 2 review is still required.
 
 ## Evidence
 
-- `./scripts/verify.sh`: pass with 57 tests.
+- `./scripts/verify.sh`: pass with 61 tests after the Round 1 revision.
 - `scripts/check_ara.py`: pass on 13 live claims.
 - `tests/test_check_ara.py`: valid fixture plus one or more negative fixtures
-  for every documented checker invariant.
+  for every documented checker invariant, including punctuated status/fields
+  and traversal/symlink proof escapes.
 - Disposable archive probes: lint, format, workflow-state, ARA-proof, and unit
   test mutations each stop the corresponding stage with exit 1.
-- GitHub Actions run
-  `https://github.com/intrinsicD/agent-kit/actions/runs/30438019981`: success on
-  Python 3.11, 3.12, and 3.13.
+- GitHub Actions runs `30438019981` (initial) and `30439177610` (Round 1
+  revision): success on Python 3.11, 3.12, and 3.13.
 - `distribution/manifest.json` is unchanged from `main`.
 
 ## Required Fixes
 
-None before independent review.
+Round 1's four required fixes are implemented at `04322dc`. No Driver-identified
+fix remains before Round 2 independent review.
 
 ## Optional Improvements
 
