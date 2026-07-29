@@ -2,7 +2,7 @@
 
 Date: 2026-07-29
 
-Reviewed implementation: `5ceaceb`, `c3c4fcb`
+Reviewed implementation: `5ceaceb`, `c3c4fcb`, `49db6a5`
 
 ## Scope
 
@@ -21,7 +21,8 @@ record. Quantitative and performance claims are not in scope.
   required `core` group. Rows are strict source/destination pairs.
 - Source and destination paths are safe relative paths. Sources must be unique
   regular files inside the source checkout; destinations must be globally
-  unique, may not enter `.git`, and may not claim the generated receipt path.
+  unique and hierarchy-disjoint, may not enter `.git`, and may not equal,
+  contain, or be contained by the generated receipt path.
 - CLI selection always begins with `core`; repeated profiles form a stable
   union and unknown profiles fail with exit 2 before target writes.
 - `install` requires exactly one of `--slug` and `--no-prefix`. Slugs implement
@@ -32,10 +33,16 @@ record. Quantitative and performance claims are not in scope.
 - The renderer has an explicit eleven-token allowlist. With a slug, it changes
   only matching skill directory segments, exact skill frontmatter names, and
   token occurrences inside single-backtick spans.
+- Inline matching uses Unicode-aware word guards plus a hyphen guard. Adjacent
+  uppercase letters, underscores, Unicode word characters, and an existing
+  slug prefix prevent a rewrite; punctuation and path separators permit it.
+  Applying the renderer twice is idempotent.
 - Prose outside backticks is byte-for-byte unaffected by the rewrite. Tests
   specifically retain prose uses of “implementation”, “implementations”, and
   “handoff”.
-- Rendering rejects duplicate final destinations. A disposable Git target
+- Raw and rendered payloads reject both exact duplicates and
+  ancestor/descendant destination conflicts. The final write-plan check repeats
+  that invariant after adding the generated receipt. A disposable Git target
   proves that all eleven prefixed skills agree with their frontmatter and
   routing entries and that the installed validator passes.
 
@@ -43,6 +50,9 @@ record. Quantitative and performance claims are not in scope.
 
 - Dry-run and install use the same rendered plan and collision function. The
   plan includes all selected payload entries and the generated receipt.
+- Structurally impossible raw, receipt-relative, and slug-rendered plans are
+  configuration/schema errors with exit 2 before dry-run output or installation
+  writes.
 - Preflight reports every exact destination and blocking file/symlink ancestor.
   It writes nothing in both clean and colliding dry runs.
 - Actual files use exclusive creation. The rollback ledger contains only files
@@ -63,9 +73,11 @@ record. Quantitative and performance claims are not in scope.
   manifest paths. Receipt schema, hash shapes, ownership disjointness, config
   consistency, and timestamp timezone are validated before inspection.
 - Doctor never writes. Immutable regular files are `OK`, `MODIFIED`, or
-  `MISSING`; user templates are `PRESENT` or `MISSING`. Symlinks and blocking
-  ancestors cannot satisfy immutable hashes, including a correct external file
-  reached through a symlinked directory.
+  `MISSING`; user templates are `PRESENT` only when their destinations resolve
+  to files, otherwise `MISSING`. Directories and dangling symlinks therefore
+  produce findings. Symlinks and blocking ancestors cannot satisfy immutable
+  hashes, including a correct external file reached through a symlinked
+  directory.
 - A missing receipt is always a finding and explicitly reports unknown
   integrity/profile selection. Its bounded fallback checks current `core`
   presence and recognizes either unprefixed or valid slug-prefixed skill
@@ -73,11 +85,9 @@ record. Quantitative and performance claims are not in scope.
 - Exit codes follow the approved contract: 0 clean/success, 1
   findings/collision/write failure, and 2 usage/environment/schema error.
 
-## Findings and Disposition
+## Findings
 
-No open critical, high, or medium findings remain in the Driver audit.
-
-Two boundary issues were identified and resolved before this record:
+The initial Driver audit identified and resolved two boundary issues:
 
 1. Programmatic plan construction could previously put a non-core group first,
    producing a receipt that doctor would correctly reject. Plan construction
@@ -87,25 +97,49 @@ Two boundary issues were identified and resolved before this record:
    path as `MODIFIED` without trusting the external file; a regression pins the
    behavior. The receipt itself receives the same ancestor check.
 
+Reviewer Round 1 then reproduced three additional bounded defects, all resolved
+in `49db6a5`:
+
+1. ASCII-lowercase-only token guards rewrote parts of identifiers adjacent to
+   uppercase, underscore, or Unicode word characters. The guards now use
+   Unicode `\w` semantics plus the existing hyphen protection, with explicit
+   punctuation/path/idempotence regressions.
+2. Exact destination checks allowed ancestor/descendant plans, including
+   generated-receipt and post-slug-render conflicts. One shared hierarchy
+   invariant now runs on the raw manifest, rendered payload, and complete write
+   plan; install and dry-run classify every reproduced variant as exit 2 before
+   writes.
+3. Presence-only template checks accepted directories and dangling symlinks.
+   Presence now requires `Path.is_file()`, which follows only destinations that
+   resolve to files; both reproduced replacements are `MISSING`, exit 1, and
+   leave the target snapshot unchanged.
+
+## Severity
+
+No open critical, high, or medium findings remain in the Round 2 Driver audit.
+
 ## Evidence
 
 All Python test commands used `PYTHONDONTWRITEBYTECODE=1`.
 
-- `python3 tests/test_distribution.py -q`: 24 focused tests passed. They cover
+- `python3 tests/test_distribution.py -q`: 28 focused tests passed. They cover
   manifest failures and group union, CLI migration and slug validation,
-  bounded rendering, clean/colliding dry-run snapshots, exact and ancestor
-  collisions, exclusive rollback including receipt failure, receipt
-  provenance/ownership, doctor clean/modified/missing/template/missing-receipt
-  states, no-write snapshots, installed validation, and Git metadata
+  Unicode-bounded/idempotent rendering, clean/colliding dry-run snapshots,
+  exact target collisions, raw/rendered/receipt hierarchy rejection, exclusive
+  rollback including receipt failure, receipt provenance/ownership, doctor
+  clean/modified/missing/template/missing-receipt states, non-file template
+  findings, no-write snapshots, installed validation, and Git metadata
   preservation.
 - `./scripts/verify.sh`: all five gates passed; Ruff lint and format were clean,
-  workflow state and 14 ARA claims validated, and all 82 regression tests
+  workflow state and 14 ARA claims validated, and all 86 regression tests
   passed.
 - A separate disposable Git-target probe installed 22 `core` payload files and
   the receipt with slug `probe`; the installed validator found 11 valid skills
   and zero archived tasks; doctor exited 0 clean, then reported
   `MODIFIED AGENTS.md` and exited 1 after an induced edit. The target stayed on
-  `main` at its original commit throughout.
+  `main` at its original commit throughout. The Round 2 repeat replaced a
+  user-owned template with a directory; doctor reported it `MISSING`, exited 1,
+  and again preserved the target's original Git HEAD and branch.
 
 ## Required Fixes
 
@@ -127,10 +161,10 @@ interface or threat model.
   installer-created paths for a later collision report.
 - Without a receipt, doctor cannot recover hashes or optional profile
   selection. Its presence-only `core` report is intentionally labeled unknown.
-- This is a Driver self-audit. Independent Reviewer falsification is still
-  required before acceptance.
+- This is a Driver revision self-audit. Independent Reviewer Round 2
+  falsification is still required before acceptance.
 
 ## Verdict
 
-Ready for independent review, subject to the final verification evidence in the
-Driver handoff.
+Ready for independent Round 2 review, subject to the final verification and CI
+evidence in the Driver handoff.
