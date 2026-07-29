@@ -12,7 +12,7 @@ Refactor distribution boundary and add results-audit skill
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -111,7 +111,7 @@ generic skill set.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -259,3 +259,153 @@ Yes
 
 Reviewer `codex-a` should start from the committed handoff, reproduce the
 evidence, and record the Task 004 verdict in this Handoff Log.
+
+### Review (codex-a, Reviewer, Round 1)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The implementation satisfies the behavioral slice under its documented stable-
+target assumption:
+
+- The fixed manifest contains 22 unique destinations, all sources are tracked,
+  and no destination has another payload file as an ancestor.
+- Manifest path validation prevents absolute, dot-segment, backslash, `.git`,
+  duplicate-destination, missing, symlink-source, and repository-escape cases.
+- Preflight finds exact destinations plus file and symlink ancestors before
+  writes. Exclusive creation protects a destination that appears after
+  preflight, and owned-path rollback handles ordinary copy failures.
+- Blank templates, rather than live state or history, populate all operational
+  and index destinations.
+- The installed authority routes all 11 installed skills, and the optional
+  `results-audit` procedure contains the six generic invariant groups supported
+  by Task 003 without importing target-specific rules or P2 mechanisms.
+
+The validator's removal of the root `README.md` requirement is bounded to a
+non-runtime source document that is intentionally absent from target payloads.
+The installed validator still checks its authority, skills, state, directories,
+task lifecycle, and archives.
+
+#### Evidence Quality
+
+The functional evidence reproduced:
+
+- Six of six focused distribution tests passed.
+- All 36 repository tests passed.
+- Live validation passed with 11 skills and three archives.
+- Ruff lint and `git diff --check` passed.
+- An independent committed-artifact probe extracted `git archive 92148b4`,
+  installed from that checkout, and passed the installed validator with 11
+  skills and zero archives.
+- An independent all-destinations probe populated every one of the 22 manifest
+  destinations; the installer reported exactly 22 collisions and left the
+  target byte-for-byte unchanged.
+- A separate probe confirmed installation into pre-existing nonblocking
+  `.agents`, `docs`, and `scripts` directories preserves unrelated target
+  content.
+
+One durable evidence claim did not reproduce as written.
+`ruff format --check scripts/install_agent_workflow.py
+scripts/validate_agent_workflow.py tests/test_distribution.py
+tests/test_agent_workflow.py` exits nonzero and names the validator and legacy
+workflow test. The same two files fail at setup commit `0a66c6f` and
+implementation commit `92148b4`, so this is unchanged formatting debt, not a
+Task 004 behavior regression. However,
+`docs/audits/distribution-installer.md` and the Driver handoff currently state
+that Ruff format checks passed for all changed Python paths.
+
+#### Simplicity
+
+The fixed JSON manifest, one standard-library installer, separate blank
+templates, and one focused optional skill are proportionate. There is no
+configurable generator, adapter layer, plugin system, overwrite/update mode, or
+P2 workflow expansion. The public command has one obvious path.
+
+#### Missing Cases
+
+- The committed suite samples three exact collisions and two blocking
+  ancestors rather than materializing all 22 simultaneously; the independent
+  review supplied that exhaustive probe and it passed.
+- Manifest validation does not explicitly reject one payload destination being
+  the ancestor of another. The fixed manifest is independently verified not to
+  contain that relation, and an internally conflicting future manifest would
+  fail and roll back rather than overwrite target data. Treat an early
+  `ManifestError` check as optional hardening.
+- Python minimum-version and non-POSIX support are not documented. The code was
+  exercised on Python 3.12/Linux, and the handoff already scopes that evidence.
+
+#### Required Changes
+
+1. Correct the Ruff-format evidence in
+   `docs/audits/distribution-installer.md`. State which exact paths the format
+   check covered successfully, and record that the two legacy files fail
+   identically at `0a66c6f` and `92148b4`. Do not reformat unrelated legacy
+   files merely to make the claim green.
+2. In the revision handoff, replace the broad Ruff-format claim with the exact
+   commands and outcomes. Re-run the focused suite, full suite, live validator,
+   Ruff lint, new-file Ruff format check, and whitespace check after the
+   evidence correction.
+
+#### Optional Improvements
+
+- Reject internal destination ancestor/descendant conflicts during manifest
+  loading.
+- State a minimum supported Python version when the project establishes a
+  compatibility policy.
+
+### Session Completion (codex-a, Reviewer, Round 1)
+
+#### Work completed
+
+Independently audited Task 004's filesystem ownership, payload boundary,
+installed artifact, validator compatibility, results-audit scope, regression
+claims, and architectural proportionality.
+
+#### Evidence
+
+The implementation passed all functional and adversarial probes. A single
+durable Ruff-format claim was contradicted by exact baseline and implementation
+commands, requiring an evidence-only revision.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- Six focused distribution regressions.
+- Full 36-test discovery.
+- Live workflow validation.
+- Ruff lint and four-path Ruff format checks.
+- Baseline-versus-implementation Ruff format comparison.
+- Whitespace check.
+- Exhaustive 22-destination collision/no-write probe.
+- Existing-parent/unrelated-content preservation probe.
+- Installation and validation from the committed Git archive.
+
+#### Known limitations
+
+No concurrent-adversary, uncatchable-termination, non-POSIX, or alternate
+Python-version matrix was run. These remain explicit support boundaries rather
+than approved portability claims.
+
+#### Unresolved questions
+
+Only the bounded evidence correction above blocks acceptance.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver corrects the durable audit and handoff evidence without changing the
+accepted implementation scope, reruns the exact checks, and returns the same
+implementation for Round 2 review.
