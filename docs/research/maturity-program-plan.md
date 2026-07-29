@@ -2,9 +2,10 @@
 
 Date: 2026-07-29
 
-Status: **Proposed planning input.** No task in this document is initialized and
-no decision in it is accepted. Nothing here is a roadmap commitment until a
-Driver lifts a plan into `.agents/state/current-task.md` under the two-agent
+Status: **Active planning reference.** The verification foundation is
+initialized as task 006; later slices remain validated backlog, not accepted
+implementation. A decision in this document becomes accepted only when a
+Driver lifts it into `.agents/state/current-task.md` under the two-agent
 workflow and it survives review. Task IDs are indicative; real IDs bind at
 initialization ("next unused number in `docs/tasks/`").
 
@@ -19,6 +20,20 @@ C13, the manifest holds 22 unprefixed entries, the validator parses the
 `## Skill routing` section dynamically rather than hardcoding skill names
 (`scripts/validate_agent_workflow.py:171`, `:522-526`), and neither
 `AGENTS.md` nor `README.md` mentions `ara/`.
+
+Amendment (2026-07-29, task 006 initialization): proposed plan 005 binds to
+actual task 006 because task 005 was already assigned to the accepted
+cross-repository revalidation. The baseline was reproduced before
+implementation: 36/36 tests and the workflow validator passed; the only Ruff
+format failures were the two recorded files. The active environment is Ruff
+0.15.20 rather than the plan author's 0.15.8 probe, so task 006 pins 0.15.20.
+The live claims file also contained a non-claim level-two heading that
+contradicted D5.3; task 006 normalizes it to level three. Because `ara/PAPER.md`
+uses Markdown links rather than backticked layer paths, the checker validates
+those actual link destinations. The owner's instruction to check, fix, and
+implement this plan authorizes the proposed dependency order and Python
+3.11–3.13 floor. D1 remains proposed because it affects another repository;
+later interface decisions bind in their own tasks.
 
 ---
 
@@ -134,7 +149,7 @@ then.
 
 ---
 
-## Plan 005 — Verification foundation (indicative task 005)
+## Plan 005 — Verification foundation (bound as actual task 006)
 
 ### Goal
 
@@ -916,18 +931,14 @@ escalation rules). Until then, plans 006–007 stand on their own evidence.
 
 ## Open questions for the human
 
-1. **Sequencing sign-off.** Execute in the proposed order
-   005 → 006 → 007 → {008 ∥ 009} → 010, with M1 optionally pulled forward?
-2. **D6.2.** Is `--slug` required-with-escape-hatch the right prefix policy,
+1. **D6.2.** Is `--slug` required-with-escape-hatch the right prefix policy,
    or should unprefixed remain the default?
-3. **D1.** Approve the single-product convergence direction now, or defer
+2. **D1.** Approve the single-product convergence direction now, or defer
    until after 007?
-4. **Roles.** Task 004 recorded Driver `codex-b` / Reviewer `codex-a`; the
-   rotation rule wants a swap. Confirm labels for 005 (e.g. Driver `claude`,
-   Reviewer one of the codex agents) or assign explicitly.
-5. **Python floor.** Plans assume ≥ 3.11 (stdlib `tomllib`); recorded
-   installer evidence is 3.12-only today, and the 005 CI matrix would widen
-   it to 3.11–3.13. Acceptable?
+
+Resolved at task 006 initialization: the owner authorized execution of the
+proposed sequence and Python 3.11–3.13 support. The repository rotation record
+assigns task 006 Driver `codex-b` and Reviewer `codex-a`.
 
 ## Execution protocol
 
