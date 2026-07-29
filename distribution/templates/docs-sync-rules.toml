@@ -1,0 +1,10 @@
+# Repository-owned documentation-sync policy.
+#
+# Add conservative rules only after observing a real missed-update failure.
+# Every rule says which changed paths trigger an obligation, which changed
+# paths may satisfy it, and why the obligation exists.
+#
+# [[rule]]
+# trigger = ["src/**"]
+# one_of = ["docs/**", "README.md"]
+# reason = "Public behavior changes must update user-facing documentation."

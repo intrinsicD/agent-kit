@@ -10,6 +10,10 @@ import unittest
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 VERIFY_SCRIPT = REPOSITORY_ROOT / "scripts/verify.sh"
 CI_WORKFLOW = REPOSITORY_ROOT / ".github/workflows/ci.yml"
+TARGET_VERIFY_SCRIPT = REPOSITORY_ROOT / "distribution/templates/scripts/verify.sh"
+TARGET_CI_WORKFLOW = (
+    REPOSITORY_ROOT / "distribution/templates/.github/workflows/agent-workflow.yml"
+)
 DEVELOPMENT_REQUIREMENTS = REPOSITORY_ROOT / "requirements-dev.txt"
 RUFF_CONFIGURATION = REPOSITORY_ROOT / "pyproject.toml"
 
@@ -21,6 +25,12 @@ EXPECTED_STAGES = (
     "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_doc_links.py --root . --strict",
     "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_ara.py",
     "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v",
+)
+TARGET_EXPECTED_STAGES = (
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_authority.py --root . --strict",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_doc_links.py --root . --strict",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_docs_sync.py --root .",
 )
 TRAILING_SHELL_COMMENT = re.compile(r"\s+#.*$")
 
@@ -70,6 +80,25 @@ class VerificationEntryPointTests(unittest.TestCase):
         self.assertIn('python-version: ["3.11", "3.12", "3.13"]', workflow)
         self.assertEqual(1, workflow.count("run: ./scripts/verify.sh"))
         for command in EXPECTED_STAGES:
+            self.assertNotIn(command, workflow)
+
+    def test_target_verify_template_covers_generic_gates_and_extension_marker(self):
+        script = TARGET_VERIFY_SCRIPT.read_text(encoding="utf-8")
+        lines = normalized_shell_lines(script)
+        self.assertEqual("#!/bin/sh", script.splitlines()[0])
+        self.assertTrue(TARGET_VERIFY_SCRIPT.stat().st_mode & stat.S_IXUSR)
+        self.assertIn("# TODO: repository-specific gates", script)
+        for command in TARGET_EXPECTED_STAGES:
+            self.assertEqual(
+                1,
+                lines.count(command),
+                f"target gate must occur exactly once: {command}",
+            )
+
+    def test_target_ci_invokes_only_the_target_verify_entry_point(self):
+        workflow = TARGET_CI_WORKFLOW.read_text(encoding="utf-8")
+        self.assertEqual(1, workflow.count("run: ./scripts/verify.sh"))
+        for command in (*TARGET_EXPECTED_STAGES, *EXPECTED_STAGES):
             self.assertNotIn(command, workflow)
 
     def test_ruff_version_and_python_floor_are_explicit(self):
