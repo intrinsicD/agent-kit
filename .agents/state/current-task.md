@@ -12,7 +12,7 @@ Implement Installer v2 configuration and diagnostics
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -146,7 +146,7 @@ overwrite-capable behavior remains explicitly excluded.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -413,3 +413,148 @@ Yes
 Reviewer `codex-b` begins with this Handoff Log and fixed implementation tip
 `e562259`, reproduces the evidence, and records a verdict before any Driver
 closeout.
+
+### Review (codex-b, Reviewer, Round 1)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The fixed implementation tip `e562259` satisfies the main happy paths:
+manifest v2 retains the exact 22-file `core` mapping, explicit slugged and
+unprefixed installs preserve target Git metadata, the installed validator
+accepts all eleven rendered skills, dry-run and doctor are read-only in the
+covered cases, receipt-backed drift classifications work for normal files, and
+fault injection restores the pre-install snapshot.
+
+Three bounded counterexamples prevent acceptance:
+
+1. The token pattern is not a word-boundary match. Inside backticks it rewrites
+   `Ximplementation`, `implementationX`, `implementation_detail`, and
+   `préimplementation` into strings containing `acme-implementation`.
+   Uppercase letters, underscores, and non-ASCII word characters are omitted
+   from both boundary guards. These are not exact occurrences of the approved
+   `implementation` skill token, so the renderer can corrupt code identifiers
+   despite the task's bounded-rewrite contract.
+2. Manifest and rendered-plan validation reject exact duplicate destinations
+   but accept ancestor/descendant file destinations. A synthetic schema-v2
+   manifest with destinations `node` and `node/child.txt` loads successfully,
+   produces no preflight collisions on an empty target, and then fails every
+   install with `NotADirectoryError`. A manifest destination `.agents` likewise
+   passes validation and conflicts structurally with the generated
+   `.agents/kit-install.json` receipt. Rollback succeeds, but schema/dry-run
+   validation falsely describes an impossible plan as clean.
+3. Receipt-backed template presence accepts any filesystem node. After a valid
+   install, replacing `.agents/state/current-task.md` with either a directory
+   or a dangling symlink makes doctor print `PRESENT` and exit 0. The expected
+   template file is absent, so this is a false clean diagnostic rather than
+   the required `MISSING` finding.
+
+#### Evidence Quality
+
+- Independent local `PYTHONDONTWRITEBYTECODE=1 python3
+  tests/test_distribution.py -v`: 24/24 pass.
+- Independent local `./scripts/verify.sh`: all five gates and 82/82 tests pass;
+  workflow validation finds six archives and the ARA checker accepts 14
+  claims.
+- GitHub Actions run `30444837171` is tied to handoff commit `24b31ed`; CPython
+  3.11.15, 3.12.13, and 3.13.14 each ran the verbatim gate and passed 82 tests.
+- The old and new manifest mappings compare equal at 22 files;
+  `git diff --check 5262f9d..e562259` passes and the implementation diff has no
+  ARA path.
+- Disposable/programmatic probes independently reproduced all three
+  counterexamples. Both impossible-plan installs rolled back to an empty
+  target; the diagnostic problem is the false-clean schema/dry-run result, not
+  target data loss.
+
+#### Simplicity
+
+One standard-library script with manifest, rendered-plan, receipt, and doctor
+domain records is proportionate to the approved interface. The CLI has one
+obvious install path and one read-only diagnostic path. None of the required
+corrections needs a new dependency, parser framework, repair mode, profile
+implementation, or general filesystem transaction.
+
+#### Missing Cases
+
+The accepted scope still excludes Windows-specific paths, cryptographic
+receipt authenticity, arbitrary Markdown code-span grammars, concurrent
+adversarial target mutation, uncatchable termination, optional profile
+inference without a receipt, and update/uninstall/repair behavior. These do not
+block the current slice.
+
+#### Required Changes
+
+1. Make skill-token guards honor actual word boundaries, including uppercase,
+   underscore, and Unicode word characters, while retaining intended rewrites
+   at punctuation/path boundaries and avoiding double-prefixing. Add a
+   synthetic regression containing the reproduced variants.
+2. Reject ancestor/descendant conflicts across the fully rendered write plan,
+   including the generated receipt, as configuration/schema errors before a
+   clean dry-run or install. Cover raw manifest, receipt, and slug-rendered
+   hierarchy variants and preserve exact-duplicate behavior.
+3. Require a user-owned template destination to resolve to a file for
+   `PRESENT`; directories and dangling symlinks must produce a finding. Add
+   receipt-backed no-write regressions for both reproduced replacements.
+4. Re-run the focused suite, full gate, disposable install/doctor probe, and
+   Python 3.11–3.13 CI matrix, then return the branch for Round 2.
+
+#### Optional Improvements
+
+- Reject control characters in target-controlled receipt paths if later
+  hardening needs machine-stable diagnostic output.
+- Compare receipt provenance with the invoking checkout only if a future
+  product decision wants cross-version compatibility diagnostics; the current
+  receipt remains an intentionally unsigned local baseline.
+
+### Session Completion (codex-b, Reviewer, Round 1)
+
+#### Work completed
+
+Independently audited the Installer v2 implementation, reproduced its focused,
+full, CI, manifest-boundary, Git-preservation, rendering, no-write, receipt,
+and doctor evidence, and recorded three acceptance-blocking false negatives
+without editing implementation files.
+
+#### Evidence
+
+The 24-test focused run, 82-test unified gate, CI run `30444837171`, exact
+22-file mapping comparison, fixed-tip diff checks, and six concrete boundary
+variants are recorded in the Review above.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Focused distribution suite; full verification; CI metadata and log
+inspection; manifest mapping/diff checks; synthetic word-boundary rendering;
+raw and receipt hierarchy-conflict plans; and receipt-backed directory and
+dangling-symlink template replacements.
+
+#### Known limitations
+
+Only the explicitly scoped cases under Missing Cases remain outside the
+required corrections.
+
+#### Unresolved questions
+
+None requiring human input. All three fixes are local consequences of the
+already recorded interfaces.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-a` implements the three bounded validation fixes, updates the
+durable audit, collects fresh local/CI evidence, and returns Task 007 for Round
+2 independent review.
