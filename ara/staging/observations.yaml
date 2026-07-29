@@ -131,3 +131,14 @@ observations:
     promoted_to: "logic/claims.md:C12"
     crystallized_via: artifact-commitment
     stale: false
+  - id: O13
+    timestamp: "2026-07-29T09:11+02:00"
+    provenance: ai-suggested
+    content: "The validator and legacy workflow test produce the identical two-file Ruff format failure at Task 004 setup commit 0a66c6f and implementation commit 92148b4."
+    context: "Round 1 independent review and Driver reproduction corrected an overbroad durable formatting claim without changing behavior."
+    potential_type: claim
+    bound_to: [N16, N17]
+    promoted: true
+    promoted_to: "logic/claims.md:C13"
+    crystallized_via: empirical-resolution
+    stale: false

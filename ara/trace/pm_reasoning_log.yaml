@@ -21,3 +21,9 @@ entries:
       - "Crystallized O11 and O12 through artifact commitment because committed code, tests, audit, and handoff now depend on those scoped implementation claims."
       - "Marked C11 and C12 testing rather than supported because independent Task 004 review remains open."
       - "Found no contradiction with C08 or C10: those claims are scoped to earlier inspected commits, while C11 and C12 describe 92148b4."
+  - turn: "2026-07-29_001#4"
+    notes:
+      - "Routed independent Round 1 review as N16 and the bounded Driver reproduction/correction as N17."
+      - "Crystallized O13 as C13 through empirical resolution because both agents reproduced identical fixed-commit Ruff output."
+      - "Advanced but did not promote C11 or C12 to supported: Round 1 passed functionality, but the terminal independent verdict remains open."
+      - "Recorded the overbroad Ruff statement as corrected evidence scope, not a Task 004 behavior dead end."

@@ -201,3 +201,19 @@ present.
 - **Dependencies**: [C10]
 - **Tags**: results-audit, reciprocal-integration, evidence
 - **From staging**: O12
+
+## C13: Task 004 did not introduce the two legacy Ruff format failures
+- **Statement**: Running `ruff format --check
+  scripts/validate_agent_workflow.py tests/test_agent_workflow.py` in archived
+  checkouts of Task 004 setup commit `0a66c6f` and implementation commit
+  `92148b4` exits 1 identically, names those same two files, and reports that
+  two files would be reformatted.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: empirical-resolution
+- **Falsification criteria**: The exact command has a different exit status,
+  file list, or summary at either fixed commit.
+- **Proof**: [docs/audits/distribution-installer.md, .agents/state/current-task.md, 0b1bd0ac1389db6b2790698996815aaafa7bf22b]
+- **Dependencies**: []
+- **Tags**: formatting, evidence-scope, regression-baseline
+- **From staging**: O13

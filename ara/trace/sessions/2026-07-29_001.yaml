@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T08:59+02:00"
-  turn_count: 3
-  summary: "Workflow defects were remediated, target adoption was assessed, and the clean distribution plus results-audit implementation entered independent review."
+  last_turn: "2026-07-29T09:11+02:00"
+  turn_count: 4
+  summary: "Workflow defects were remediated, target adoption was assessed, and Task 004 entered Round 2 after a bounded evidence correction."
 
 events_logged:
   - turn: 1
@@ -103,6 +103,24 @@ events_logged:
     routing: crystallized
     provenance: ai-suggested
     summary: "Task 004 adds the bounded optional generic results-audit procedure."
+  - turn: 4
+    type: experiment
+    id: N16
+    routing: direct
+    provenance: ai-executed
+    summary: "Round 1 passed functionality and required one Ruff evidence-scope correction."
+  - turn: 4
+    type: experiment
+    id: N17
+    routing: direct
+    provenance: ai-executed
+    summary: "Baseline comparison and all requested post-correction checks reproduced."
+  - turn: 4
+    type: claim
+    id: O13
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Two legacy Ruff format failures are identical before and after Task 004."
 
 ai_actions:
   - turn: 1
@@ -163,6 +181,16 @@ ai_actions:
     files_changed:
       - "docs/audits/distribution-installer.md"
       - ".agents/state/current-task.md"
+  - turn: 4
+    action: "Corrected the Task 004 Ruff-format evidence without changing implementation behavior or formatting legacy files."
+    provenance: ai-executed
+    files_changed:
+      - "docs/audits/distribution-installer.md"
+      - ".agents/state/current-task.md"
+  - turn: 4
+    action: "Reproduced baseline-versus-implementation Ruff output and reran the complete requested verification set."
+    provenance: ai-executed
+    files_changed: []
 
 claims_touched:
   - id: C01
@@ -201,6 +229,15 @@ claims_touched:
   - id: C12
     action: crystallized
     turn: 3
+  - id: C11
+    action: advanced
+    turn: 4
+  - id: C12
+    action: advanced
+    turn: 4
+  - id: C13
+    action: crystallized
+    turn: 4
 
 key_context:
   - turn: 1
@@ -209,9 +246,11 @@ key_context:
     excerpt: "The user asked whether agent-kit should be added to or replace four sibling workflows, and what should flow back into agent-kit."
   - turn: 3
     excerpt: "The user asked to fix the accepted workflow-distribution and reciprocal results-audit problems."
+  - turn: 4
+    excerpt: "Round 1 required only exact Ruff evidence correction, with no unrelated legacy formatting or behavior change."
 
 open_threads:
-  - "Independently review and close out the clean payload boundary and results-audit implementation."
+  - "Complete Round 2 independent review and close out the clean payload boundary and results-audit implementation."
   - "After packaging is safe, measure whether the realtime-gs and Prospect pilots earn adoption."
 
 ai_suggestions_pending: []
