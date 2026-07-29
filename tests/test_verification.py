@@ -24,6 +24,7 @@ EXPECTED_STAGES = (
 class VerificationEntryPointTests(unittest.TestCase):
     def test_verify_script_runs_exactly_the_five_documented_stages(self):
         lines = VERIFY_SCRIPT.read_text(encoding="utf-8").splitlines()
+        stripped_lines = [line.strip() for line in lines]
         stage_commands = []
         for index, line in enumerate(lines):
             if not line.startswith('echo "['):
@@ -35,6 +36,12 @@ class VerificationEntryPointTests(unittest.TestCase):
             stage_commands.append(lines[command_index].strip())
 
         self.assertEqual(EXPECTED_STAGES, tuple(stage_commands))
+        for expected in EXPECTED_STAGES:
+            self.assertEqual(
+                1,
+                stripped_lines.count(expected),
+                f"gate command must occur exactly once: {expected}",
+            )
 
     def test_verify_script_is_executable_posix_shell(self):
         self.assertEqual("#!/bin/sh", VERIFY_SCRIPT.read_text().splitlines()[0])

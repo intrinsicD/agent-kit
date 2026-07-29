@@ -67,9 +67,16 @@ PATH_ROOTS = (
 )
 
 CLAIM_HEADING = re.compile(r"^## (C\d+): (\S.*)$")
-FIELD = re.compile(r"^- \*\*([A-Za-z][A-Za-z ]*)\*\*:\s*(.*)$")
+FIELD = re.compile(r"^- \*\*([^*\r\n]+)\*\*\s*:\s*(.*)$")
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 COMMIT_REFERENCE = re.compile(r"^[0-9a-f]{7,40}$")
+
+
+def status_disposition(status: str) -> str:
+    """Return the normalized first-word disposition used by every status check."""
+
+    words = status.split()
+    return words[0].strip(".,;:").lower() if words else ""
 
 
 class AraChecker:
@@ -155,7 +162,7 @@ class AraChecker:
 
             field = FIELD.match(line)
             if field:
-                field_name = field.group(1)
+                field_name = field.group(1).strip()
                 if field_name in claims[current_claim]:
                     self.finding(f"claim {current_claim} repeats field '{field_name}'")
                 claims[current_claim][field_name] = field.group(2).strip()
@@ -187,10 +194,9 @@ class AraChecker:
 
     def check_claim_statuses(self, claims: dict[str, dict[str, str]]) -> None:
         for claim_id, fields in claims.items():
-            words = fields.get("Status", "").split()
-            if not words:
+            disposition = status_disposition(fields.get("Status", ""))
+            if not disposition:
                 continue
-            disposition = words[0].strip(".,;:").lower()
             if disposition not in STATUS_WORDS:
                 self.finding(
                     f"claim {claim_id} has unknown status disposition '{disposition}'"
@@ -223,15 +229,22 @@ class AraChecker:
                 if not entry.startswith(PATH_ROOTS):
                     continue
                 path_text = entry.split("::", 1)[0]
-                if (self.root / path_text).exists():
-                    existing_path = True
-                else:
+                try:
+                    resolved_path = (self.root / path_text).resolve(strict=True)
+                except (OSError, RuntimeError):
                     self.finding(
                         f"claim {claim_id} cites missing proof path '{path_text}'"
                     )
+                    continue
+                if not resolved_path.is_relative_to(self.root):
+                    self.finding(
+                        f"claim {claim_id} proof path '{path_text}' escapes "
+                        "repository root"
+                    )
+                    continue
+                existing_path = True
 
-            status_words = fields.get("Status", "").split()
-            disposition = status_words[0].lower() if status_words else ""
+            disposition = status_disposition(fields.get("Status", ""))
             if disposition in {"supported", "refuted"} and not existing_path:
                 self.finding(
                     f"claim {claim_id} is {disposition} but cites no existing "

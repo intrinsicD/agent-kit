@@ -2,6 +2,7 @@
 """Regression tests for the agent-kit ARA claim-ledger checker."""
 
 import importlib.util
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -60,6 +61,7 @@ VALID_CLAIMS = textwrap.dedent(
 class AraCheckerTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()
+        self.outside_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
         for relative in CHECKER_MODULE.REQUIRED_FILES:
             path = self.root / relative
@@ -87,6 +89,7 @@ class AraCheckerTests(unittest.TestCase):
 
     def tearDown(self):
         self.temporary_directory.cleanup()
+        self.outside_directory.cleanup()
 
     def findings(self):
         return CHECKER_MODULE.AraChecker(self.root).run()
@@ -155,6 +158,13 @@ class AraCheckerTests(unittest.TestCase):
         )
         self.assert_finding_contains("unknown field 'Mystery'")
 
+    def test_punctuated_unknown_field_fails(self):
+        self.replace_claims(
+            "- **From staging**: O01\n",
+            "- **From staging**: O01\n- **Mystery-key** : value\n",
+        )
+        self.assert_finding_contains("unknown field 'Mystery-key'")
+
     def test_boundary_is_an_accepted_optional_field(self):
         self.replace_claims(
             "- **From staging**: O01\n",
@@ -165,6 +175,11 @@ class AraCheckerTests(unittest.TestCase):
     def test_unknown_status_fails(self):
         self.replace_claims("- **Status**: supported\n", "- **Status**: accepted\n")
         self.assert_finding_contains("unknown status disposition 'accepted'")
+
+    def test_punctuated_disposed_status_still_requires_existing_path(self):
+        self.replace_claims("- **Status**: supported\n", "- **Status**: supported:\n")
+        self.replace_claims("[docs/evidence.md, abcdef0]", "[abcdef0]")
+        self.assert_finding_contains("cites no existing repository proof path")
 
     def test_unresolved_dependency_fails(self):
         self.replace_claims(
@@ -181,6 +196,24 @@ class AraCheckerTests(unittest.TestCase):
     def test_missing_proof_path_fails(self):
         self.replace_claims("docs/evidence.md", "docs/missing.md")
         self.assert_finding_contains("missing proof path 'docs/missing.md'")
+
+    def test_proof_path_cannot_escape_repository(self):
+        outside_path = Path(self.outside_directory.name) / "outside.md"
+        outside_path.write_text("external proof\n", encoding="utf-8")
+        from_docs = os.path.relpath(outside_path, self.root / "docs")
+        escaped_path = f"docs/{Path(from_docs).as_posix()}"
+        self.replace_claims("[docs/evidence.md, abcdef0]", f"[{escaped_path}]")
+        self.assert_finding_contains("escapes repository root")
+
+    def test_proof_symlink_cannot_escape_repository(self):
+        outside_path = Path(self.outside_directory.name) / "outside.md"
+        outside_path.write_text("external proof\n", encoding="utf-8")
+        (self.root / "docs/external-link.md").symlink_to(outside_path)
+        self.replace_claims(
+            "[docs/evidence.md, abcdef0]",
+            "[docs/external-link.md]",
+        )
+        self.assert_finding_contains("escapes repository root")
 
     def test_disposed_claim_requires_existing_path(self):
         self.replace_claims("[docs/evidence.md, abcdef0]", "[abcdef0]")
