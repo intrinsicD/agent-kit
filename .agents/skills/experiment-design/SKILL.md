@@ -79,3 +79,7 @@ The Reviewer checks:
 The Reviewer returns one of the standard verdicts: Accepted, Accepted with
 follow-up, Revision required (refine or repeat the experiment), Rejected, or
 Inconclusive.
+
+For a results-bearing claim, use `results-audit` to perform the structured raw
+recomputation, provenance, controls/accounting, evidence-scope, and
+claim-disposition pass before the terminal task verdict.

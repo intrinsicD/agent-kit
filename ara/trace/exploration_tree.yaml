@@ -198,4 +198,82 @@ tree:
           - "N12"
           - "docs/research/cross-repository-agent-workflow-adoption.md"
         status: resolved
-        children: []
+        children:
+          - id: N14
+            type: decision
+            title: "Implement the clean distribution boundary and results audit"
+            provenance: user
+            timestamp: "2026-07-29T08:59+02:00"
+            choice: >
+              Fix the accepted clean-distribution blocker and add the bounded
+              generic results-audit procedure in Task 004, without installing
+              into targets or adding P2 or configurable-platform scope.
+            alternatives:
+              - "Leave the accepted P0 and P1 findings unresolved"
+              - "Expand Task 004 into target integration or distribution infrastructure"
+            evidence:
+              - "N10"
+              - "N12"
+              - "N13"
+              - "docs/research/cross-repository-agent-workflow-adoption.md"
+            status: resolved
+            children:
+              - id: N15
+                type: experiment
+                title: "Exercise the fixed distribution implementation"
+                provenance: ai-executed
+                timestamp: "2026-07-29T08:59+02:00"
+                result: >
+                  Commit 92148b4 introduced the fixed 22-file payload and
+                  results-audit skill. Six disposable distribution tests and
+                  all 36 repository tests passed; the installed blank target
+                  validated with 11 skills and zero archives, collision
+                  targets remained unchanged, and Driver code audit found no
+                  required fix before independent review.
+                evidence:
+                  - "92148b4c19b84614301c03ff77b736de54cb65d7"
+                  - "tests/test_distribution.py"
+                  - "docs/audits/distribution-installer.md"
+                  - ".agents/state/current-task.md"
+                  - "O11"
+                  - "O12"
+                status: resolved
+                children:
+                  - id: N16
+                    type: experiment
+                    title: "Independently review the Task 004 implementation"
+                    provenance: ai-executed
+                    timestamp: "2026-07-29T09:11+02:00"
+                    result: >
+                      Round 1 independently passed all functional and
+                      adversarial probes but reproduced one overbroad evidence
+                      statement: Ruff format did not pass for the validator or
+                      legacy workflow test. Both files failed identically at
+                      setup and implementation commits, so the verdict was
+                      Revision required for evidence correction only.
+                    evidence:
+                      - "ff939ab"
+                      - ".agents/state/current-task.md"
+                      - "docs/audits/distribution-installer.md"
+                    status: resolved
+                    children:
+                      - id: N17
+                        type: experiment
+                        title: "Correct and reproduce the Ruff evidence"
+                        provenance: ai-executed
+                        timestamp: "2026-07-29T09:11+02:00"
+                        result: >
+                          Archived checkouts at 0a66c6f and 92148b4 produced
+                          the same two-file Ruff format failure. The audit was
+                          corrected without reformatting legacy files; six
+                          focused and 36 full tests, live validation,
+                          four-path Ruff lint, two-new-file Ruff format, and
+                          whitespace checks passed before Round 2 handoff.
+                        evidence:
+                          - "0b1bd0ac1389db6b2790698996815aaafa7bf22b"
+                          - "c0095c6"
+                          - "docs/audits/distribution-installer.md"
+                          - ".agents/state/current-task.md"
+                          - "O13"
+                        status: resolved
+                        children: []

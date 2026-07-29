@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "source": "AGENTS.md",
+      "destination": "AGENTS.md"
+    },
+    {
+      "source": ".agents/skills/code-audit/SKILL.md",
+      "destination": ".agents/skills/code-audit/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/experiment-design/SKILL.md",
+      "destination": ".agents/skills/experiment-design/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/handoff/SKILL.md",
+      "destination": ".agents/skills/handoff/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/implementation/SKILL.md",
+      "destination": ".agents/skills/implementation/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/novel-idea-generation/SKILL.md",
+      "destination": ".agents/skills/novel-idea-generation/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/productization/SKILL.md",
+      "destination": ".agents/skills/productization/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/repo-organization/SKILL.md",
+      "destination": ".agents/skills/repo-organization/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/research-methods/SKILL.md",
+      "destination": ".agents/skills/research-methods/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/results-audit/SKILL.md",
+      "destination": ".agents/skills/results-audit/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/review-and-falsification/SKILL.md",
+      "destination": ".agents/skills/review-and-falsification/SKILL.md"
+    },
+    {
+      "source": ".agents/skills/task-orchestration/SKILL.md",
+      "destination": ".agents/skills/task-orchestration/SKILL.md"
+    },
+    {
+      "source": "scripts/validate_agent_workflow.py",
+      "destination": "scripts/validate_agent_workflow.py"
+    },
+    {
+      "source": "distribution/templates/current-task.md",
+      "destination": ".agents/state/current-task.md"
+    },
+    {
+      "source": "distribution/templates/state.md",
+      "destination": ".agents/state/state.md"
+    },
+    {
+      "source": "distribution/templates/backlog.md",
+      "destination": ".agents/state/backlog.md"
+    },
+    {
+      "source": "distribution/templates/ideas.md",
+      "destination": ".agents/state/ideas.md"
+    },
+    {
+      "source": "distribution/templates/docs/decisions/README.md",
+      "destination": "docs/decisions/README.md"
+    },
+    {
+      "source": "distribution/templates/docs/research/README.md",
+      "destination": "docs/research/README.md"
+    },
+    {
+      "source": "distribution/templates/docs/experiments/README.md",
+      "destination": "docs/experiments/README.md"
+    },
+    {
+      "source": "distribution/templates/docs/audits/README.md",
+      "destination": "docs/audits/README.md"
+    },
+    {
+      "source": "distribution/templates/docs/tasks/README.md",
+      "destination": "docs/tasks/README.md"
+    }
+  ]
+}

@@ -132,6 +132,7 @@ Use these skills where applicable:
 - `research-methods`: investigate methods, theory, implementations, and primary literature.
 - `novel-idea-generation`: generate and rank genuinely useful ideas, including cross-field transfer.
 - `experiment-design`: design falsifiable, reproducible experiments and interpret results.
+- `results-audit`: independently recompute quantitative results, audit provenance, controls, accounting, and scope, and dispose of empirical claims before promotion.
 - `implementation`: implement the smallest correct vertical slice.
 - `review-and-falsification`: independently challenge research, experiments, architecture, or code.
 - `code-audit`: audit correctness, numerical behavior, performance, APIs, and maintainability.
