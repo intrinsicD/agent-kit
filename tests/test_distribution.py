@@ -3,6 +3,7 @@
 
 import importlib.util
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -277,6 +278,37 @@ class DistributionBoundaryTests(unittest.TestCase):
                     with self.assertRaises(INSTALLER_MODULE.ManifestError):
                         INSTALLER_MODULE.load_manifest(root, path)
 
+    def test_manifest_rejects_raw_and_receipt_destination_hierarchies(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            (root / "one.txt").write_text("one\n", encoding="utf-8")
+            (root / "two.txt").write_text("two\n", encoding="utf-8")
+            path = root / "manifest.json"
+            invalid_rows = (
+                [
+                    {"source": "one.txt", "destination": "node"},
+                    {"source": "two.txt", "destination": "node/child.txt"},
+                ],
+                [{"source": "one.txt", "destination": ".agents"}],
+                [
+                    {
+                        "source": "one.txt",
+                        "destination": ".agents/kit-install.json/child.txt",
+                    }
+                ],
+            )
+            for rows in invalid_rows:
+                with self.subTest(rows=rows):
+                    path.write_text(
+                        json.dumps({"version": 2, "groups": {"core": rows}}),
+                        encoding="utf-8",
+                    )
+                    with self.assertRaisesRegex(
+                        INSTALLER_MODULE.ManifestError,
+                        "destination hierarchy conflict",
+                    ):
+                        INSTALLER_MODULE.load_manifest(root, path)
+
     def test_named_group_selection_is_a_stable_union(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
@@ -351,6 +383,122 @@ class DistributionBoundaryTests(unittest.TestCase):
         implementation = by_destination[".agents/skills/acme-implementation/SKILL.md"]
         self.assertIn("two real implementations already exist", implementation)
         self.assertIn("interfaces with one implementation", implementation)
+
+    def test_inline_rewrite_uses_unicode_word_boundaries_and_is_idempotent(self):
+        source = (
+            "`implementation` `/implementation/` `(implementation)` "
+            "`Ximplementation` `implementationX` `implementation_detail` "
+            "`préimplementation` `implementationé` `acme-implementation`"
+        )
+        expected = (
+            "`acme-implementation` `/acme-implementation/` "
+            "`(acme-implementation)` `Ximplementation` `implementationX` "
+            "`implementation_detail` `préimplementation` `implementationé` "
+            "`acme-implementation`"
+        )
+
+        rendered = INSTALLER_MODULE._rewrite_inline_skill_names(source, "acme-")
+
+        self.assertEqual(expected, rendered)
+        self.assertEqual(
+            expected,
+            INSTALLER_MODULE._rewrite_inline_skill_names(rendered, "acme-"),
+        )
+
+    def test_rendered_and_receipt_hierarchy_conflicts_are_configuration_errors(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            skill_source = root / "skill.md"
+            skill_source.write_text(
+                "---\nname: implementation\n---\n\nUse `implementation`.\n",
+                encoding="utf-8",
+            )
+            blocker_source = root / "blocker.txt"
+            blocker_source.write_text("blocker\n", encoding="utf-8")
+            manifest_path = root / "manifest.json"
+            manifest_path.write_text(
+                json.dumps(
+                    {
+                        "version": 2,
+                        "groups": {
+                            "core": [
+                                {
+                                    "source": "skill.md",
+                                    "destination": (
+                                        ".agents/skills/implementation/SKILL.md"
+                                    ),
+                                },
+                                {
+                                    "source": "blocker.txt",
+                                    "destination": (
+                                        ".agents/skills/acme-implementation"
+                                    ),
+                                },
+                            ]
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            slug_manifest = INSTALLER_MODULE.load_manifest(root, manifest_path)
+            receipt_manifest = INSTALLER_MODULE.DistributionManifest(
+                version=2,
+                sha256="0" * 64,
+                groups={
+                    "core": (
+                        INSTALLER_MODULE.PayloadFile(
+                            source=blocker_source,
+                            destination=Path(".agents"),
+                        ),
+                    )
+                },
+            )
+
+            for label, manifest, slug in (
+                ("slug-rendered", slug_manifest, "acme"),
+                ("generated-receipt", receipt_manifest, None),
+            ):
+                with self.subTest(label=label, interface="plan"):
+                    with self.assertRaisesRegex(
+                        INSTALLER_MODULE.ManifestError,
+                        "destination hierarchy conflict",
+                    ):
+                        INSTALLER_MODULE.build_install_plan(manifest, slug=slug)
+
+                for dry_run in (False, True):
+                    with self.subTest(
+                        label=label,
+                        interface="dry-run" if dry_run else "install",
+                    ):
+                        target = root / f"target-{label}-{dry_run}"
+                        target.mkdir()
+                        before = workspace_snapshot(target)
+                        arguments = INSTALLER_MODULE.argparse.Namespace(
+                            target=target,
+                            slug=slug,
+                            no_prefix=slug is None,
+                            profile=[],
+                            dry_run=dry_run,
+                        )
+                        with (
+                            mock.patch.object(
+                                INSTALLER_MODULE,
+                                "load_manifest",
+                                return_value=manifest,
+                            ),
+                            mock.patch.object(
+                                INSTALLER_MODULE.sys,
+                                "stderr",
+                                new=io.StringIO(),
+                            ) as stderr,
+                        ):
+                            result = INSTALLER_MODULE._run_install(arguments)
+
+                        self.assertEqual(2, result)
+                        self.assertIn(
+                            "destination hierarchy conflict", stderr.getvalue()
+                        )
+                        self.assertEqual(before, workspace_snapshot(target))
 
     def test_fresh_slugged_install_is_valid_and_preserves_git_metadata(self):
         _, rows = manifest_rows()
@@ -674,6 +822,35 @@ class DistributionBoundaryTests(unittest.TestCase):
             self.assertEqual(1, missing_check.returncode, missing_check.stdout)
             self.assertIn("  MISSING docs/tasks/README.md", missing_check.stdout)
             self.assertEqual(before_missing_check, workspace_snapshot(target))
+
+    def test_doctor_requires_template_destinations_to_resolve_to_files(self):
+        for replacement in ("directory", "dangling-symlink"):
+            with self.subTest(replacement=replacement):
+                with tempfile.TemporaryDirectory() as temporary_directory:
+                    target = Path(temporary_directory) / "target"
+                    target.mkdir()
+                    installation = run(install_command(target, "--no-prefix"))
+                    self.assertEqual(0, installation.returncode, installation.stdout)
+                    task = target / ".agents/state/current-task.md"
+                    task.unlink()
+                    if replacement == "directory":
+                        task.mkdir()
+                    else:
+                        task.symlink_to("missing-task.md")
+                    before = workspace_snapshot(target)
+
+                    doctor = run(doctor_command(target))
+
+                    self.assertEqual(1, doctor.returncode, doctor.stdout)
+                    self.assertIn(
+                        "  MISSING .agents/state/current-task.md",
+                        doctor.stdout,
+                    )
+                    self.assertIn(
+                        "8 templates PRESENT, 1 templates MISSING",
+                        doctor.stdout,
+                    )
+                    self.assertEqual(before, workspace_snapshot(target))
 
     def test_doctor_missing_receipt_uses_unknown_presence_fallback_without_writes(
         self,

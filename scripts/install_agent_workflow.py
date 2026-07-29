@@ -34,11 +34,11 @@ SLUG_PATTERN = re.compile(r"^[a-z][a-z0-9-]*$")
 GROUP_PATTERN = re.compile(r"^[a-z][a-z0-9-]*$")
 INLINE_CODE_PATTERN = re.compile(r"`([^`\n]+)`")
 SKILL_TOKEN_PATTERN = re.compile(
-    r"(?<![a-z0-9-])("
+    r"(?<![\w-])("
     + "|".join(
         re.escape(token) for token in sorted(SKILL_TOKENS, key=len, reverse=True)
     )
-    + r")(?![a-z0-9-])"
+    + r")(?![\w-])"
 )
 
 
@@ -85,6 +85,22 @@ def _relative_path(value, field):
     return Path(*parts)
 
 
+def _validate_destination_hierarchy(destinations, context):
+    """Reject exact or ancestor/descendant destinations in a write plan."""
+
+    validated = []
+    for destination in destinations:
+        if destination in validated:
+            raise ManifestError(f"duplicate {context} destination: {destination}")
+        for existing in validated:
+            if existing in destination.parents or destination in existing.parents:
+                raise ManifestError(
+                    f"{context} destination hierarchy conflict: "
+                    f"{existing} and {destination}"
+                )
+        validated.append(destination)
+
+
 def load_manifest(source_root=SOURCE_ROOT, manifest_path=MANIFEST_PATH):
     """Load and validate the versioned, named-group distribution manifest."""
 
@@ -104,7 +120,7 @@ def load_manifest(source_root=SOURCE_ROOT, manifest_path=MANIFEST_PATH):
         raise ManifestError("manifest groups must include `core`")
 
     root = source_root.resolve()
-    destinations = set()
+    destinations = []
     sources = set()
     groups = {}
     for group, rows in manifest["groups"].items():
@@ -135,7 +151,7 @@ def load_manifest(source_root=SOURCE_ROOT, manifest_path=MANIFEST_PATH):
                 raise ManifestError(f"duplicate destination: {destination}")
             if source_relative in sources:
                 raise ManifestError(f"duplicate source: {source_relative}")
-            destinations.add(destination)
+            destinations.append(destination)
             sources.add(source_relative)
 
             source = source_root / source_relative
@@ -154,6 +170,10 @@ def load_manifest(source_root=SOURCE_ROOT, manifest_path=MANIFEST_PATH):
             )
         groups[group] = tuple(entries)
 
+    _validate_destination_hierarchy(
+        (*destinations, RECEIPT_PATH),
+        "manifest",
+    )
     return DistributionManifest(
         version=manifest["version"],
         sha256=hashlib.sha256(raw_manifest).hexdigest(),
@@ -275,9 +295,10 @@ def render_payload(payload, slug=None):
                 user_owned=entry.user_owned,
             )
         )
-    destinations = [entry.destination for entry in planned]
-    if len(destinations) != len(set(destinations)):
-        raise ManifestError("rendered payload contains duplicate destinations")
+    _validate_destination_hierarchy(
+        (entry.destination for entry in planned),
+        "rendered payload",
+    )
     return tuple(planned)
 
 
@@ -343,7 +364,12 @@ def build_install_plan(manifest, groups=("core",), slug=None, installed_at=None)
             installed_at or _utc_timestamp(),
         ),
     )
-    return (*rendered, receipt)
+    plan = (*rendered, receipt)
+    _validate_destination_hierarchy(
+        (entry.destination for entry in plan),
+        "rendered write plan",
+    )
+    return plan
 
 
 def find_collisions(target, payload):
@@ -570,8 +596,8 @@ def _immutable_status(target, relative, expected_digest):
     return "OK" if actual_digest == expected_digest else "MODIFIED"
 
 
-def _is_present(path):
-    return path.exists() or path.is_symlink()
+def _is_present_file(path):
+    return path.is_file()
 
 
 def doctor_from_receipt(target, receipt):
@@ -606,7 +632,7 @@ def doctor_from_receipt(target, receipt):
     missing_templates = 0
     print("User-owned templates:")
     for relative in receipt["user_owned_templates"]:
-        status = "PRESENT" if _is_present(target / Path(relative)) else "MISSING"
+        status = "PRESENT" if _is_present_file(target / Path(relative)) else "MISSING"
         print(f"  {status} {relative}")
         if status == "PRESENT":
             present_templates += 1
@@ -626,9 +652,9 @@ def doctor_from_receipt(target, receipt):
 def _fallback_skill_path(target, destination):
     token = _skill_token(destination)
     if token is None:
-        return destination if _is_present(target / destination) else None
+        return destination if _is_present_file(target / destination) else None
 
-    if _is_present(target / destination):
+    if _is_present_file(target / destination):
         return destination
     skill_root = target / ".agents/skills"
     if not skill_root.is_dir() or skill_root.is_symlink():
@@ -640,7 +666,7 @@ def _fallback_skill_path(target, destination):
             validate_slug(slug)
         except ValueError:
             continue
-        if _is_present(candidate):
+        if _is_present_file(candidate):
             return candidate.relative_to(target)
     return None
 
