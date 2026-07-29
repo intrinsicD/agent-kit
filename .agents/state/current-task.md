@@ -12,7 +12,7 @@ Implement generic validator pack and target CI template
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -130,7 +130,7 @@ policy.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -233,3 +233,189 @@ single-command anti-drift property.
 Reviewer `codex-a` checks out the handoff commit, reproduces the fixed
 implementation tip and disposable install independently, adds adversarial
 probes beyond the Driver fixtures, and records an evidence-based verdict.
+
+### Review (codex-a, Reviewer, Round 1)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+Implementation tip `a14d5547cec70e4de7799cd63b1dda3eb917ee0c`
+provides a working opt-in profile and preserves the accepted Installer v2
+contracts, but five bounded counterexamples prevent acceptance:
+
+1. `.codex/config.yaml` is searched as raw text. A file containing only
+   `# AGENTS.md` plus unrelated configuration passes strict authority checking,
+   although a YAML comment is not an effective reference to the contract.
+2. `check_doc_links.py` verifies containment only after discovering a Markdown
+   file. A `docs` scan root symlinked to an empty directory outside the
+   repository therefore exits 0 with two scanned files and zero findings,
+   violating the bounded-root contract.
+3. The flat link-start expression silently skips valid Markdown link text with
+   balanced or escaped brackets. Both
+   `[outer [inner]](missing.md)` and
+   `[outer \[inner\]](missing.md)` exit 0 with zero links rather than reporting
+   the missing destination. These are standard link-text forms under the
+   [CommonMark link rules](https://spec.commonmark.org/spec#links); supporting
+   them does not require a full CommonMark implementation.
+4. Docs-sync glob syntax is not validated when rules load. Trigger patterns
+   `[z-a]` and `[!]` raise uncaught `re.error` tracebacks and exit 1 when a
+   changed path is evaluated, rather than returning configuration/schema exit
+   2. The same malformed `[z-a]` rule exits 0 when a Git comparison has no
+   changed paths, so configuration validity incorrectly depends on input data.
+5. The target-workflow anti-drift regression rejects only exact, fully spelled
+   stage command strings. Adding
+   `- run: python3 scripts/check_authority.py --root . --strict` alongside the
+   required gate still satisfies the current test, even though it relists a
+   delegated stage and violates Success Criterion 4.
+
+The current target workflow itself contains exactly one
+`./scripts/verify.sh` invocation and no duplicated stage; finding 5 concerns
+the required regression guarantee.
+
+#### Evidence Quality
+
+- Independent `./scripts/verify.sh` passed all seven source stages at handoff
+  `a4a2acc`: Ruff lint/format, workflow validation, strict live authority and
+  document-link checks, 14 ARA claims, and 105/105 regressions.
+- Independent focused runs passed 15/15 validator-pack, 30/30 distribution,
+  and 7/7 verification tests.
+- GitHub Actions run `30448167432` was inspected directly: it is tied to
+  implementation tip `a14d554`, completed successfully, and ran the verbatim
+  gate on Python 3.11, 3.12, and 3.13.
+- A fresh committed disposable Git target received the unchanged 22-file
+  `core` plus six-file `verify` payload. Installation wrote 28 payload files
+  plus the receipt; the installed four-stage gate exited 0, doctor reported
+  16 immutable files `OK` and 12 templates `PRESENT`, executable modes were
+  preserved, and Git HEAD/branch stayed unchanged. A separate dry-run left its
+  target byte-for-byte unchanged. Editing the user-owned target gate remained
+  `PRESENT`; editing an immutable checker became `MODIFIED` and exit 1.
+- Authority controls passed for chained `CLAUDE.md` aliases ending at
+  `AGENTS.md`; external/dangling `CLAUDE.md` and skills-root aliases, a
+  symlinked skill directory, a symlinked canonical contract, and ambiguous
+  duplicate frontmatter names were all rejected. The comment-only Codex
+  configuration above was the sole authority bypass reproduced.
+- Document-link controls correctly handled balanced and escaped destination
+  parentheses, angle destinations with spaces, reference definitions,
+  root-relative paths, external schemes, fenced examples, external Markdown
+  file symlinks, percent-encoded escapes, and non-directory scan roots. An
+  escaped ASCII-space destination outside angle brackets produced a finding
+  and was not promoted as a defect because that form is not a valid CommonMark
+  destination.
+- Docs-sync controls passed for `*`, `**`, `?`, negated character classes,
+  warning/strict dispositions, unsafe explicit paths and rule paths, missing
+  refs, nested Git roots, no-Git behavior, rename source/destination
+  accounting, and divergent-branch merge-base semantics. Only the malformed
+  character-class validation defect above failed.
+- Baseline Task 007 and current `core` manifest rows compare exactly at 22;
+  `verify` contains the intended six physical sources with modes `0755` for
+  checkers/target gate and `0664` for rules/workflow templates.
+- `git diff --check 40d0b99..a14d554` passed, and the handoff commit changes
+  only `.agents/state/current-task.md`.
+
+#### Simplicity
+
+The profile remains bounded: three direct checkers, three target-owned
+templates, no dependency, no core expansion, and no target-specific policy.
+The required corrections fit the existing design: meaningful comment-aware
+contract detection, scan-root containment before enumeration, balanced link
+text recognition, eager glob compilation/validation, and a stronger
+workflow-mutation assertion. No parser framework, profile abstraction, or
+additional interface is justified.
+
+#### Missing Cases
+
+The documented exclusions remain acceptable: raw HTML, autolinks, heading
+fragment validation, working-tree inference for `--base`, Windows/non-POSIX
+behavior, non-UTF-8 Git paths, concurrent mutation, and target-specific
+docs-sync policy. None explains the five reproduced cases, which occur on
+ordinary Linux/UTF-8 inputs inside the approved interfaces.
+
+#### Required Changes
+
+1. Make `.codex/config.yaml` contract detection ignore comments (or enforce a
+   comparably meaningful configuration reference) and add comment-only
+   bypass/valid-reference regressions.
+2. Reject or configuration-error every present Markdown scan root that
+   resolves outside the repository, even when it contains no Markdown files;
+   add empty and populated external-root controls.
+3. Scan valid inline-link text containing balanced and backslash-escaped
+   brackets, with missing/existing destination regressions. Keep the parser
+   bounded to the accepted link forms.
+4. Validate or compile every `trigger` and `one_of` glob while loading rules,
+   translate malformed patterns to
+   `DocumentationSyncConfigurationError`, and prove exit 2 independent of the
+   changed-file set.
+5. Harden the target CI anti-drift test so semantically equivalent relisted
+   checker invocations fail, not only exact copies of the target-gate command
+   strings.
+
+#### Optional Improvements
+
+None recommended in this round. Do not expand into full CommonMark, YAML
+configuration modeling, target policy, or additional installer modes while
+closing these counterexamples.
+
+### Session Completion (codex-a, Reviewer, Round 1)
+
+#### Work completed
+
+Independently audited all three checkers, manifest and ownership behavior,
+source/target gates, workflow template, test assertions, README contract, and
+Driver audit at fixed implementation tip `a14d554`; reproduced the recorded
+source, focused, CI, and disposable-target evidence; then ran adversarial
+authority, Markdown, docs-sync, distribution, and anti-drift probes.
+
+#### Evidence
+
+The passing controls and five required correction groups are recorded in the
+Review above. The full gate remains green at 105 tests, but eight exact probe
+expectations fail across those five underlying defects.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+- `docs/audits/validator-pack.md`
+
+No implementation or test file was changed.
+
+#### Tests or experiments run
+
+- `./scripts/verify.sh`
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_validator_pack.py -q`
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -q`
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_verification.py -q`
+- Independent disposable dry-run/install/gate/doctor/mode/ownership/Git probe
+- Independent authority symlink, frontmatter, and Codex-comment probes
+- Independent Markdown parsing, fence, containment, and scan-root probes
+- Independent TOML/glob/path/ref/no-Git/rename/merge-base probes
+- Target-workflow mutation probe and GitHub Actions run `30448167432`
+  inspection
+- Manifest baseline mapping, implementation/handoff scope, and whitespace
+  checks
+
+#### Known limitations
+
+The accepted out-of-scope boundaries listed in the Review remain unchanged.
+
+#### Unresolved questions
+
+None. The five correction groups are reproducible and do not require a human
+product decision.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-b` implements only the five required correction groups, adds the
+reproducing regressions, updates the durable audit, reruns focused/full/CI and
+disposable-target evidence, and hands back a fixed implementation tip for
+Round 2 independent review.

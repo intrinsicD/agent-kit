@@ -2,17 +2,15 @@
 
 ## Scope
 
-Driver audit of Task 008's three standard-library checkers, source verification
-wiring, six-file opt-in `verify` manifest group, target verification entry
-point, CI template, installer ownership classification, and regression
-fixtures. The audit covers correctness, failure semantics, path containment,
-Git change-set accounting, executable modes, and interface drift. It does not
-approve target-specific documentation rules or later maturity-program
-profiles.
+Driver audit and independent Reviewer Round 1 falsification of Task 008's three
+standard-library checkers, source verification wiring, six-file opt-in
+`verify` manifest group, target verification entry point, CI template,
+installer ownership classification, and regression fixtures. The audit covers
+correctness, failure semantics, path containment, Git change-set accounting,
+executable modes, and interface drift. It does not approve target-specific
+documentation rules or later maturity-program profiles.
 
 ## Findings
-
-No required correctness finding remains open in the reviewed scope.
 
 Two edge cases were found during the Driver pass and fixed before handoff:
 
@@ -29,11 +27,25 @@ receipt-hashed payload, while the rules file, target gate, and workflow are
 user-owned templates checked for presence only. The target workflow contains
 one `./scripts/verify.sh` invocation and none of the gate commands it delegates.
 
+Independent Reviewer Round 1 reproduced five additional correction groups:
+
+1. Comment-only `AGENTS.md` text satisfies the optional Codex configuration
+   reference check.
+2. An empty external directory symlink at a Markdown scan root passes.
+3. Valid balanced/escaped-bracket link text can hide missing destinations.
+4. Malformed docs-sync character classes can traceback as exit 1 or pass on
+   an empty change set instead of producing configuration exit 2.
+5. The target workflow is clean, but the anti-drift regression accepts a
+   semantically equivalent relisted checker command.
+
+Exact inputs and full dispositions are recorded in
+`.agents/state/current-task.md`.
+
 ## Severity
 
 - Critical: none.
 - High: none.
-- Medium: none open; both implementation-pass findings above were resolved.
+- Medium: five open bounded Reviewer correction groups.
 - Low: bounded parser and operating-environment limitations remain under
   Residual Risks.
 
@@ -53,10 +65,23 @@ one `./scripts/verify.sh` invocation and none of the gate commands it delegates.
 - Focused evidence before handoff: 15 validator-pack, 30 distribution, and
   seven verification tests pass. The unified source gate passes 105 tests,
   both live strict checkers, workflow validation, Ruff, and ARA validation.
+- Reviewer Round 1 independently reproduced all focused counts and the
+  105-test gate, inspected green Python 3.11–3.13 CI run `30448167432`,
+  repeated a committed disposable `core` + `verify` install with clean
+  four-stage gate and doctor, and challenged authority symlinks/frontmatter,
+  Markdown syntax/containment/scan roots, docs-sync
+  TOML/globs/path/ref/merge-base/rename/no-Git behavior, manifest
+  ownership/modes/core mapping, and workflow mutation resistance.
 
 ## Required Fixes
 
-None at Driver handoff.
+1. Reject comment-only Codex contract references.
+2. Enforce scan-root containment before Markdown enumeration.
+3. Recognize balanced and escaped bracket forms in valid inline link text.
+4. Eagerly validate all docs-sync globs and classify malformed syntax as exit
+   2 regardless of the change set.
+5. Make the anti-drift regression reject alternate spellings of relisted
+   checker stages.
 
 ## Optional Improvements
 
@@ -84,6 +109,7 @@ None at Driver handoff.
 
 ## Verdict
 
-Ready for independent review. The implementation is the smallest complete
-opt-in slice in Plan 007: it adds no core payload, no target-specific policy,
-and no later profile behavior.
+Revision required after independent Reviewer Round 1. The overall slice remains
+appropriately small and its main install/gate path works, but the five bounded
+correction groups above must close before the self-enforcement and anti-drift
+claims can be accepted.
