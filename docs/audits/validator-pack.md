@@ -41,11 +41,30 @@ Independent Reviewer Round 1 reproduced five additional correction groups:
 Exact inputs and full dispositions are recorded in
 `.agents/state/current-task.md`.
 
+Driver revision commit `41e9dee` closes all five groups:
+
+1. Codex configuration text is searched only after comment-aware filtering;
+   a comment-only reference now fails while a visible value passes.
+2. Every present directory scan root is resolved and checked for repository
+   containment before enumeration, so empty and populated external aliases
+   both fail.
+3. Inline link text is scanned with balanced, backslash-aware bracket
+   handling. The revision also masks same-line inline code after the stronger
+   parser correctly exposed Markdown-like examples in the immutable Review
+   record.
+4. Every `trigger` and `one_of` glob is compiled while rules load. Invalid
+   classes become configuration exit 2 before any explicit-file or Git diff
+   path can affect the result.
+5. The workflow assertion now accepts exactly one normalized `run` directive:
+   `./scripts/verify.sh`. Additional relisted stages fail even with spacing or
+   quoted-key variants.
+
 ## Severity
 
 - Critical: none.
 - High: none.
-- Medium: five open bounded Reviewer correction groups.
+- Medium: none open; all five Reviewer correction groups are covered by
+  passing regressions.
 - Low: bounded parser and operating-environment limitations remain under
   Residual Risks.
 
@@ -62,9 +81,10 @@ Exact inputs and full dispositions are recorded in
 - `tests/test_verification.py` pins all source and target gate commands and
   proves that both source and target workflows invoke their respective
   verification entry points without relisting stages.
-- Focused evidence before handoff: 15 validator-pack, 30 distribution, and
-  seven verification tests pass. The unified source gate passes 105 tests,
-  both live strict checkers, workflow validation, Ruff, and ARA validation.
+- Focused evidence after revision: 19 validator-pack, 30 distribution, and
+  seven verification tests pass. The unified source gate passes 109 tests,
+  both live strict checkers, workflow validation, Ruff, and 15-claim ARA
+  validation.
 - Reviewer Round 1 independently reproduced all focused counts and the
   105-test gate, inspected green Python 3.11–3.13 CI run `30448167432`,
   repeated a committed disposable `core` + `verify` install with clean
@@ -75,13 +95,9 @@ Exact inputs and full dispositions are recorded in
 
 ## Required Fixes
 
-1. Reject comment-only Codex contract references.
-2. Enforce scan-root containment before Markdown enumeration.
-3. Recognize balanced and escaped bracket forms in valid inline link text.
-4. Eagerly validate all docs-sync globs and classify malformed syntax as exit
-   2 regardless of the change set.
-5. Make the anti-drift regression reject alternate spellings of relisted
-   checker stages.
+None open after Driver revision. Round 1's five required changes map one-to-one
+to the dispositions and regressions under Findings; Round 2 must independently
+reproduce those fixes before acceptance.
 
 ## Optional Improvements
 
@@ -95,9 +111,10 @@ Exact inputs and full dispositions are recorded in
 
 ## Residual Risks
 
-- Markdown scanning is intentionally bounded to inline links, images, and
-  reference definitions outside fenced code. It does not implement all of
-  CommonMark, validate anchors, or inspect raw HTML.
+- Markdown scanning is intentionally bounded to same-line inline links,
+  images, and reference definitions outside fenced and same-line inline code.
+  It does not implement all of CommonMark, validate anchors, inspect raw HTML,
+  or model code spans that cross lines.
 - `--base` evaluates committed paths between the merge base and `HEAD`.
   Working-tree and untracked changes require explicit `--files`.
 - Warning mode intentionally returns success for findings. The target gate
@@ -109,7 +126,6 @@ Exact inputs and full dispositions are recorded in
 
 ## Verdict
 
-Revision required after independent Reviewer Round 1. The overall slice remains
-appropriately small and its main install/gate path works, but the five bounded
-correction groups above must close before the self-enforcement and anti-drift
-claims can be accepted.
+Ready for independent Round 2 review. The five required correction groups are
+closed locally without expanding the profile, but acceptance remains with
+Reviewer `codex-a`.

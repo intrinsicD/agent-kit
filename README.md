@@ -125,10 +125,12 @@ three target-owned templates:
 
 - `scripts/check_authority.py` detects divergent `AGENTS.md`/`CLAUDE.md`,
   duplicate physical skill roots, mismatched skill frontmatter names, and an
-  optional `.codex/config.yaml` that does not reference `AGENTS.md`;
+  optional `.codex/config.yaml` that does not visibly reference `AGENTS.md`
+  outside YAML comments;
 - `scripts/check_doc_links.py` resolves local Markdown links under the
-  authority, README, `docs/`, state, and skill trees while ignoring fenced
-  examples, external schemes, and same-document anchors;
+  authority, README, `docs/`, state, and skill trees while containing symlinked
+  scan roots and ignoring fenced or inline-code examples, external schemes,
+  and same-document anchors;
 - `scripts/check_docs_sync.py` evaluates repository-owned
   `docs-sync-rules.toml` obligations against explicit changed files or a Git
   merge base;
@@ -161,7 +163,8 @@ python3 scripts/check_docs_sync.py --root . --strict --base origin/main
 With configured rules, omitting both change-set options or using an
 unresolvable Git base emits a skip warning and exits 0 in the default
 warning-only mode; strict mode returns exit 2 because no reliable input was
-available. An empty rules file passes without requiring Git.
+available. An empty rules file passes without requiring Git. Invalid TOML,
+rule fields, paths, or glob syntax return exit 2 before change-set evaluation.
 
 Run `python3 scripts/validate_agent_workflow.py` after installation and after
 any structural change. It checks two things:
