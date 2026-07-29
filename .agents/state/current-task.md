@@ -12,7 +12,7 @@ Implement generic validator pack and target CI template
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: human
+- Turn: driver
 
 ## Mode
 
@@ -130,7 +130,7 @@ policy.
 
 ## Status
 
-Blocked on human decision
+Accepted with follow-up
 
 ## Human Decisions
 
@@ -175,11 +175,16 @@ escalate rather than extend again.
 
 ### Decision
 
-Pending repository-owner response.
+On 2026-07-29, the repository owner directed: “commit all changes. merge into
+main and push to remote.” This accepts Task 008 with follow-up and authorizes
+the Driver to merge the reviewed branch despite the known named-step
+anti-drift mutation-test gap. The gap must remain recorded as validated
+follow-up work; this decision does not claim that the missing regression was
+implemented.
 
 ### Date
 
-Escalated 2026-07-29.
+Escalated and decided 2026-07-29.
 
 ## Handoff Log
 
@@ -722,3 +727,55 @@ The repository owner selects option 1 or 2. The receiving Driver records the
 answer and date, restores the paired role/status fields, commits that decision,
 and only then either performs the bounded correction or executes the
 metadata-only Inconclusive closeout.
+
+### Review (repository owner, Human promotion)
+
+#### Verdict
+
+Accepted with follow-up
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The repository owner accepts the Task 008 implementation for merge. The
+shipped target workflow contains only the delegated `./scripts/verify.sh`
+entry point, all checker and installer behavior passed the recorded review
+controls, and four of the five Round 1 correction groups were independently
+closed. This promotion does not overrule the factual Round 2 counterexample:
+the test helper still misses a relisted checker when `run:` follows `name:`.
+
+#### Evidence Quality
+
+The acceptance is bounded by the evidence already reproduced independently:
+109/109 unified regressions, 19/19 validator-pack tests, 30/30 distribution
+tests, 7/7 verification tests, a clean disposable 22+6 install/gate/doctor
+probe, and green Python 3.11–3.13 CI at revision tip
+`74e05f91a5dbaf5e4f0dd91e1a1bbcb25d987e89`. The known named-step mutation
+counterexamples remain preserved in the Round 2 Review.
+
+#### Simplicity
+
+The accepted implementation remains the smallest opt-in validator profile:
+three standard-library checkers and three target-owned templates, with no
+dependency, `core`, or policy expansion.
+
+#### Missing Cases
+
+Named scalar and named block-form workflow steps are not covered by the
+current anti-drift mutation-test helper. The shipped workflow is clean, but
+the regression guarantee in Success Criterion 4 is incomplete for those two
+ordinary YAML forms.
+
+#### Required Changes
+
+None before the owner-authorized merge. Preserve the named-step detector and
+two exact mutation regressions as a validated follow-up item.
+
+#### Optional Improvements
+
+When prioritized, make the run-key detector recognize `run:` after another
+step key and add named scalar plus named block-form mutation regressions
+without changing shipped runtime behavior.
