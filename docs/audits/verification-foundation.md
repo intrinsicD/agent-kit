@@ -31,14 +31,14 @@ maturity-plan corrections.
 7. Round 2 independent review confirmed the Round 1 fixes and found two nearby
    false negatives: empty or punctuation-only Status values are treated as
    absent, and a repeated gate with a trailing shell comment escapes exact-line
-   counting. Both remain open pending the required human decision after two
-   non-accepting rounds.
+   counting. The repository owner authorized one final bounded revision, and
+   commit `2a77376` closes both with focused regressions.
 
 ## Severity
 
-The four plan mismatches and four Round 1 review findings are corrected. The two
-Round 2 false negatives remain acceptance-blocking, and task 006 is blocked on
-the repository owner's decision whether to authorize a final bounded revision.
+The four plan mismatches, four Round 1 findings, and two Round 2 findings are
+corrected. No Driver-audit blocker remains; final independent review is
+required before acceptance.
 
 ## Evidence
 
@@ -55,12 +55,9 @@ the repository owner's decision whether to authorize a final bounded revision.
 
 ## Required Fixes
 
-Round 1's four required fixes are implemented at `04322dc`. Round 2 requires:
-
-1. Reject a present Status field whose normalized disposition is empty.
-2. Detect repeated expected gate commands with trailing shell comments.
-
-Repository policy requires human authorization before another revision.
+Round 1's four required fixes are implemented at `04322dc`; the owner-authorized
+Round 2 fixes are implemented at `2a77376`. No known required fix remains before
+final independent review.
 
 ## Optional Improvements
 
@@ -81,4 +78,4 @@ permits a Git dependency.
 
 ## Verdict
 
-Blocked on human decision after two non-accepting independent review rounds.
+Ready for final independent review after the authorized bounded revision.

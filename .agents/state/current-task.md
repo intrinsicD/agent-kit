@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -599,3 +599,60 @@ validation changes, fresh local/CI evidence, and one final independent review.
 
 The repository owner chooses one option under Human Decisions. The receiving
 Driver records that answer and date before any implementation work resumes.
+
+### Handoff (codex-b, Driver, Final Authorized Revision)
+
+#### Objective
+
+Independently verify that commit `2a77376` closes the two Round 2 false
+negatives under the owner's recorded authorization, while preserving every
+previously verified property.
+
+#### Changes
+
+- A present Status field whose normalized first word is empty now produces
+  `claim <ID> has no status disposition`; missing Status remains handled by the
+  required-field check.
+- The verification regression removes only whitespace-delimited trailing shell
+  comments before counting expected gate commands.
+- Added empty-status, punctuation-only-status, and commented-duplicate-gate
+  regressions. The full suite grows from 61 to 64 tests.
+
+#### Evidence
+
+- Focused ARA suite: 23/23 pass; focused verification suite: 5/5 pass.
+- Clean `./scripts/verify.sh`: exit 0 with 64/64 tests.
+- Disposable `2a77376` archives: empty Status and `Status: :;,.` each exit 1
+  at the ARA stage; a duplicated ARA command with `# duplicated gate` exits 1
+  at the regression stage.
+- The original five induced failures still exit 1 at their intended lint,
+  format, workflow, ARA, and unit-test stages.
+- GitHub Actions run
+  `https://github.com/intrinsicD/agent-kit/actions/runs/30440422028` passes
+  Python 3.11, 3.12, and 3.13 at `2a77376`.
+- Distribution content and manifest remain unchanged.
+
+#### Assumptions
+
+Shell `#` is treated as a trailing comment only when preceded by whitespace,
+matching the reviewed counterexample and avoiding a general shell parser.
+
+#### Uncertainties
+
+Only the previously accepted out-of-scope limitations remain: reference-style
+PAPER links, Git resolution of commit proofs, Windows, arbitrary
+shell-equivalent rewrites, and immutable action SHA pinning.
+
+#### Review Focus
+
+- Reproduce empty, whitespace-only, and punctuation-only Status values plus
+  punctuated valid/invalid status words.
+- Reproduce the exact commented duplicate and whitespace variants without
+  expanding into arbitrary shell equivalence.
+- Run the clean 64-test command and inspect CI run `30440422028`.
+- Confirm no distribution or unrelated implementation path changed.
+
+#### Recommended Next Action
+
+Return the final independent verdict. If accepted, set `Status: Accepted` and
+`Turn: driver` so the Driver can merge and run accepted closeout.
