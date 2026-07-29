@@ -2,16 +2,19 @@
 
 Date: 2026-07-29
 
-Reviewed implementation: `5ceaceb`, `c3c4fcb`, `49db6a5`
+Reviewed implementation tip: `337e5b9`
+
+Independent acceptance: `43845cd`
 
 ## Scope
 
-Driver self-audit of Task 007's manifest schema v2, group selection, slug
-renderer, install and dry-run paths, generated receipt, doctor command,
-regression suite, and user-facing installation contract. The audit asks whether
-the implementation preserves target ownership and the existing
-refuse-on-collision guarantee while adding the interfaces approved in the task
-record. Quantitative and performance claims are not in scope.
+Driver self-audit and independent Reviewer falsification of Task 007's manifest
+schema v2, group selection, slug renderer, install and dry-run paths, generated
+receipt, doctor command, regression suite, and user-facing installation
+contract. The audit asks whether the implementation preserves target ownership
+and the existing refuse-on-collision guarantee while adding the interfaces
+approved in the task record. Quantitative and performance claims are not in
+scope.
 
 ## Contracts Reviewed
 
@@ -116,7 +119,8 @@ in `49db6a5`:
 
 ## Severity
 
-No open critical, high, or medium findings remain in the Round 2 Driver audit.
+No open critical, high, or medium findings remain after independent Round 2
+review.
 
 ## Evidence
 
@@ -133,6 +137,13 @@ All Python test commands used `PYTHONDONTWRITEBYTECODE=1`.
 - `./scripts/verify.sh`: all five gates passed; Ruff lint and format were clean,
   workflow state and 14 ARA claims validated, and all 86 regression tests
   passed.
+- Reviewer Round 2 independently reproduced the 28 focused tests and 86-test
+  unified gate, both hierarchy orderings, cross-group and receipt conflicts,
+  Unicode token boundaries and idempotence, directory/dangling/live-file
+  template cases, no-write snapshots, and the unchanged 22-row `core` mapping.
+- GitHub Actions runs `30446106512` at implementation tip `337e5b9` and
+  `30446215181` at handoff tip `570f08e` both passed the verbatim gate on
+  Python 3.11, 3.12, and 3.13.
 - A separate disposable Git-target probe installed 22 `core` payload files and
   the receipt with slug `probe`; the installed validator found 11 valid skills
   and zero archived tasks; doctor exited 0 clean, then reported
@@ -143,7 +154,7 @@ All Python test commands used `PYTHONDONTWRITEBYTECODE=1`.
 
 ## Required Fixes
 
-None identified by the Driver self-audit.
+None.
 
 ## Optional Improvements
 
@@ -161,10 +172,9 @@ interface or threat model.
   installer-created paths for a later collision report.
 - Without a receipt, doctor cannot recover hashes or optional profile
   selection. Its presence-only `core` report is intentionally labeled unknown.
-- This is a Driver revision self-audit. Independent Reviewer Round 2
-  falsification is still required before acceptance.
 
 ## Verdict
 
-Ready for independent Round 2 review, subject to the final verification and CI
-evidence in the Driver handoff.
+Accepted independently at `43845cd`. Reviewer Round 2 found no required changes
+after reproducing the corrected boundaries, focused suite, complete gate,
+mapping, no-write behavior, and CI evidence.

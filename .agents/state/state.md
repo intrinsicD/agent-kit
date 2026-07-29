@@ -9,10 +9,13 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 ## Working System
 
 - Eleven reusable skills are present and match the routing in `AGENTS.md`.
-- The installer copies a fixed 22-file allowlist containing reusable workflow
-  authority, skills, validation, blank state, and blank documentation indexes.
-  It refuses every exact destination or blocking ancestor collision before
-  writes and does not enter target Git metadata.
+- The installer consumes schema-v2 manifest groups while keeping `core` at the
+  accepted 22-file payload. Every install explicitly selects slug-prefixing or
+  no-prefix behavior; dry-run uses the same plan, install emits a receipt, and
+  doctor checks immutable hashes plus presence-only user templates.
+- Raw, rendered, and receipt-inclusive plans reject exact and hierarchical
+  destination conflicts before writes. Exclusive creation and owned-path
+  rollback preserve pre-existing target content and Git metadata.
 - The optional `results-audit` skill adds claim inventory, raw recomputation,
   provenance, controls, accounting, evidence-scope, and disposition checks
   while leaving domain-specific rules local.
@@ -20,7 +23,7 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
   visible fields, review semantics, status/turn pairing, terminal status, and
   matching ids.
 - `scripts/verify.sh` is the single source-repository gate for Ruff lint and
-  format, workflow structure, the ARA claim ledger, and all 64 regression
+  format, workflow structure, the ARA claim ledger, and all 86 regression
   tests. GitHub Actions invokes it verbatim on Python 3.11, 3.12, and 3.13.
 - The standard-library ARA checker enforces required artifacts, claim shape,
   dispositions, dependencies, repository-contained proof paths, staging
@@ -36,9 +39,11 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 - The `Turn` field remains a cooperative protocol marker rather than a
   concurrency lock.
 - Markdown role labels do not cryptographically authenticate agent identity.
-- Installer evidence covers a stable target on Python 3.12/Linux; concurrent
-  adversarial mutation, uncatchable termination, non-POSIX behavior, and
-  alternate Python versions remain outside the approved evidence.
+- Installer evidence covers Linux and the CI floor of Python 3.11–3.13.
+  Unsigned-receipt tampering, concurrent adversarial mutation, uncatchable
+  termination, and Windows/non-POSIX behavior remain outside the approved
+  evidence. Without a receipt, doctor intentionally cannot recover hashes or
+  optional-profile selection.
 
 ## Known Failures
 
@@ -49,9 +54,11 @@ accepted remediations remain in `docs/audits/` and `docs/tasks/`.
 
 - Do not install agent-kit into, or replace the existing workflow of, Prospect,
   StructSplat, realtime-gs, or IntrinsicEngine.
-- Distribute agent-kit only through the fixed, non-overwriting manifest and
-  blank templates. Overwrite, update, uninstall, and target profiles are not
-  implied.
+- Distribute agent-kit only through schema-v2 named manifest groups and
+  non-overwriting writes. `core` remains the exact 22-file payload; installs
+  require `--slug` or `--no-prefix`, and dry-run, generated receipts, and
+  read-only doctor are supported. Overwrite, update, repair, uninstall, and
+  unapproved profile content are not implied.
 - Preserve target-specific task, evidence, validation, and domain-skill
   systems. `results-audit` is an optional generic procedure; domain rules
   remain local.
@@ -59,30 +66,33 @@ accepted remediations remain in `docs/audits/` and `docs/tasks/`.
   realtime-gs first and Prospect separately afterward. Consider only in-place
   identity/verdict checks in StructSplat or IntrinsicEngine after a concrete
   failure establishes the need.
-- Before an authorized zero-collision target pilot, add a read-only installer
-  plan; do not import IntrinsicEngine's broader generator platform.
+- Any authorized target pilot begins with the accepted read-only dry-run and
+  requires zero collisions; do not import IntrinsicEngine's broader generator
+  platform.
 
 ## Current Metrics
 
 - Routed skills: 11.
-- Fixed payload files: 22.
-- Workflow regression tests: 36.
-- Unified verification tests: 64.
+- Fixed `core` payload files: 22.
+- Agent workflow regression tests: 30.
+- Installer distribution regression tests: 28.
+- Verification wiring regression tests: 5.
+- Unified verification tests: 86.
 - ARA checker fixtures: 23.
-- Archived operational tasks: 6.
+- Archived operational tasks: 7.
 - Remediated audit findings: 6 of 6.
+- Task 007 review findings resolved: 3 of 3.
 - Assessed target workflows: 4.
-- Task 006 independent verdict: Accepted.
+- Task 007 independent verdict: Accepted.
 
 ## Immediate Next Step
 
-Initialize the validated Installer v2 slice as task 007 with roles swapped.
-Record human outcomes for the prefix-policy and doctor-receipt interface
-questions before implementation; do not infer either choice from the planning
-reference alone.
+Initialize the generic validator pack and target CI template as actual task
+008, applying the role swap implied by the Last Completed Task. Keep the
+profile opt-in and do not pull later maturity-program slices forward.
 
 ## Last Completed Task
 
-- Task ID: 006
-- Driver: codex-b
-- Reviewer: codex-a
+- Task ID: 007
+- Driver: codex-a
+- Reviewer: codex-b

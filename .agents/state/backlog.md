@@ -2,13 +2,14 @@
 
 Only add work that has evidence, a clear motivation, or an accepted dependency.
 
-- [ ] Installer v2: slug prefixing, dry-run, doctor, and manifest groups
+- [x] Installer v2: slug prefixing, dry-run, doctor, and manifest groups
   - Motivation: Multi-repository sessions expose unprefixed skill-name
     collisions, while the current installer cannot preview or diagnose an
     installation.
   - Priority: High
   - Dependencies: Verification foundation (accepted task 006)
-  - Evidence: `docs/research/maturity-program-plan.md` plan 006
+  - Evidence: `docs/research/maturity-program-plan.md` plan 006;
+    independently accepted as `docs/tasks/007-installer-v2.md`
   - Suggested skills: `task-orchestration`, `implementation`, `code-audit`,
     `handoff`, `repo-organization`
 - [ ] Generic validator pack and target CI template
