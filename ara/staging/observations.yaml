@@ -142,3 +142,14 @@ observations:
     promoted_to: "logic/claims.md:C13"
     crystallized_via: empirical-resolution
     stale: false
+  - id: O14
+    timestamp: "2026-07-29T11:31+02:00"
+    provenance: ai-suggested
+    content: "Task 006's branch runs one verification entry point across Python 3.11-3.13 and passes 61 tests, but two independently reproduced validation false negatives keep the capability unaccepted."
+    context: "Two independent review rounds of the maturity program verification foundation ended Revision required and triggered mandatory human escalation."
+    potential_type: claim
+    bound_to: [N27, N28, N29]
+    promoted: false
+    promoted_to: null
+    crystallized_via: null
+    stale: false

@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T10:34+02:00"
-  turn_count: 7
-  summary: "Workflow defects were remediated; target adoption was assessed and revalidated; Tasks 004 and 005 were independently accepted and archived."
+  last_turn: "2026-07-29T11:31+02:00"
+  turn_count: 8
+  summary: "Tasks 004 and 005 were accepted; maturity Task 006 implemented verification and escalated two residual false negatives after two review rounds."
 
 events_logged:
   - turn: 1
@@ -169,6 +169,36 @@ events_logged:
     routing: direct
     provenance: ai-executed
     summary: "Retain no normal installation or replacement, with only explicitly prioritized bounded pilots."
+  - turn: 8
+    type: decision
+    id: N26
+    routing: direct
+    provenance: user
+    summary: "Begin the maturity program in dependency order with the verification foundation."
+  - turn: 8
+    type: experiment
+    id: N27
+    routing: direct
+    provenance: ai-executed
+    summary: "Initial implementation passed locally and in CI; Round 1 found four validation bypasses."
+  - turn: 8
+    type: experiment
+    id: N28
+    routing: direct
+    provenance: ai-executed
+    summary: "The bounded revision closed four bypasses; Round 2 found two remaining false negatives."
+  - turn: 8
+    type: question
+    id: N29
+    routing: direct
+    provenance: ai-suggested
+    summary: "Ask whether to authorize a final bounded revision after two non-accepting rounds."
+  - turn: 8
+    type: claim
+    id: O14
+    routing: staged
+    provenance: ai-suggested
+    summary: "Verification is executable and cross-version green but remains unaccepted with two false negatives."
 
 ai_actions:
   - turn: 1
@@ -263,6 +293,23 @@ ai_actions:
       - "docs/tasks/005-revalidate-cross-repository-workflow-adoption.md"
       - ".agents/state/current-task.md"
       - ".agents/state/state.md"
+  - turn: 8
+    action: "Implemented the verification foundation, corrected the maturity plan, and ran local, induced-failure, and Python-matrix CI checks."
+    provenance: ai-executed
+    files_changed:
+      - "scripts/verify.sh"
+      - "scripts/check_ara.py"
+      - "tests/test_check_ara.py"
+      - "tests/test_verification.py"
+      - ".github/workflows/ci.yml"
+      - "README.md"
+      - "docs/research/maturity-program-plan.md"
+  - turn: 8
+    action: "Ran two independent falsification rounds, fixed four first-round bypasses, and recorded the mandatory human escalation for two residual false negatives."
+    provenance: ai-executed
+    files_changed:
+      - ".agents/state/current-task.md"
+      - "docs/audits/verification-foundation.md"
 
 claims_touched:
   - id: C01
@@ -332,9 +379,13 @@ key_context:
     excerpt: "Final clean-main verification confirmed the accepted distribution and results-audit integration survived merge and archive closeout."
   - turn: 7
     excerpt: "Independent review corrected moving-target snapshot evidence and accepted the unchanged no-replacement, conditional-pilot disposition."
+  - turn: 8
+    excerpt: "Two independent Revision required rounds leave Task 006 blocked on whether to authorize one final bounded two-fix revision."
 
 open_threads:
   - "If explicitly prioritized, add a read-only installer plan and measure whether a bounded realtime-gs pilot earns adoption; consider Prospect separately later."
+  - "Human decision required: authorize the final bounded Task 006 correction, accept two known false negatives, or close the task as inconclusive."
 
 ai_suggestions_pending:
   - "Before an authorized zero-collision target pilot, add a read-only installer plan or --dry-run mode."
+  - "Authorize one final Task 006 revision to reject empty/punctuation-only statuses and count repeated gates after trailing shell comments."
