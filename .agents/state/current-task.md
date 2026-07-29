@@ -12,7 +12,7 @@ Revalidate cross-repository agent workflow adoption
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -91,7 +91,7 @@ these are packaging results, not evidence of workflow benefit.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -231,3 +231,177 @@ Yes
 #### Recommended next action
 
 codex-b independently reviews commit `fecdb53` and records a verdict.
+
+### Review (codex-b, Reviewer, Round 1)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The main zero-drift premise is false at the fixed artifact. Prospect is at
+`21b16952b4ebe930bde312c9f0bb0468ed46fc6e`, one commit after the recorded
+Task 003 snapshot, and IntrinsicEngine is at
+`41c4f73b99826cc25f434e94026a8ca564dfe897`, two commits after its snapshot.
+Their reflogs place those commits at 10:07 and 10:08 local time, before artifact
+commit `fecdb53` at 10:12 and handoff commit `f707820` at 10:13. StructSplat
+and realtime-gs do reproduce zero commit and tree drift.
+
+The missed commits do not presently appear to reverse the repository
+dispositions, but they must be classified in the durable assessment:
+
+- Prospect `21b1695` changes Q1 evidence, ARA/session records, constraints, an
+  operator runbook, implementation, and tests, but not its agent authority,
+  skills, or CI. Diagnostics from a disposable snapshot still exit zero while
+  keeping all four claims unsupported and scoped as reference-only or blocked.
+- IntrinsicEngine `ecd484d` and `41c4f73` activate RUNTIME-201 through the
+  existing task lifecycle and add its first implementation slice. They change
+  task state, the generated session brief, implementation, and tests, but not
+  workflow policy or validators. From a disposable snapshot, strict task
+  validation still passes for 175 task files, the session brief is current,
+  and all 17 skill mirrors across three surfaces agree.
+
+The no-replacement recommendation remains proportionate. The selective
+realtime-gs-first ordering is a defensible integration-cost inference because
+it lacks a competing task authority, not an adoption result; all pilot benefit
+remains unmeasured. The target-conditioned read-only plan or `--dry-run`
+recommendation is also appropriately narrow: the current CLI has no preview
+path and would immediately create 22 files in zero-collision Prospect, while
+the recommendation is triggered only by an authorized pilot and explicitly
+excludes overwrite, update, and generator-platform scope.
+
+Task 004 does close the accepted P0 and P1 work. Its implementation and
+evidence-fix commits are ancestors of this branch; the current manifest has 22
+files, all six distribution regressions pass, live validation passes, and the
+generic optional `results-audit` skill remains routed with domain rules left
+local. The fixed-payload collision result also reproduces at the actual target
+heads as `0/1/1/1`, with `AGENTS.md` as each nonzero collision.
+
+One separate conclusion sentence exceeds that evidence. The Implications
+section says Task 004 made changes that “support adaptation into an existing
+task authority.” Task 004 explicitly excluded target-specific adapters, and
+the fixed installer always carries its own state/task layout. Adaptation
+remains a target-conditioned future integration decision, not completed P0/P1
+behavior.
+
+#### Evidence Quality
+
+- `git rev-list --left-right --count <task-003>...HEAD` reproduced target
+  distances `0/1`, `0/0`, `0/0`, and `0/2` for Prospect, StructSplat,
+  realtime-gs, and IntrinsicEngine respectively; tree diffs agree.
+- Read-only reflog inspection establishes that all three missed commits
+  predate the reviewed artifact and handoff.
+- Diff path inspection found no changed workflow policy, skill, validator, or
+  CI file in the Prospect commit, and only existing task-state surfaces among
+  the IntrinsicEngine workflow paths.
+- Disposable current-HEAD snapshots reproduced Prospect diagnostics and the
+  impacted IntrinsicEngine task, brief, and skill-mirror checks.
+- `python3 tests/test_distribution.py -v` passed 6/6 and
+  `scripts/validate_agent_workflow.py` passed with 11 skills and four archives.
+- A read-only call to the installer's own payload and collision functions
+  reproduced 22 payload files and current collision counts `0/1/1/1`.
+- Prospect, StructSplat, and realtime-gs worktree fingerprints were identical
+  before and after review. IntrinsicEngine's dirty state changed concurrently
+  while the review ran, despite this review issuing only read-only commands
+  against the live target; it was neither inspected as authority nor modified.
+
+#### Simplicity
+
+The substantive assessment still prefers no normal installation or
+replacement, preserves every domain workflow, and limits possible experiments
+to the smallest missing coordination invariant. The conditional installer
+preview is one bounded behavior rather than an IntrinsicEngine generator
+import. No broader architecture is justified.
+
+#### Missing Cases
+
+The moving IntrinsicEngine worktree prevents treating one dirty-state
+fingerprint as durable current authority. Remote-only policy, unrecorded human
+practice, and actual pilot cost or benefit remain untested. These limits do not
+justify the false zero-commit claim and do not presently overturn the
+no-change/pilot dispositions.
+
+#### Required Changes
+
+1. Re-probe all four target heads at the revised artifact boundary. Replace the
+   zero-drift table and all `0/0/0/0` claims with the actual commits and
+   distances, and record the contemporaneous worktree limitation without
+   treating dirty work as workflow authority.
+2. Classify Prospect `21b1695` and IntrinsicEngine `ecd484d`/`41c4f73` in the
+   research note, record the bounded current-HEAD checks, and state explicitly
+   why those changes do or do not alter each disposition. Recheck immediately
+   before the next handoff in case the active target work advances again.
+3. Correct the Implications section so only the fixed clean payload boundary
+   and optional generic results audit are described as completed Task 004
+   behavior. Keep adaptation into an existing task authority under
+   target-conditioned future work.
+4. Update Current Evidence and the next Handoff to cite the revised fixed
+   artifact and accurate target snapshot. Preserve the four target worktrees
+   and do not broaden the revision into a pilot or installer change.
+
+#### Optional Improvements
+
+- Mark the older 31-test/two-archive result as historical Task 003 evidence so
+  it cannot be confused with the current 36-test/four-archive result.
+- Record a capture time beside future cross-repository snapshots when target
+  repositories are under active development.
+
+### Session Completion (codex-b, Reviewer, Round 1)
+
+#### Work completed
+
+Independently challenged the fixed Task 005 artifact, falsified its zero-drift
+premise, classified the newly discovered commits, reproduced the smallest
+impacted target checks, verified Task 004 P0/P1 closure, challenged all four
+repository dispositions and the conditional installer-preview recommendation,
+and returned a structured Revision required verdict.
+
+#### Evidence
+
+Prospect is one commit and IntrinsicEngine two commits beyond the report's
+snapshots, with reflog times preceding the fixed artifact. The new commits do
+not currently alter the substantive no-replacement/pilot conclusion, while the
+Task 004 payload, results-audit routing, regression evidence, and current
+`0/1/1/1` collision result reproduce.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- Four target commit-distance, tree-diff, reflog, status, and changed-path
+  probes.
+- Prospect diagnostics from a disposable current-HEAD snapshot.
+- IntrinsicEngine strict task, generated-brief, and skill-mirror checks from a
+  disposable current-HEAD snapshot.
+- Six focused agent-kit distribution regressions.
+- Live agent-kit workflow validation.
+- Fixed-manifest payload and target collision preflight.
+- Git ancestry and whitespace checks.
+
+#### Known limitations
+
+No target pilot, remote-policy inspection, or target write was performed.
+IntrinsicEngine's dirty work changed concurrently and remains outside the
+checked-in workflow assessment.
+
+#### Unresolved questions
+
+Whether a realtime-gs or Prospect coordination pilot earns its cost remains a
+future measured decision; it is not evidence for present adoption.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-a` corrects the two evidence defects without changing target
+repositories, reruns the bounded currency checks, and returns a new fixed
+artifact for Round 2 review.
