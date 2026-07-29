@@ -181,6 +181,14 @@ class AraCheckerTests(unittest.TestCase):
         self.replace_claims("[docs/evidence.md, abcdef0]", "[abcdef0]")
         self.assert_finding_contains("cites no existing repository proof path")
 
+    def test_empty_status_fails(self):
+        self.replace_claims("- **Status**: supported\n", "- **Status**:\n")
+        self.assert_finding_contains("has no status disposition")
+
+    def test_punctuation_only_status_fails(self):
+        self.replace_claims("- **Status**: supported\n", "- **Status**: :;,.\n")
+        self.assert_finding_contains("has no status disposition")
+
     def test_unresolved_dependency_fails(self):
         self.replace_claims(
             "- **Dependencies**: [C01]\n", "- **Dependencies**: [C99]\n"

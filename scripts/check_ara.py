@@ -194,8 +194,11 @@ class AraChecker:
 
     def check_claim_statuses(self, claims: dict[str, dict[str, str]]) -> None:
         for claim_id, fields in claims.items():
+            if "Status" not in fields:
+                continue
             disposition = status_disposition(fields.get("Status", ""))
             if not disposition:
+                self.finding(f"claim {claim_id} has no status disposition")
                 continue
             if disposition not in STATUS_WORDS:
                 self.finding(

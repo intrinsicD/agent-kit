@@ -2,6 +2,7 @@
 """Regression tests for the single verification entry point and CI mirror."""
 
 from pathlib import Path
+import re
 import stat
 import unittest
 
@@ -19,12 +20,20 @@ EXPECTED_STAGES = (
     "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_ara.py",
     "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v",
 )
+TRAILING_SHELL_COMMENT = re.compile(r"\s+#.*$")
+
+
+def normalized_shell_lines(script_text):
+    return [
+        TRAILING_SHELL_COMMENT.sub("", line.strip()).rstrip()
+        for line in script_text.splitlines()
+    ]
 
 
 class VerificationEntryPointTests(unittest.TestCase):
     def test_verify_script_runs_exactly_the_five_documented_stages(self):
         lines = VERIFY_SCRIPT.read_text(encoding="utf-8").splitlines()
-        stripped_lines = [line.strip() for line in lines]
+        executable_lines = normalized_shell_lines("\n".join(lines))
         stage_commands = []
         for index, line in enumerate(lines):
             if not line.startswith('echo "['):
@@ -39,9 +48,15 @@ class VerificationEntryPointTests(unittest.TestCase):
         for expected in EXPECTED_STAGES:
             self.assertEqual(
                 1,
-                stripped_lines.count(expected),
+                executable_lines.count(expected),
                 f"gate command must occur exactly once: {expected}",
             )
+
+    def test_trailing_comment_cannot_hide_duplicate_gate(self):
+        script = VERIFY_SCRIPT.read_text(encoding="utf-8")
+        duplicated = f"{script}\n{EXPECTED_STAGES[3]} # duplicated gate\n"
+        executable_lines = normalized_shell_lines(duplicated)
+        self.assertEqual(2, executable_lines.count(EXPECTED_STAGES[3]))
 
     def test_verify_script_is_executable_posix_shell(self):
         self.assertEqual("#!/bin/sh", VERIFY_SCRIPT.read_text().splitlines()[0])
