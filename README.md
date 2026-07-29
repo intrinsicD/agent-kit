@@ -78,12 +78,28 @@ The operating-state checks stay quiet only while `current-task.md` is the
 complete unfilled template. A partially initialized record fails validation
 instead of being mistaken for a fresh installation.
 
-Run the source regression suite after changing workflow or distribution
-behavior. These source-repository tests are not installed into targets:
+For source development, install the pinned development dependency and run the
+single verification entry point after changing workflow or distribution
+behavior:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+python3 -m pip install -r requirements-dev.txt
+./scripts/verify.sh
 ```
+
+The command runs Ruff lint and formatting checks, validates workflow state,
+checks the source repository's claim ledger, and runs the full regression
+suite. Source-repository verification tooling and tests are not installed into
+targets.
+
+## Evidence and claims
+
+The source repository records durable capability and research claims in
+[`ara/logic/claims.md`](ara/logic/claims.md). Each claim binds its status and
+falsification criteria to repository evidence; `scripts/check_ara.py` enforces
+the ledger's structure and on-disk proof links through `./scripts/verify.sh`.
+The live ledger is project history and is deliberately excluded from the
+distribution payload.
 
 ## Wiring up the agent tools
 
