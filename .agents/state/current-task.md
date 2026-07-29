@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -26,10 +26,10 @@ regression suite.
 
 ## Motivation
 
-The accepted maturity program identifies verification as the dependency for
-every later installer/profile slice. The live baseline has 36 passing tests and
-a passing workflow validator, but Ruff 0.15.20 still reports two known format
-failures, the ARA ledger is unchecked, and the repository has no single
+The owner-authorized maturity program identifies verification as the dependency
+for every later installer/profile slice. The live baseline has 36 passing tests
+and a passing workflow validator, but Ruff 0.15.20 still reports two known
+format failures, the ARA ledger is unchecked, and the repository has no single
 verification entry point or CI workflow.
 
 ## Success Criteria
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -120,3 +120,68 @@ blocks here in chronological order. Entries use `###` headings and their fields
 use `####` headings so every entry remains nested under this Handoff Log. Do
 not delete earlier entries. On task completion this file is archived to
 `docs/tasks/<task-id>-<slug>.md`.
+
+### Handoff (codex-b, Driver)
+
+#### Objective
+
+Independently verify that task 006 supplies one reproducible five-stage gate,
+enforces the existing ARA ledger, and mirrors the gate verbatim in a
+three-version CI matrix without changing the installable payload.
+
+#### Changes
+
+- Isolated the two legacy format corrections in commit `a884ccb`.
+- Added Ruff 0.15.20 pin/configuration, `scripts/verify.sh`,
+  `scripts/check_ara.py`, 17 fixture tests, README guidance, and the live
+  heading normalization in commit `a25c0f9`.
+- Added the Python 3.11/3.12/3.13 workflow, four verification/CI regression
+  tests, and a dated maturity-plan amendment in commit `f2fc7e8`.
+- Registered the remaining maturity program as dependency-aware backlog and
+  recorded the Driver audit in `docs/audits/verification-foundation.md`.
+
+#### Evidence
+
+- Clean `./scripts/verify.sh`: exit 0; Ruff lint and format pass, workflow
+  validator passes, `check_ara` reports 13 valid claims, and 57/57 tests pass.
+- Disposable induced failures all exit 1 at the intended stage: unused/undefined
+  import (lint), unformatted assignment (format), `In progress` with Reviewer
+  turn (workflow), missing C01 proof path (ARA), and a deliberately wrong Ruff
+  pin assertion (unit tests).
+- GitHub Actions run
+  `https://github.com/intrinsicD/agent-kit/actions/runs/30438019981` succeeded
+  for Python 3.11, 3.12, and 3.13 at `f2fc7e8`.
+- `git diff 878018d..f2fc7e8 -- distribution/manifest.json` is empty.
+- Task initialization and every implementation increment are committed; the
+  worktree was clean before this handoff update.
+
+#### Assumptions
+
+- The owner's request authorizes the proposed dependency order and Python
+  support floor. The cross-repository convergence decision D1 remains
+  deliberately unaccepted.
+- Current official action majors (`checkout@v7`, `setup-python@v6`) are
+  appropriate for GitHub-hosted runners.
+
+#### Uncertainties
+
+- The checker covers inline Markdown links and images, not reference-style
+  Markdown links, because the live PAPER uses only inline links.
+- Commit-shaped proof references remain syntax-only and are not looked up in
+  Git, matching the stated constraint.
+- Immutable action SHA pinning was outside the proposed scope.
+
+#### Review Focus
+
+- Attempt to bypass or crash each ARA invariant, especially wrapped fields,
+  mixed path/commit proofs, duplicate IDs, and malformed headings.
+- Confirm the stage-list test cannot pass if CI or `verify.sh` re-lists or
+  reorders gates.
+- Reproduce the clean gate and inspect the successful three-version CI run.
+- Confirm the format commit is mechanical and the distribution manifest and
+  payload expectations are unchanged.
+
+#### Recommended Next Action
+
+Use `review-and-falsification` and `code-audit`, append an independent verdict,
+and return the turn to the Driver.
