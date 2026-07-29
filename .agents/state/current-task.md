@@ -71,13 +71,16 @@ Task 003 independently accepted a no-wholesale-adoption conclusion at Prospect
 `5f7843c9`. Task 004 then made agent-kit distribution collision-safe without
 authorizing installation into those repositories.
 
-All four target `HEAD`s remain exactly at the Task 003 commits. Checks rerun
-from disposable committed snapshots passed: Prospect diagnostics, StructSplat
-structural checks and 8 tests, realtime-gs structural checks and 12 tests, and
-IntrinsicEngine task/state/brief/skill/ARA checks plus its generator self-test.
-Agent-kit's 36 tests and live validator pass. The fixed payload currently has
-zero path collisions in Prospect and only `AGENTS.md` in each other target;
-these are packaging results, not evidence of workflow benefit.
+At the revised `2026-07-29T10:23:47+02:00` snapshot, Prospect is one commit
+past its Task 003 baseline, StructSplat and realtime-gs remain unchanged, and
+IntrinsicEngine is three commits past its baseline. Prospect `21b1695` changes
+Q1 evidence and implementation without changing workflow authority or checks.
+IntrinsicEngine `ecd484d`, `41c4f73`, and `cf4fe419` exercise its existing task
+lifecycle and add implementation slices without changing workflow policy or
+validators. Bounded checks at the fixed current commits pass. Agent-kit's 36
+tests and live validator pass. The fixed payload has zero path collisions in
+Prospect and only `AGENTS.md` in each other target; these are packaging
+results, not evidence of workflow benefit.
 
 ## Minimal Plan
 

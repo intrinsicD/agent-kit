@@ -132,22 +132,41 @@ human practices not represented in the repositories.
 
 ### Repository observations
 
-On 2026-07-29, Task 005 compared every target's current `HEAD` with the Task 003
-snapshot. All four commit distances are zero:
+Task 005 captured the revised target snapshot at
+`2026-07-29T10:23:47+02:00` and compared it with the Task 003 baselines:
 
 | Repository | Current commit | Commits since Task 003 |
 | --- | --- | ---: |
-| `prospect` | `537966bf88c0ca9ecc89af10b6d7dbebef3872bd` | 0 |
+| `prospect` | `21b16952b4ebe930bde312c9f0bb0468ed46fc6e` | 1 |
 | `structsplat` | `ebf860bcf29d15e33d1be32315c6856baa30abb5` | 0 |
 | `realtime-gs` | `dd84c28deb3378d57992cd10b20f08bb594f102a` | 0 |
-| `IntrinsicEngine` | `5f7843c99be6f978b2939b463f48abfb39348c66` | 0 |
+| `IntrinsicEngine` | `cf4fe4196c4d7816ec38a519171ac5f0b2e108db` | 3 |
 
-Prospect still has local uncommitted research work and an untracked `discuss/`
-directory. IntrinsicEngine has local uncommitted RUNTIME-201 work. Task 005 did
-not inspect those changes as workflow authority and did not write to any target
-checkout. StructSplat and realtime-gs remain clean.
+Prospect was four commits ahead of `origin/main` with only an untracked
+`discuss/` directory. StructSplat, realtime-gs, and IntrinsicEngine were clean;
+IntrinsicEngine was on `codex/runtime-201-unified-editor-mutation`. The target
+repositories were active while Task 005 ran, so this is an explicitly timed
+snapshot rather than a timeless `HEAD` claim. Task 005 did not inspect
+untracked content as workflow authority and did not write to any target
+checkout.
 
-The target checks were rerun from disposable `git archive HEAD` snapshots so
+The post-Task-003 changes were classified as follows:
+
+- Prospect `21b1695` closes a Q1 SIGTERM evidence boundary. It changes ARA
+  evidence/session records, constraints, an operator runbook, implementation,
+  and tests, but not agent authority, skills, task coordination, validators, or
+  CI. It strengthens Prospect's repository-specific evidence workflow without
+  filling the generic task-turn/verdict gap.
+- IntrinsicEngine `ecd484d`, `41c4f73`, and `cf4fe419` activate RUNTIME-201 and
+  add its first two implementation slices. They move and update the task
+  through the existing task lifecycle, regenerate its session view, and change
+  runtime code, documentation, and tests. They do not change workflow policy,
+  skills, validators, or CI. This is further evidence that a parallel
+  agent-kit task authority would duplicate an actively used system.
+- StructSplat and realtime-gs have no committed or tree drift from the Task 003
+  snapshots.
+
+Checks were rerun from disposable archives fixed to the recorded commits so
 the live working trees stayed untouched:
 
 - Prospect's epistemic diagnostics exited zero while retaining
@@ -157,8 +176,9 @@ the live working trees stayed untouched:
 - realtime-gs's docs, ARA, and script checks passed; its focused workflow tests
   passed 12/12.
 - IntrinsicEngine validated 175 task files and 811 task IDs, reported its
-  session brief and skill mirrors current, passed its ARA check, and passed the
-  generator self-test.
+  session brief and all 17 skill mirrors across three surfaces current, and
+  passed its ARA check. Its unchanged generator self-test also passed during
+  the initial Task 005 snapshot.
 
 ### Established results
 
@@ -167,7 +187,7 @@ the live workflow validator pass. Task 004's fixed manifest contains 22
 payload files, emits blank state, excludes source history, and refuses all
 collisions before writes.
 
-Against the current target files, the new manifest preflight reports:
+Against the revised target snapshots, the new manifest preflight reports:
 
 | Repository | Fixed-payload collisions | Collision |
 | --- | ---: | --- |
@@ -183,10 +203,12 @@ worth its cost.
 
 ### Agent inference
 
-No target-side evidence has changed the Task 003 dispositions. Task 004 makes
-a bounded pilot safe to package, while the benefit and process cost remain
-unmeasured. A target change still requires a separately prioritized,
-falsifiable pilot.
+The new Prospect and IntrinsicEngine commits do not change the Task 003
+dispositions. Prospect still warrants only a conditional later pilot that
+preserves its stronger evidence gates. IntrinsicEngine's active task lifecycle
+further weighs against a parallel workflow. Task 004 makes a bounded pilot
+safe to package, while the benefit and process cost remain unmeasured. A target
+change still requires a separately prioritized, falsifiable pilot.
 
 ## Evaluation Criteria
 
@@ -745,13 +767,19 @@ generic workflow rules.
 
 ## Implications for This Repository
 
-The two-agent protocol should remain agent-kit's core. Task 004 made the
-required deployment changes:
+The two-agent protocol should remain agent-kit's core. Task 004 completed only
+the two changes supported as repository-independent:
 
 - distribute clean templates, not the repository's tracked history;
-- expose an explicit, auditable payload boundary before any installation;
-- support adaptation into an existing task authority rather than requiring a
-  parallel one;
+- expose an explicit, auditable payload boundary before any installation; and
+- add the optional generic results-audit procedure while leaving domain rules
+  local.
+
+Task 004 did not implement target-specific adaptation. A future authorized
+pilot must:
+
+- adapt the tested coordination invariant into the target's existing task
+  authority where one exists, rather than create a parallel authority;
 - preserve target repositories' specialist skills and resolve naming only
   when a preflight demonstrates a collision; and
 - treat stronger target evidence systems as extensions to keep, not workflows
