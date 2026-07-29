@@ -604,4 +604,25 @@ tree:
           - "tests/test_verification.py"
         also_depends_on: [N32]
         status: resolved
-        children: []
+        children:
+          - id: N36
+            type: experiment
+            title: "Review the Task 008 boundary revisions"
+            provenance: ai-executed
+            timestamp: "2026-07-29T14:22+02:00"
+            result: >
+              Independent Round 2 review passed the 109-test source gate,
+              focused 19/30/7 suites, disposable core-plus-verify gate and
+              doctor, and exact authority, scan-root, link, and glob
+              counterexamples. The workflow assertion caught compact, spaced,
+              quoted, and compact block forms but missed valid named scalar
+              and named block run steps, so the verdict remained Revision
+              required for one bounded regression gap.
+            evidence:
+              - "dd0e3fa"
+              - ".agents/state/current-task.md"
+              - "tests/test_verification.py"
+              - "tests/test_validator_pack.py"
+              - "tests/test_distribution.py"
+            status: resolved
+            children: []

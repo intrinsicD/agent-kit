@@ -8,8 +8,8 @@ sessions:
     open_threads: 1
   - id: "2026-07-29_001"
     date: "2026-07-29"
-    summary: "Task 008 Round 1 reproduced five bounded validator-pack gaps and returned Revision required."
-    turn_count: 10
-    events_count: 40
-    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15]
+    summary: "Task 008 Round 2 closed four boundary groups but retained one named-step anti-drift gap."
+    turn_count: 11
+    events_count: 42
+    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16]
     open_threads: 2

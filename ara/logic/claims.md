@@ -254,3 +254,21 @@ present.
 - **Dependencies**: [C14]
 - **Tags**: validator-pack, authority, markdown, docs-sync, ci, falsification
 - **From staging**: O16
+
+## C16: Task 008's first revision retains one workflow anti-drift gap
+- **Statement**: At revision commit `74e05f9`, independent probes close the
+  four authority, Markdown scan-root, link-label, and glob-validation groups
+  from Round 1, but `workflow_run_directives()` still returns only the required
+  target gate after a valid named scalar or named block `run` step relists a
+  checker command.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `74e05f9`, either named-step mutation changes
+  the helper's detected-directive tuple and fails the anti-drift assertion, or
+  any of the four stated closed correction groups still reproduces its Round 1
+  failure.
+- **Proof**: [.agents/state/current-task.md, tests/test_verification.py, dd0e3fa]
+- **Dependencies**: [C15]
+- **Tags**: validator-pack, ci, yaml, regression-tests, falsification
+- **From staging**: O17

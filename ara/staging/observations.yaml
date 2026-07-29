@@ -175,3 +175,14 @@ observations:
     promoted_to: "logic/claims.md:C15"
     crystallized_via: artifact-commitment
     stale: false
+  - id: O17
+    timestamp: "2026-07-29T14:22+02:00"
+    provenance: ai-suggested
+    content: "At Task 008 revision tip 74e05f9, four Round 1 boundary groups are closed, but the target-workflow anti-drift assertion still accepts relisted checker commands in valid named scalar and named block run steps."
+    context: "Independent Round 2 review reproduced all correction groups, committed the remaining exact counterexample, and returned Revision required."
+    potential_type: claim
+    bound_to: [N35, N36]
+    promoted: true
+    promoted_to: "logic/claims.md:C16"
+    crystallized_via: artifact-commitment
+    stale: false

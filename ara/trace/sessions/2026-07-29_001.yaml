@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T13:59+02:00"
-  turn_count: 10
-  summary: "Task 008 Round 1 reproduced five bounded validator-pack gaps and returned Revision required."
+  last_turn: "2026-07-29T14:22+02:00"
+  turn_count: 11
+  summary: "Task 008 Round 2 closed four boundary groups but retained one named-step anti-drift gap."
 
 events_logged:
   - turn: 1
@@ -247,6 +247,18 @@ events_logged:
     routing: crystallized
     provenance: ai-suggested
     summary: "Task 008 implementation tip a14d554 retains five independently reproduced boundary gaps."
+  - turn: 11
+    type: experiment
+    id: N36
+    routing: direct
+    provenance: ai-executed
+    summary: "Round 2 closed four boundary groups and reproduced one named-step workflow regression bypass."
+  - turn: 11
+    type: claim
+    id: O17
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 008 revision tip 74e05f9 retains one named scalar/block anti-drift gap."
 
 ai_actions:
   - turn: 1
@@ -382,6 +394,11 @@ ai_actions:
     files_changed:
       - ".agents/state/current-task.md"
       - "docs/audits/validator-pack.md"
+  - turn: 11
+    action: "Independently audited the Task 008 revision, ran exact and adjacent counterexamples plus full and disposable verification, and committed the Round 2 verdict."
+    provenance: ai-executed
+    files_changed:
+      - ".agents/state/current-task.md"
 
 claims_touched:
   - id: C01
@@ -441,6 +458,9 @@ claims_touched:
   - id: C15
     action: crystallized
     turn: 10
+  - id: C16
+    action: crystallized
+    turn: 11
 
 key_context:
   - turn: 1
@@ -463,9 +483,11 @@ key_context:
     excerpt: "The user chose option 1; Task 006 was fixed, independently accepted, merged, and followed by two explicit Installer v2 policy questions."
   - turn: 10
     excerpt: "Independent Task 008 review passed 105 tests and the installed profile, but five exact counterexample groups required revision."
+  - turn: 11
+    excerpt: "Round 2 closed four Task 008 finding groups, but valid named scalar and named block run steps still bypass the workflow anti-drift assertion."
 
 open_threads:
   - "If explicitly prioritized, add a read-only installer plan and measure whether a bounded realtime-gs pilot earns adoption; consider Prospect separately later."
-  - "Task 008 Driver must close the five Round 1 validator-pack findings before independent Round 2 review."
+  - "Task 008 Driver must close the named-step workflow anti-drift regression gap before the next independent review."
 
 ai_suggestions_pending: []
