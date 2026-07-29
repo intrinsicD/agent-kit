@@ -12,7 +12,7 @@ Implement generic validator pack and target CI template
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: human
 
 ## Mode
 
@@ -130,7 +130,7 @@ policy.
 
 ## Status
 
-Revision required
+Blocked on human decision
 
 ## Human Decisions
 
@@ -144,6 +144,42 @@ chat is not recorded. Use one block per decision:
 ### Decision
 ### Date
 ```
+
+### Question
+
+After two complete non-accepting review rounds, should Task 008 receive one
+bounded third correction/review cycle for the sole remaining anti-drift test
+gap, or close without merging?
+
+### Options
+
+1. **Authorize one bounded exception cycle.** Change only the workflow-test
+   run-key detector so it recognizes `run:` both at the start of a sequence
+   item and after `name:`, and add named scalar plus named `run: |` mutation
+   regressions. Re-run focused/full/CI and one final independent review. This
+   changes no shipped file or runtime behavior.
+2. **Stop and close Task 008 as Inconclusive.** Do not merge the task branch;
+   preserve the evidence and metadata-only closeout. Main remains at the
+   accepted Task 007 baseline, so the entire validator profile stays
+   unavailable despite the four accepted correction groups and green install
+   path.
+
+### Recommendation
+
+Option 1. The remaining defect is isolated to one test helper: its regex
+requires `run` to begin a YAML sequence item. Making that leading sequence
+marker optional and adding the two exact named-step regressions is a bounded,
+test-only correction with no product, dependency, manifest, or installer
+impact. If the authorized final review still does not accept, close or
+escalate rather than extend again.
+
+### Decision
+
+Pending repository-owner response.
+
+### Date
+
+Escalated 2026-07-29.
 
 ## Handoff Log
 
@@ -655,3 +691,34 @@ Driver `codex-b` closes only the named-step detection gap, adds the two
 regressions above, reconciles the durable audit, reruns focused/full/CI and
 disposable evidence, and returns the fixed commit for the next independent
 review.
+
+### Escalation (codex-b, Driver, after Round 2)
+
+#### Trigger
+
+Task 008 has received two complete independent `Revision required` verdicts.
+Repository policy requires human authorization rather than beginning a third
+cycle automatically.
+
+#### Evidence
+
+Round 2 independently accepted the authority-comment, external scan-root,
+balanced/escaped label, and eager-glob corrections. All 109 regressions,
+focused suites, and the disposable 22+6 install/gate/doctor controls pass.
+The sole remaining failure is that `workflow_run_directives()` recognizes
+`- run: ...` but misses ordinary named steps whose following line is
+`run: ...` or `run: |`. The shipped workflow itself is clean; the gap is only
+in the mutation-resistance regression required by Success Criterion 4.
+
+#### Options and recommendation
+
+The full alternatives and consequences are recorded under Human Decisions.
+Recommend one explicitly authorized, test-only correction and final
+independent review.
+
+#### Recommended next action
+
+The repository owner selects option 1 or 2. The receiving Driver records the
+answer and date, restores the paired role/status fields, commits that decision,
+and only then either performs the bounded correction or executes the
+metadata-only Inconclusive closeout.

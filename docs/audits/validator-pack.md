@@ -41,7 +41,8 @@ Independent Reviewer Round 1 reproduced five additional correction groups:
 Exact inputs and full dispositions are recorded in
 `.agents/state/current-task.md`.
 
-Driver revision commit `41e9dee` closes all five groups:
+Driver revision commit `41e9dee` closes four groups and partially closes the
+fifth:
 
 1. Codex configuration text is searched only after comment-aware filtering;
    a comment-only reference now fails while a visible value passes.
@@ -55,16 +56,18 @@ Driver revision commit `41e9dee` closes all five groups:
 4. Every `trigger` and `one_of` glob is compiled while rules load. Invalid
    classes become configuration exit 2 before any explicit-file or Git diff
    path can affect the result.
-5. The workflow assertion now accepts exactly one normalized `run` directive:
-   `./scripts/verify.sh`. Additional relisted stages fail even with spacing or
-   quoted-key variants.
+5. The workflow assertion accepts exactly one detected `run` directive:
+   `./scripts/verify.sh`. Additional direct relisted stages fail with spacing,
+   quoted-key, and compact block variants. Reviewer Round 2 showed that named
+   scalar and named block steps still bypass detection because their `run` key
+   does not begin the sequence item.
 
 ## Severity
 
 - Critical: none.
 - High: none.
-- Medium: none open; all five Reviewer correction groups are covered by
-  passing regressions.
+- Medium: one open test-guarantee finding. Four Reviewer correction groups are
+  closed; named workflow-step mutation detection remains incomplete.
 - Low: bounded parser and operating-environment limitations remain under
   Residual Risks.
 
@@ -92,12 +95,19 @@ Driver revision commit `41e9dee` closes all five groups:
   Markdown syntax/containment/scan roots, docs-sync
   TOML/globs/path/ref/merge-base/rename/no-Git behavior, manifest
   ownership/modes/core mapping, and workflow mutation resistance.
+- Reviewer Round 2 independently passed all four implementation corrections,
+  their positive controls, 19/30/7 focused tests, the 109-test source gate,
+  and the disposable install controls. Direct, spaced, quoted, and compact
+  block workflow mutations were caught; named scalar and named block steps
+  reproduced the remaining bypass.
 
 ## Required Fixes
 
-None open after Driver revision. Round 1's five required changes map one-to-one
-to the dispositions and regressions under Findings; Round 2 must independently
-reproduce those fixes before acceptance.
+One bounded fix remains after Round 2: count `run` mapping keys that follow a
+named step, add named scalar and named block mutation regressions, and
+reconcile this audit. Because this is the second non-accepting review round,
+starting that correction requires the repository owner's explicit decision
+recorded in Task 008.
 
 ## Optional Improvements
 
@@ -126,6 +136,6 @@ reproduce those fixes before acceptance.
 
 ## Verdict
 
-Ready for independent Round 2 review. The five required correction groups are
-closed locally without expanding the profile, but acceptance remains with
-Reviewer `codex-a`.
+Blocked on human decision after independent Round 2. The remaining gap is
+test-only and bounded, but repository policy forbids beginning a third
+correction/review cycle without explicit authorization.
