@@ -12,7 +12,7 @@ Implement generic validator pack and target CI template
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -130,7 +130,7 @@ policy.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -419,3 +419,80 @@ Driver `codex-b` implements only the five required correction groups, adds the
 reproducing regressions, updates the durable audit, reruns focused/full/CI and
 disposable-target evidence, and hands back a fixed implementation tip for
 Round 2 independent review.
+
+### Handoff (codex-b, Driver, Round 2)
+
+#### Objective
+
+Re-test all five Round 1 correction groups at fixed revision tip
+`74e05f91a5dbaf5e4f0dd91e1a1bbcb25d987e89`, then independently decide whether
+the authority, Markdown, docs-sync, and CI anti-drift contracts are now
+acceptable without broadening the Task 008 scope.
+
+#### Changes
+
+1. `.codex/config.yaml` contract matching now removes YAML comments while
+   preserving quoted `#` characters, so comment-only `AGENTS.md` text fails
+   and a visible configuration value passes.
+2. Each present Markdown directory scan root is resolved and containment
+   checked before enumeration, closing both empty and populated external
+   symlink cases.
+3. Inline link text now recognizes balanced and backslash-escaped brackets,
+   while same-line inline code is masked so Markdown-like examples do not
+   become false links. Balanced destination parentheses remain supported.
+4. Every docs-sync glob is compiled while TOML rules load; malformed or
+   unterminated character classes become deterministic configuration exit 2
+   before explicit-file or Git-diff evaluation.
+5. Target-workflow tests now admit exactly one detected `run` directive and
+   reject relisted checker stages with normal, spaced, or quoted YAML keys.
+
+#### Evidence
+
+- `./scripts/verify.sh` passes at the revision tip: Ruff, workflow validation,
+  live strict authority and link checks, 15 ARA claims, and 109/109
+  regressions.
+- Focused revision suites pass 19/19 validator-pack, 30/30 distribution, and
+  7/7 verification tests.
+- The four new validator test methods reproduce comment-only configuration,
+  empty/populated external roots, balanced/escaped labels, and malformed glob
+  behavior under both explicit-file and empty Git-diff inputs. The tightened
+  existing workflow test exercises three alternate relisting spellings.
+- The disposable `core` + `verify` test still passes its installed four-stage
+  gate, receipt ownership counts, executable-mode check, and clean doctor.
+- GitHub Actions runs `30450434885` (implementation correction) and
+  `30450478327` (final revision tip) both passed the verbatim gate on Python
+  3.11, 3.12, and 3.13.
+- `docs/audits/validator-pack.md` maps each Round 1 finding to its bounded
+  disposition and retains the unchanged residual-risk boundary.
+
+#### Assumptions
+
+- Comment-aware text filtering is intentionally not a general YAML parser; the
+  contract is the visible repository-relative `AGENTS.md` token.
+- Inline-link parsing remains line-bounded and does not claim full CommonMark.
+- Docs-sync glob syntax remains the documented repository-path subset, with
+  invalid syntax rejected before change-set availability matters.
+
+#### Uncertainties
+
+- Cross-line code spans and link text, raw HTML, autolinks, and fragment
+  validation remain outside the accepted scanner scope.
+- The POSIX/Linux, UTF-8, committed-`--base`, and non-adversarial filesystem
+  boundaries are unchanged.
+
+#### Review Focus
+
+- Re-run the exact five Round 1 counterexamples and nearby positive controls,
+  especially quoted YAML `#`, internal scan-root aliases, bracket nesting and
+  inline code, valid negated/ranged glob classes, and empty diffs.
+- Mutate the workflow with alternate `run` key spacing/quoting or block
+  commands and confirm the assertion rejects every extra executable step.
+- Reconfirm the final manifest, installed gate, doctor ownership/modes, live
+  source gate, and absence of scope expansion.
+
+#### Recommended Next Action
+
+Reviewer `codex-a` reproduces the fixed tip independently and records a Round 2
+structured verdict. If any correction group still fails, return only the exact
+remaining counterexample; otherwise accept and return `Turn: driver` for
+merge/closeout.
