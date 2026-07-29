@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-In review
+Accepted
 
 ## Human Decisions
 
@@ -656,3 +656,125 @@ shell-equivalent rewrites, and immutable action SHA pinning.
 
 Return the final independent verdict. If accepted, set `Status: Accepted` and
 `Turn: driver` so the Driver can merge and run accepted closeout.
+
+### Review (codex-a, Reviewer, Final Authorized)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The owner-authorized final implementation at `2a77376` closes both Round 2
+false negatives without weakening the earlier fixes:
+
+- A present empty, spaces-only, tabs-only, or punctuation-only Status value now
+  produces `claim C01 has no status disposition` and exits nonzero.
+- `supported:` and `:SuPpOrTeD;,` remain valid normalized dispositions when
+  backed by the live existing proof paths, while `accepted:` remains rejected
+  as unknown.
+- Whitespace-delimited trailing shell comments no longer hide duplicated gate
+  commands. Independent mutations duplicated each of the five expected
+  commands with single spaces, multiple spaces, a tab, or mixed whitespace
+  before `#`; every resulting `./scripts/verify.sh` invocation exited nonzero
+  at the uniqueness regression.
+
+The implementation distinguishes a missing Status field from a present value
+that normalizes empty, so the established required-field finding remains the
+single missing-field authority. Comment normalization removes only a
+whitespace-delimited trailing comment and does not attempt arbitrary shell
+equivalence, matching the recorded authorization.
+
+No regression was found in the previously reviewed status normalization,
+unknown-field parsing, resolved proof containment, symlink behavior, gate
+order, or CI mirroring. The live claim ledger remains valid.
+
+#### Evidence Quality
+
+- Local Python 3.12.9 with Ruff 0.15.20: `./scripts/verify.sh` exited 0, all
+  five stages passed, `check_ara` accepted 13 claims, and all 64 tests passed.
+- GitHub Actions run `30440422028` is tied to implementation commit `2a77376`.
+  Its CPython 3.11.15, 3.12.13, and 3.13.14 jobs each installed Ruff 0.15.20,
+  invoked `./scripts/verify.sh` verbatim, accepted 13 claims, and passed 64
+  tests.
+- Disposable archives of reviewed handoff `3a46dae` independently reproduced
+  five invalid Status cases, two valid punctuated Status cases, and commented
+  duplicates of all five expected gate commands with varied whitespace.
+- The final implementation commit changes only `scripts/check_ara.py`,
+  `tests/test_check_ara.py`, and `tests/test_verification.py`.
+- `git diff main...HEAD -- distribution/` is empty, the manifest still contains
+  22 payload files, all six distribution regressions pass, and claim C13 is
+  unchanged.
+- `git diff --check main...HEAD` passes.
+
+#### Simplicity
+
+The final slice adds one explicit empty-disposition finding and one small
+normalization helper for the existing textual stage regression. It adds no
+dependency, product abstraction, shell parser, payload behavior, or target
+profile. The implementation stops at the human-authorized boundary.
+
+#### Missing Cases
+
+Reference-style PAPER links, Git resolution of commit proofs, Windows support,
+arbitrary shell-equivalent rewrites, and immutable action SHA pinning remain
+the explicitly accepted out-of-scope limits. None is needed to establish the
+task's five success criteria.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+- Consider reference-style PAPER links only if the live artifact adopts them.
+- Consider immutable action SHA pinning in a separately scoped supply-chain
+  task.
+
+### Session Completion (codex-a, Reviewer, Final Authorized)
+
+#### Work completed
+
+Independently audited the authorized two-fix revision, reproduced exact and
+adjacent counterexamples, verified local and CI evidence, confirmed unchanged
+distribution, and recorded an Accepted verdict without modifying product code.
+
+#### Evidence
+
+The clean 64-test command, CI run `30440422028`, Status boundary cases,
+comment-spacing mutations for every gate, implementation-only diff, and
+distribution checks are recorded in the Review above.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+`./scripts/verify.sh`; GitHub run/job/log inspection; empty, spaces-only,
+tabs-only, punctuation-only, punctuated-valid, and punctuated-invalid Status
+mutations; commented duplicates of all five gate commands across four
+whitespace forms; implementation and distribution diffs; manifest count; and
+whitespace validation.
+
+#### Known limitations
+
+Only the explicitly scoped cases under Missing Cases remain outside the
+accepted evidence.
+
+#### Unresolved questions
+
+None.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-b` merges the accepted task branch and runs the accepted-flow
+`repo-organization` completion update on the default branch.
