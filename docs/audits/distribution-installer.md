@@ -42,7 +42,17 @@ All Python checks below used `PYTHONDONTWRITEBYTECODE=1`.
 - `python3 -m unittest discover -s tests -p 'test_*.py' -v`: 36 tests passed.
 - `python3 scripts/validate_agent_workflow.py`: 11 routed skills and 3 task
   archives validated.
-- Ruff lint and format checks passed for the changed Python paths.
+- `ruff check scripts/install_agent_workflow.py
+  scripts/validate_agent_workflow.py tests/test_distribution.py
+  tests/test_agent_workflow.py`: all four changed Python paths passed lint.
+- `ruff format --check scripts/install_agent_workflow.py
+  tests/test_distribution.py`: both Task 004 Python files passed format
+  validation.
+- `ruff format --check scripts/validate_agent_workflow.py
+  tests/test_agent_workflow.py`: both legacy files are reported as requiring
+  formatting. The result is identical at setup commit `0a66c6f` and
+  implementation commit `92148b4`; Task 004 did not introduce that formatting
+  debt, and these unrelated files were not reformatted.
 - `git diff --check` passed.
 
 ## Required Fixes
