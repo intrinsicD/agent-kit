@@ -8,8 +8,8 @@ sessions:
     open_threads: 1
   - id: "2026-07-29_001"
     date: "2026-07-29"
-    summary: "Tasks 004-006 were accepted; Installer v2 is initialized as Task 007 and blocked on two interface policies."
-    turn_count: 9
-    events_count: 38
-    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14]
-    open_threads: 3
+    summary: "Task 008 Round 1 reproduced five bounded validator-pack gaps and returned Revision required."
+    turn_count: 10
+    events_count: 40
+    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15]
+    open_threads: 2

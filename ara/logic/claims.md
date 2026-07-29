@@ -235,3 +235,22 @@ present.
 - **Dependencies**: [C07]
 - **Tags**: verification, ci, ara, regression-tests, independent-review
 - **From staging**: O15
+
+## C15: Task 008's first validator pack has five reproducible boundary gaps
+- **Statement**: At implementation commit `a14d554`, the seven-stage source
+  gate and a fresh `core` plus `verify` target pass, but independent probes
+  reproduce five bounded gaps: comment-only Codex contract text passes,
+  an empty external Markdown scan-root symlink passes, valid balanced or
+  escaped link labels hide missing destinations, malformed docs-sync
+  character classes traceback or pass depending on the change set, and the
+  target-workflow regression accepts an alternate relisted checker command.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `a14d554`, any listed counterexample does not
+  reproduce under the exact Task 008 interface, or the committed Round 1
+  review does not require its correction.
+- **Proof**: [.agents/state/current-task.md, docs/audits/validator-pack.md, 0184f1f]
+- **Dependencies**: [C14]
+- **Tags**: validator-pack, authority, markdown, docs-sync, ci, falsification
+- **From staging**: O16

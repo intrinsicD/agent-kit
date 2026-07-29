@@ -582,3 +582,26 @@ tree:
           - ".agents/state/current-task.md"
         status: open
         children: []
+      - id: N35
+        type: experiment
+        title: "Falsify the first Task 008 validator pack"
+        provenance: ai-executed
+        timestamp: "2026-07-29T13:59+02:00"
+        result: >
+          Independent Round 1 review passed the seven-stage 105-test source
+          gate, Python 3.11-3.13 CI inspection, and a fresh core-plus-verify
+          target install, but reproduced five bounded gaps: comment-only Codex
+          authority references, external empty Markdown scan roots, valid
+          balanced or escaped link-label omissions, input-dependent malformed
+          glob handling, and a workflow anti-drift mutation missed by its
+          regression. The verdict was Revision required.
+        evidence:
+          - "0184f1f"
+          - ".agents/state/current-task.md"
+          - "docs/audits/validator-pack.md"
+          - "tests/test_validator_pack.py"
+          - "tests/test_distribution.py"
+          - "tests/test_verification.py"
+        also_depends_on: [N32]
+        status: resolved
+        children: []

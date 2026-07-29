@@ -56,3 +56,9 @@ entries:
       - "Routed accepted-flow merge/archive as N32 and the two blocking Installer v2 interface choices as open questions N33-N34."
       - "Staged O15 and crystallized C14 through artifact commitment because accepted code, CI, archive, and repository state now depend on the verification capability."
       - "Left O14 unpromoted as a time-scoped intermediate state; the final revision superseded its open limitation without making the earlier review result false."
+  - turn: "2026-07-29_001#10"
+    notes:
+      - "Routed the independent Task 008 source, target, and adversarial review as experiment N35."
+      - "Staged O16 and crystallized C15 through artifact commitment because the fixed-tip review verdict and durable audit depend on the five reproduced gaps."
+      - "Scoped C15 to a14d554 so a later corrected implementation will not contradict the historical finding."
+      - "Did not create a positive validator-pack capability claim because Task 008 remains Revision required."
