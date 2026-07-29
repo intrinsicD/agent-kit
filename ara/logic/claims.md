@@ -272,3 +272,24 @@ present.
 - **Dependencies**: [C15]
 - **Tags**: validator-pack, ci, yaml, regression-tests, falsification
 - **From staging**: O17
+
+## C17: Task 007 provides bounded configurable installation and diagnostics
+- **Statement**: At merged implementation commit `b45d101`, the schema-v2
+  installer keeps `core` at 22 files, requires either a validated slug or
+  explicit no-prefix mode, previews the selected receipt-inclusive plan
+  without writes, records immutable hashes and user-template paths in
+  `.agents/kit-install.json`, and diagnoses clean, modified, missing, or
+  unknown-receipt installations without writes; independent review accepted
+  the implementation after all 86 regressions passed.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `b45d101`, `core` differs from 22 files,
+  install accepts no explicit naming choice or corrupts bounded skill tokens,
+  dry-run changes the target, receipt/doctor violates the immutable versus
+  user-owned boundary, any accepted collision/rollback regression fails, or
+  the archived task lacks an independent Accepted verdict.
+- **Proof**: [scripts/install_agent_workflow.py, distribution/manifest.json, tests/test_distribution.py, docs/audits/installer-v2.md, docs/tasks/007-installer-v2.md, b45d101, 40d0b99]
+- **Dependencies**: [C11, C14]
+- **Tags**: installer, slug, dry-run, receipt, doctor, independent-review
+- **From staging**: O18

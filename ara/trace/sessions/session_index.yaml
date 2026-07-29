@@ -8,8 +8,8 @@ sessions:
     open_threads: 1
   - id: "2026-07-29_001"
     date: "2026-07-29"
-    summary: "Task 008 Round 2 closed four boundary groups but retained one named-step anti-drift gap."
-    turn_count: 11
-    events_count: 42
-    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16]
+    summary: "Task 007 was accepted and merged; Task 008 awaits a decision on one final test-only correction."
+    turn_count: 12
+    events_count: 47
+    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17]
     open_threads: 2
