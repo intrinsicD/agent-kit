@@ -209,8 +209,7 @@ def markdown_lines(text):
 def without_fenced_code(text):
     """Blank fenced code while preserving line boundaries for Markdown scans."""
     return "\n".join(
-        "" if is_fenced else line
-        for line, is_fenced in markdown_lines(text)
+        "" if is_fenced else line for line, is_fenced in markdown_lines(text)
     )
 
 
@@ -256,17 +255,14 @@ def review_blocks(handoff_log):
     parsed = []
     review_text = without_fenced_code(handoff_log)
     for match in REVIEW_BLOCK.finditer(review_text):
-        nested, duplicates = sections(
-            match.group(1), level=4, with_duplicates=True
-        )
+        nested, duplicates = sections(match.group(1), level=4, with_duplicates=True)
         parsed.append(
             {
                 "Verdict": nested.get("Verdict", "").strip(),
                 "Self-reviewed": nested.get("Self-reviewed", "")
                 .strip()
                 .removesuffix("."),
-                "Duplicate state fields": duplicates
-                & {"Verdict", "Self-reviewed"},
+                "Duplicate state fields": duplicates & {"Verdict", "Self-reviewed"},
             }
         )
     return parsed
@@ -294,9 +290,7 @@ def parse_task_document(text, source, problems):
         or nonblank_lines[0].strip() != "# Current Task"
         or root_headings != ["Current Task"]
     ):
-        problems.append(
-            f"{source}: root heading must be exactly '# Current Task'"
-        )
+        problems.append(f"{source}: root heading must be exactly '# Current Task'")
 
     for heading in sorted(duplicates):
         problems.append(f"{source}: duplicate `## {heading}` section")
@@ -389,14 +383,11 @@ def validate_task_record(
 
     roles = task.get("Role Assignment", "")
     role_values = {
-        name: field_values(roles, name)
-        for name in ("Driver", "Reviewer", "Turn")
+        name: field_values(roles, name) for name in ("Driver", "Reviewer", "Turn")
     }
     for name, values in role_values.items():
         if len(values) > 1:
-            problems.append(
-                f"{source}: duplicate Role Assignment field {name!r}"
-            )
+            problems.append(f"{source}: duplicate Role Assignment field {name!r}")
     driver = role_values["Driver"][0] if role_values["Driver"] else ""
     reviewer = role_values["Reviewer"][0] if role_values["Reviewer"] else ""
     turn = role_values["Turn"][0].lower() if role_values["Turn"] else ""
@@ -410,9 +401,7 @@ def validate_task_record(
         problems.append(f"{source}: task has no Reviewer")
 
     if task.get("Selected Skills", "").strip() == "-":
-        problems.append(
-            f"{source}: Selected Skills must replace the '-' placeholder"
-        )
+        problems.append(f"{source}: Selected Skills must replace the '-' placeholder")
 
     if not re.fullmatch(r"\d{3,}", task_id):
         found = task_id.splitlines()[0] if task_id else ""
@@ -434,14 +423,12 @@ def validate_task_record(
     if status not in STATUSES:
         found = status.splitlines()[0] if status else ""
         problems.append(
-            f"{source}: Status must be one of the documented values, "
-            f"found {found!r}"
+            f"{source}: Status must be one of the documented values, found {found!r}"
         )
     elif archived:
         if status not in TERMINAL_STATUSES:
             problems.append(
-                f"{source}: archived task Status must be terminal, found "
-                f"{status!r}"
+                f"{source}: archived task Status must be terminal, found {status!r}"
             )
     else:
         expected_turn = ACTIVE_STATUS_TURNS[status]
@@ -458,8 +445,7 @@ def validate_task_record(
             )
     elif turn not in {"driver", "reviewer", "human"}:
         problems.append(
-            f"{source}: Turn must be 'driver', 'reviewer', or 'human', "
-            f"found {turn!r}"
+            f"{source}: Turn must be 'driver', 'reviewer', or 'human', found {turn!r}"
         )
 
     if status in STATUSES:
@@ -495,9 +481,7 @@ def validate(root):
             disk_skills.add(entry.name)
             skill_file = entry / "SKILL.md"
             if not skill_file.is_file():
-                problems.append(
-                    f"missing file: .agents/skills/{entry.name}/SKILL.md"
-                )
+                problems.append(f"missing file: .agents/skills/{entry.name}/SKILL.md")
                 continue
             match = FRONTMATTER.match(skill_file.read_text(encoding="utf-8"))
             if not match:
@@ -505,17 +489,13 @@ def validate(root):
                 continue
             frontmatter = match.group(1)
             name = re.search(r"^name:\s*(\S+)\s*$", frontmatter, re.MULTILINE)
-            description = re.search(
-                r"^description:\s*(.+)$", frontmatter, re.MULTILINE
-            )
+            description = re.search(r"^description:\s*(.+)$", frontmatter, re.MULTILINE)
             if not name or name.group(1) != entry.name:
                 problems.append(
                     f"{entry.name}: frontmatter name must match the directory name"
                 )
             if not description or not description.group(1).strip():
-                problems.append(
-                    f"{entry.name}: frontmatter description is missing"
-                )
+                problems.append(f"{entry.name}: frontmatter description is missing")
 
     agents_file = root / "AGENTS.md"
     if agents_file.is_file():
@@ -524,9 +504,7 @@ def validate(root):
             problems.append("AGENTS.md: no `## Skill routing` section found")
         else:
             routed = set(
-                re.findall(
-                    r"^- `([a-z0-9-]+)`:", routing.group(1), re.MULTILINE
-                )
+                re.findall(r"^- `([a-z0-9-]+)`:", routing.group(1), re.MULTILINE)
             )
             for skill in sorted(disk_skills - routed):
                 problems.append(
@@ -603,10 +581,7 @@ def main():
         return 1
 
     print("Agent workflow installation and state validation passed.")
-    print(
-        f"Found {len(disk_skills)} skills, all required state files and "
-        "directories."
-    )
+    print(f"Found {len(disk_skills)} skills, all required state files and directories.")
     print(f"Validated archived tasks: {len(archived_ids)}.")
     return 0
 

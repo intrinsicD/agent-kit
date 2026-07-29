@@ -1,6 +1,6 @@
 # Claims
 
-## Scope and remediation
+### Scope and remediation
 
 Claims C01-C06 describe the repository at audited baseline `ffbf949`. Task 002
 remediated all six findings, received an independent `Accepted` verdict at

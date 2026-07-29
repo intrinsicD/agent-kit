@@ -430,3 +430,70 @@ tree:
           - "9896501"
         status: resolved
         children: []
+  - id: N26
+    type: decision
+    title: "Begin the maturity program with verification"
+    provenance: user
+    timestamp: "2026-07-29T11:31+02:00"
+    choice: >
+      Check, correct, and implement the maturity program in dependency order,
+      beginning with the verification foundation as actual Task 006.
+    alternatives:
+      - "Leave the maturity program as proposed planning input"
+      - "Implement a downstream profile before verification"
+    evidence:
+      - "docs/research/maturity-program-plan.md"
+      - ".agents/state/current-task.md"
+    status: resolved
+    children:
+      - id: N27
+        type: experiment
+        title: "Implement and falsify the verification foundation"
+        provenance: ai-executed
+        timestamp: "2026-07-29T11:31+02:00"
+        result: >
+          The branch added a pinned five-stage verify command, ARA checker,
+          3.11-3.13 CI matrix, plan corrections, and 57 tests. Clean local and
+          CI runs passed, but independent Round 1 review found four bypasses
+          involving status normalization, proof containment, field parsing,
+          and duplicate gate counting.
+        evidence:
+          - "a25c0f9"
+          - "f2fc7e8"
+          - "417cba5"
+          - "docs/audits/verification-foundation.md"
+        status: resolved
+        children: []
+      - id: N28
+        type: experiment
+        title: "Test the bounded verification revision"
+        provenance: ai-executed
+        timestamp: "2026-07-29T11:31+02:00"
+        result: >
+          Commit 04322dc closed all four Round 1 bypasses, passed 61 tests and
+          the Python 3.11-3.13 matrix, and rejected traversal and external
+          symlinks. Independent Round 2 review still reproduced two false
+          negatives: empty or punctuation-only Status values and duplicate
+          gate commands carrying trailing shell comments.
+        evidence:
+          - "04322dc"
+          - "431e249"
+          - "https://github.com/intrinsicD/agent-kit/actions/runs/30439177610"
+          - ".agents/state/current-task.md"
+        status: resolved
+        children: []
+      - id: N29
+        type: question
+        title: "Authorize a final bounded Task 006 revision"
+        provenance: ai-suggested
+        timestamp: "2026-07-29T11:31+02:00"
+        description: >
+          After two non-accepting independent review rounds, decide whether to
+          authorize one final two-fix revision, accept the known false
+          negatives, or close Task 006 as inconclusive.
+        evidence:
+          - "431e249"
+          - "5e1153c"
+          - ".agents/state/current-task.md"
+        status: open
+        children: []
