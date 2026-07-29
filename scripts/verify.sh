@@ -11,17 +11,23 @@ if ! command -v ruff >/dev/null 2>&1; then
     exit 2
 fi
 
-echo "[1/5] Ruff lint"
+echo "[1/7] Ruff lint"
 ruff check .
 
-echo "[2/5] Ruff format"
+echo "[2/7] Ruff format"
 ruff format --check .
 
-echo "[3/5] Workflow structure"
+echo "[3/7] Workflow structure"
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py
 
-echo "[4/5] ARA claim ledger"
+echo "[4/7] Authority surfaces"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_authority.py --root . --strict
+
+echo "[5/7] Documentation links"
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_doc_links.py --root . --strict
+
+echo "[6/7] ARA claim ledger"
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_ara.py
 
-echo "[5/5] Regression tests"
+echo "[7/7] Regression tests"
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v

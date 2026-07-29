@@ -17,6 +17,8 @@ EXPECTED_STAGES = (
     "ruff check .",
     "ruff format --check .",
     "PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_authority.py --root . --strict",
+    "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_doc_links.py --root . --strict",
     "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_ara.py",
     "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v",
 )
@@ -31,7 +33,7 @@ def normalized_shell_lines(script_text):
 
 
 class VerificationEntryPointTests(unittest.TestCase):
-    def test_verify_script_runs_exactly_the_five_documented_stages(self):
+    def test_verify_script_runs_exactly_the_seven_documented_stages(self):
         lines = VERIFY_SCRIPT.read_text(encoding="utf-8").splitlines()
         executable_lines = normalized_shell_lines("\n".join(lines))
         stage_commands = []
