@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T11:31+02:00"
-  turn_count: 8
-  summary: "Tasks 004 and 005 were accepted; maturity Task 006 implemented verification and escalated two residual false negatives after two review rounds."
+  last_turn: "2026-07-29T11:58+02:00"
+  turn_count: 9
+  summary: "Tasks 004-006 were accepted; Installer v2 is initialized as Task 007 and blocked on prefix and doctor-receipt policy."
 
 events_logged:
   - turn: 1
@@ -199,6 +199,42 @@ events_logged:
     routing: staged
     provenance: ai-suggested
     summary: "Verification is executable and cross-version green but remains unaccepted with two false negatives."
+  - turn: 9
+    type: decision
+    id: N30
+    routing: direct
+    provenance: user
+    summary: "Authorize the final bounded two-fix Task 006 revision and independent review."
+  - turn: 9
+    type: experiment
+    id: N31
+    routing: direct
+    provenance: ai-executed
+    summary: "The final revision passed 64 tests and three-version CI; independent review returned Accepted."
+  - turn: 9
+    type: decision
+    id: N32
+    routing: direct
+    provenance: ai-executed
+    summary: "Merged and archived the independently accepted verification foundation."
+  - turn: 9
+    type: question
+    id: N33
+    routing: direct
+    provenance: ai-suggested
+    summary: "Choose required slug-with-escape versus unprefixed-by-default installation."
+  - turn: 9
+    type: question
+    id: N34
+    routing: direct
+    provenance: ai-suggested
+    summary: "Choose bounded receipt, all-file hashes, or receipt-free doctor behavior."
+  - turn: 9
+    type: claim
+    id: O15
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 006 supplies one independently accepted cross-version verification gate."
 
 ai_actions:
   - turn: 1
@@ -310,6 +346,24 @@ ai_actions:
     files_changed:
       - ".agents/state/current-task.md"
       - "docs/audits/verification-foundation.md"
+  - turn: 9
+    action: "Implemented the authorized final two fixes, ran local and matrix-CI verification, and obtained independent acceptance."
+    provenance: ai-executed
+    files_changed:
+      - "scripts/check_ara.py"
+      - "tests/test_check_ara.py"
+      - "tests/test_verification.py"
+      - ".agents/state/current-task.md"
+  - turn: 9
+    action: "Merged and archived Task 006, refreshed repository state and the maturity plan, and initialized Task 007 at its human-decision boundary."
+    provenance: ai-executed
+    files_changed:
+      - "docs/tasks/006-verification-foundation.md"
+      - ".agents/state/state.md"
+      - ".agents/state/current-task.md"
+      - ".agents/state/backlog.md"
+      - "docs/research/maturity-program-plan.md"
+      - "docs/audits/verification-foundation.md"
 
 claims_touched:
   - id: C01
@@ -363,6 +417,9 @@ claims_touched:
   - id: C12
     action: confirmed
     turn: 5
+  - id: C14
+    action: crystallized
+    turn: 9
 
 key_context:
   - turn: 1
@@ -381,11 +438,15 @@ key_context:
     excerpt: "Independent review corrected moving-target snapshot evidence and accepted the unchanged no-replacement, conditional-pilot disposition."
   - turn: 8
     excerpt: "Two independent Revision required rounds leave Task 006 blocked on whether to authorize one final bounded two-fix revision."
+  - turn: 9
+    excerpt: "The user chose option 1; Task 006 was fixed, independently accepted, merged, and followed by two explicit Installer v2 policy questions."
 
 open_threads:
   - "If explicitly prioritized, add a read-only installer plan and measure whether a bounded realtime-gs pilot earns adoption; consider Prospect separately later."
-  - "Human decision required: authorize the final bounded Task 006 correction, accept two known false negatives, or close the task as inconclusive."
+  - "Human decision required for Task 007: require --slug with --no-prefix escape, or keep unprefixed installation as the default."
+  - "Human decision required for Task 007: use a bounded immutable-payload receipt, hash every installed file, or use no receipt."
 
 ai_suggestions_pending:
   - "Before an authorized zero-collision target pilot, add a read-only installer plan or --dry-run mode."
-  - "Authorize one final Task 006 revision to reject empty/punctuation-only statuses and count repeated gates after trailing shell comments."
+  - "Require --slug with an explicit --no-prefix escape hatch for Task 007."
+  - "Use a bounded .agents/kit-install.json receipt that hashes immutable payload and presence-checks user-owned templates."

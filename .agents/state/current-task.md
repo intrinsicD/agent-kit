@@ -2,43 +2,151 @@
 
 ## Title
 
+Implement Installer v2 configuration and diagnostics
+
 ## Task ID
 
-Next unused number in `docs/tasks/`, zero-padded (for example `007`).
+007
 
 ## Role Assignment
 
-- Driver:
-- Reviewer:
-- Turn: driver / reviewer / human
+- Driver: codex-a
+- Reviewer: codex-b
+- Turn: driver
 
 ## Mode
 
-Explore / Decide / Implement / Validate / Stabilize / Productize
+Implement
 
 ## Goal
 
+Make installation configurable and diagnosable through slug-prefixed skill
+names, a non-writing dry run, a read-only doctor, and a grouped manifest that
+later profiles can extend, while preserving the fixed allowlist,
+refuse-on-collision, and no-overwrite guarantees.
+
 ## Motivation
+
+All four assessed sibling repositories prefix skills to avoid collisions in
+multi-repository discovery surfaces, and the owner's observed workflow opens
+five repositories in one such surface. Agent-kit currently installs eleven
+generic unprefixed skill names, so two kit-equipped repositories can shadow one
+another.
+
+The accepted Task 006 verification foundation now makes this installer slice
+reviewable across Python 3.11–3.13. The current installer has a fixed 22-file
+allowlist and strong collision/rollback guarantees, but it cannot preview a
+write, select future payload groups, record how a target was configured, or
+diagnose missing and modified files. IntrinsicEngine supplies evidence that
+slug rendering, dry-run, and doctor mechanics are feasible, while its
+overwrite-capable behavior remains explicitly excluded.
 
 ## Success Criteria
 
+1. `install_agent_workflow.py install <target> --slug acme` creates
+   `.agents/skills/acme-<name>/` directories whose frontmatter `name:` values
+   match their directories, renders the `AGENTS.md` routing section with the
+   prefixed names, leaves no unprefixed skill-name tokens in the installed
+   naming surfaces, and produces a target whose installed validator exits 0.
+2. `--dry-run` prints the complete selected write plan and every collision,
+   exits according to the kit-wide convention, and writes nothing, proven by a
+   before/after filesystem snapshot.
+3. `doctor <target>` is read-only, classifies immutable manifest entries as
+   `OK`, `MODIFIED`, or `MISSING`, classifies user-owned state/templates as
+   `PRESENT` or `MISSING`, reports install-receipt state under the selected
+   policy, and exits 0 when clean or 1 when it finds issues.
+4. Manifest schema v2 validates named groups; the existing 22 payload files
+   form `core`; repeated group/profile selection produces the correct union;
+   collision preflight covers that full union; and exact-collision refusal,
+   blocking-ancestor refusal, exclusive creation, and rollback remain covered
+   and passing under the new CLI.
+5. The CLI consistently uses exit 0 for success, 1 for findings or operational
+   failure, and 2 for usage/environment/schema errors.
+6. `./scripts/verify.sh` passes, README installation and expected-layout
+   guidance describes the selected interfaces, and an end-to-end disposable
+   target passes install, installed validation, clean doctor, tamper detection,
+   and no-write checks.
+
 ## Constraints
+
+- Do not add overwrite, update, uninstall, or repair behavior. Doctor diagnoses
+  only.
+- Preserve the fixed-allowlist boundary, refusal on any exact or
+  blocking-ancestor collision, exclusive file creation, rollback ownership,
+  target Git metadata, and the current 22 payload files in the default `core`
+  group.
+- Use the kit-wide exit convention: 0 pass, 1 failure/findings, 2
+  usage/environment/schema error.
+- Rewrite only the eleven known skill-name tokens and only in backtick-quoted
+  occurrences, frontmatter `name:` lines, and destination directory names.
+  Never rewrite prose words such as “implementation” outside backticks.
+- Validate slugs as `^[a-z][a-z0-9-]*$` with a maximum of 24 characters if the
+  slug interface is selected.
+- Implement mechanics in agent-kit's tested standard-library style; do not
+  vendor donor code.
+- Do not begin implementation or infer defaults until both pending human
+  decisions are recorded.
 
 ## Non-Goals
 
+- New payload content for the later validator, task-tree, evidence, or growth
+  profiles.
+- Any target-repository installation pilot.
+- Overwrite, forced update, uninstall, or doctor repair.
+- Vendoring or importing IntrinsicEngine's broader `tools/agentkit` generator
+  platform.
+- Resolving the separate single-product convergence direction.
+
 ## Selected Skills
 
--
+- `task-orchestration`
+- `implementation`
+- `code-audit`
+- `handoff`
 
 ## Current Evidence
 
+- Accepted Task 006 supplies a green five-stage source gate with 64 tests and a
+  Python 3.11–3.13 CI matrix.
+- `distribution/manifest.json` is schema v1 with one explicit 22-file list; all
+  eleven skills currently retain generic unprefixed destinations.
+- `scripts/install_agent_workflow.py` has one positional install path, validates
+  safe sources/destinations, rejects all collisions before writing, uses
+  exclusive creation, rolls back only owned paths, and has no dry-run, group,
+  receipt, or doctor behavior.
+- Six distribution regressions cover the clean payload, fresh installation,
+  exact collisions, blocking ancestors, nonexistent targets, and copy-failure
+  rollback.
+- `scripts/validate_agent_workflow.py` discovers routed names from `AGENTS.md`
+  rather than hardcoding them, so consistent rendering of routing,
+  frontmatter, and directories can preserve validation.
+- Four sibling repositories provide observed multi-repository prefixing
+  evidence; the current problem does not require new profiles, a generator
+  platform, or an overwrite path.
+
 ## Minimal Plan
+
+1. Record the owner's D6.2 prefix-policy and D6.4a doctor-receipt decisions,
+   including date and consequences. Then restore `Mode: Implement`,
+   `Status: In progress`, and `Turn: driver` before any code change.
+2. Introduce and validate manifest schema v2 with named groups, migrate the
+   unchanged 22-file payload to `core`, and update distribution fixtures.
+3. Implement bounded install-time rendering for the selected slug policy and
+   add snapshot, leakage, invalid-slug, and installed-validator tests.
+4. Add `--dry-run` on the same selected payload/preflight path and prove a
+   byte-for-byte unchanged target for clean and colliding plans.
+5. Implement the selected receipt policy and read-only `doctor`, covering clean,
+   tampered immutable file, missing file, user-owned template, and missing
+   receipt scenarios.
+6. Update README CLI, migration, and expected-layout guidance without adding
+   future profile content.
+7. Run focused and full verification plus a disposable Git-target end to end;
+   perform a Driver code audit; commit each bounded slice; and hand the fixed
+   branch to Reviewer `codex-b`.
 
 ## Status
 
-Not started / In progress / In review / Revision required /
-Blocked on human decision / Accepted / Accepted with follow-up /
-Provisionally accepted (self-reviewed) / Rejected / Inconclusive / Superseded
+Accepted
 
 ## Human Decisions
 
@@ -53,6 +161,77 @@ chat is not recorded. Use one block per decision:
 ### Date
 ```
 
+### Question
+
+D6.2 prefix policy: should project slug prefixing be the safe default or an
+optional behavior?
+
+### Options
+
+1. **Require `--slug`, with explicit `--no-prefix` escape.** Every install must
+   make the naming choice visible. The normal path avoids cross-repository
+   shadowing; deliberate single-repository users can opt out. This is a
+   breaking CLI change and requires one extra argument or explicit escape.
+2. **Keep unprefixed installation as the default and make `--slug` optional.**
+   Existing command ergonomics remain familiar, but unattended/default use
+   silently reproduces the observed multi-repository collision hazard and
+   makes safe naming dependent on every caller remembering an option.
+
+### Recommendation
+
+Option 1: require `--slug` with an explicit `--no-prefix` escape. The observed
+operating mode is multi-repository, so safety should be the normal path and
+unprefixed installation should require an intentional choice.
+
+### Decision
+
+Option 1 selected. The repository owner replied "1, 1", requiring `--slug`
+for the normal install path and retaining `--no-prefix` as the explicit escape
+hatch.
+
+### Date
+
+Decided 2026-07-29.
+
+### Question
+
+D6.4a doctor receipt policy: what target-owned record, if any, should define
+the installed configuration and drift boundary?
+
+### Options
+
+1. **Write `.agents/kit-install.json` with bounded ownership.** Record manifest
+   version and hash, selected slug/prefix mode and groups, installation
+   timestamp, and per-file hashes for immutable payload. Doctor hashes
+   immutable files, checks user-owned state/templates for presence only, and
+   reports a missing receipt as `unknown installation` while falling back to
+   presence checks. The generated receipt joins collision preflight. This
+   diagnoses meaningful drift without flagging normal task/state edits.
+2. **Write a receipt and hash every installed file.** Doctor gets full
+   byte-for-byte comparison, but normal edits to user-owned task state and
+   documentation templates become false `MODIFIED` findings and blur the
+   ownership boundary.
+3. **Write no receipt.** Doctor can check presence only and avoids one generated
+   target file, but cannot reliably identify the manifest/configuration used or
+   distinguish modified immutable payload from a clean install.
+
+### Recommendation
+
+Option 1: write `.agents/kit-install.json`, hash immutable payload only, treat
+user-owned templates as presence-only, and use the explicit
+missing-receipt/unknown-install fallback. This retains diagnostic value while
+respecting target ownership after installation.
+
+### Decision
+
+Option 1 selected. The repository owner replied "1, 1", authorizing
+`.agents/kit-install.json` with immutable-payload hashes, presence-only checks
+for user-owned templates, and the missing-receipt unknown-install fallback.
+
+### Date
+
+Decided 2026-07-29.
+
 ## Handoff Log
 
 Append Driver handoffs, Reviewer verdicts, escalations, and session completion
@@ -60,3 +239,587 @@ blocks here in chronological order. Entries use `###` headings and their fields
 use `####` headings so every entry remains nested under this Handoff Log. Do
 not delete earlier entries. On task completion this file is archived to
 `docs/tasks/<task-id>-<slug>.md`.
+
+### Escalation (codex-a, Driver)
+
+#### Trigger
+
+Task 007 is a consequential interface decision followed by implementation.
+Prefix defaults affect collision risk and CLI compatibility; receipt ownership
+affects what doctor may label as drift. Neither choice can be inferred from the
+planning reference.
+
+#### Evidence
+
+The current 22-file installer is non-overwriting and collision-safe but has no
+prefix, preview, configuration receipt, or diagnostic mode. Multi-repository
+skill shadowing is now observed, while target state/templates are explicitly
+user-owned after installation.
+
+#### Options and recommendation
+
+The complete alternatives and consequences are recorded under Human Decisions.
+Recommend required `--slug` with explicit `--no-prefix`, plus a bounded
+`.agents/kit-install.json` receipt that hashes immutable payload and treats
+user-owned templates as presence-only.
+
+#### Recommended next action
+
+The repository owner answers both pending questions. Driver `codex-a` records
+the answers and date, restores the implementing state, and only then begins the
+smallest manifest-and-renderer slice.
+
+### Handoff (codex-a, Driver)
+
+#### Objective
+
+Independently falsify the Installer v2 implementation at fixed implementation
+tip `e562259`: schema-v2 group selection, required naming choice and bounded
+slug rendering, receipt-inclusive dry-run/install behavior, and read-only
+doctor diagnostics, while confirming every pre-existing collision, ownership,
+rollback, and target-Git guarantee remains true.
+
+#### Changes
+
+- Commit `5ceaceb` migrates the unchanged 22-file payload to manifest schema v2
+  group `core`, adds strict group/source/destination validation and stable group
+  union, replaces the old positional CLI with `install`, requires `--slug` or
+  explicit `--no-prefix`, and renders only the eleven approved skill tokens in
+  directory names, exact frontmatter names, and single-backtick naming
+  surfaces.
+- Commit `c3c4fcb` makes one rendered plan authoritative for install and
+  `--dry-run`, adds the collision-protected generated
+  `.agents/kit-install.json`, preserves exclusive creation and owned-path
+  rollback through receipt failure, and adds receipt-backed `doctor` plus the
+  missing-receipt unknown/presence fallback. Immutable paths reached through
+  symlinked ancestors cannot pass integrity checks.
+- Commit `e562259` updates README installation, migration, receipt, doctor,
+  layout, and exit-code guidance and adds the durable Driver code audit at
+  `docs/audits/installer-v2.md`.
+- `tests/test_distribution.py` now has 24 focused cases spanning every success
+  criterion and named failure mode. No payload content, ARA file, dependency,
+  update/overwrite/uninstall/repair interface, or target pilot was added.
+
+#### Evidence
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`: 24/24
+  passed at `e562259`.
+- `./scripts/verify.sh`: all five gates passed at `e562259`; Ruff lint and
+  format were clean, workflow state and 14 ARA claims validated, and 82/82
+  regressions passed.
+- Separate disposable Git target: slugged install wrote 22 payload files plus
+  receipt; the installed validator found 11 valid skills and zero archives;
+  doctor exited 0 clean; after an `AGENTS.md` edit it reported `MODIFIED` and
+  exited 1; the target remained on `main` at its original HEAD.
+- Snapshot tests prove clean and colliding dry runs and every exercised doctor
+  path write nothing. Fault injection proves rollback after both a mid-payload
+  copy failure and a partial final receipt write.
+- `jq` reports manifest version 2, only group `core`, and `core_count: 22`.
+  `git diff --check 5262f9d..e562259` passed. The complete task diff contains
+  only `README.md`, `distribution/manifest.json`,
+  `docs/audits/installer-v2.md`, `scripts/install_agent_workflow.py`, and
+  `tests/test_distribution.py`; no `ara/` or `.ara/` path changed.
+
+#### Assumptions
+
+- The receipt is a local drift baseline, not a signature against an actor who
+  can rewrite both receipt and payload.
+- Files sourced from `distribution/templates/` are user-owned after install;
+  all other selected payload files are immutable for doctor accounting.
+- Single-backtick spans are the naming surfaces present in the approved
+  22-file payload. Ordinary prose tokens intentionally remain unprefixed.
+
+#### Uncertainties
+
+- A missing receipt cannot recover hashes or optional profile selection. The
+  fallback can recognize current unprefixed or valid slug-prefixed `core`
+  skills, but deliberately reports the installation as unknown.
+- Preflight plus exclusive creation is not an adversarial transaction. An
+  uncatchable termination can leave installer-created paths, and concurrent
+  target mutation can force refusal or rollback.
+- Local evidence used Python 3.12. The existing branch CI matrix is responsible
+  for independent Python 3.11 and 3.13 reproduction after push.
+
+#### Review Focus
+
+1. Attempt to falsify the rewrite boundary: all routing/frontmatter/directory
+   names must be prefixed while prose remains unchanged and the installed
+   validator passes.
+2. Challenge no-write and ownership guarantees for colliding dry runs,
+   receipt collision, partial receipt failure, symlink ancestors, and doctor
+   paths.
+3. Audit receipt schema/path validation and verify modified user templates do
+   not become false immutable findings.
+4. Confirm the breaking CLI and exit 0/1/2 behavior match both recorded human
+   decisions and README, without an implicit unprefixed or repair path.
+5. Inspect the complete diff for unnecessary abstraction or accidental scope
+   expansion, and reproduce the focused suite plus `./scripts/verify.sh`.
+
+#### Recommended Next Action
+
+Reviewer `codex-b` checks the fixed branch tip, records an independent
+structured verdict, and returns `Turn` to `driver`. Any required revision
+should name a reproducer and the smallest failing contract.
+
+### Session Completion (codex-a, Driver)
+
+#### Work completed
+
+Implemented all approved Installer v2 behavior, regression coverage,
+documentation, and durable code audit in three bounded commits; completed the
+Driver self-audit and prepared the branch for independent review.
+
+#### Evidence
+
+Focused distribution suite 24/24; full five-stage verification 82/82; separate
+disposable Git install/validate/doctor/tamper probe passed; fixed-tip diff and
+22-file `core` boundary inspected.
+
+#### Files changed
+
+- `distribution/manifest.json`
+- `scripts/install_agent_workflow.py`
+- `tests/test_distribution.py`
+- `README.md`
+- `docs/audits/installer-v2.md`
+- `.agents/state/current-task.md` (handoff metadata only)
+
+#### Tests or experiments run
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`
+- `./scripts/verify.sh`
+- Disposable Git target: slugged install, installed validator, clean doctor,
+  induced immutable drift, doctor finding, Git HEAD/branch comparison
+- Manifest version/group/core-count query, fixed-tip diff check, CLI help and
+  ARA-path scope inspection
+
+#### Known limitations
+
+Receipt integrity is unsigned; missing-receipt fallback is presence-only and
+cannot infer optional profiles; filesystem preflight is cooperative rather
+than transactional. No overwrite, update, uninstall, or repair behavior exists.
+
+#### Unresolved questions
+
+None for Driver implementation. Independent Reviewer verdict and CI matrix
+results remain pending.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer `codex-b` begins with this Handoff Log and fixed implementation tip
+`e562259`, reproduces the evidence, and records a verdict before any Driver
+closeout.
+
+### Review (codex-b, Reviewer, Round 1)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The fixed implementation tip `e562259` satisfies the main happy paths:
+manifest v2 retains the exact 22-file `core` mapping, explicit slugged and
+unprefixed installs preserve target Git metadata, the installed validator
+accepts all eleven rendered skills, dry-run and doctor are read-only in the
+covered cases, receipt-backed drift classifications work for normal files, and
+fault injection restores the pre-install snapshot.
+
+Three bounded counterexamples prevent acceptance:
+
+1. The token pattern is not a word-boundary match. Inside backticks it rewrites
+   `Ximplementation`, `implementationX`, `implementation_detail`, and
+   `préimplementation` into strings containing `acme-implementation`.
+   Uppercase letters, underscores, and non-ASCII word characters are omitted
+   from both boundary guards. These are not exact occurrences of the approved
+   `implementation` skill token, so the renderer can corrupt code identifiers
+   despite the task's bounded-rewrite contract.
+2. Manifest and rendered-plan validation reject exact duplicate destinations
+   but accept ancestor/descendant file destinations. A synthetic schema-v2
+   manifest with destinations `node` and `node/child.txt` loads successfully,
+   produces no preflight collisions on an empty target, and then fails every
+   install with `NotADirectoryError`. A manifest destination `.agents` likewise
+   passes validation and conflicts structurally with the generated
+   `.agents/kit-install.json` receipt. Rollback succeeds, but schema/dry-run
+   validation falsely describes an impossible plan as clean.
+3. Receipt-backed template presence accepts any filesystem node. After a valid
+   install, replacing `.agents/state/current-task.md` with either a directory
+   or a dangling symlink makes doctor print `PRESENT` and exit 0. The expected
+   template file is absent, so this is a false clean diagnostic rather than
+   the required `MISSING` finding.
+
+#### Evidence Quality
+
+- Independent local `PYTHONDONTWRITEBYTECODE=1 python3
+  tests/test_distribution.py -v`: 24/24 pass.
+- Independent local `./scripts/verify.sh`: all five gates and 82/82 tests pass;
+  workflow validation finds six archives and the ARA checker accepts 14
+  claims.
+- GitHub Actions run `30444837171` is tied to handoff commit `24b31ed`; CPython
+  3.11.15, 3.12.13, and 3.13.14 each ran the verbatim gate and passed 82 tests.
+- The old and new manifest mappings compare equal at 22 files;
+  `git diff --check 5262f9d..e562259` passes and the implementation diff has no
+  ARA path.
+- Disposable/programmatic probes independently reproduced all three
+  counterexamples. Both impossible-plan installs rolled back to an empty
+  target; the diagnostic problem is the false-clean schema/dry-run result, not
+  target data loss.
+
+#### Simplicity
+
+One standard-library script with manifest, rendered-plan, receipt, and doctor
+domain records is proportionate to the approved interface. The CLI has one
+obvious install path and one read-only diagnostic path. None of the required
+corrections needs a new dependency, parser framework, repair mode, profile
+implementation, or general filesystem transaction.
+
+#### Missing Cases
+
+The accepted scope still excludes Windows-specific paths, cryptographic
+receipt authenticity, arbitrary Markdown code-span grammars, concurrent
+adversarial target mutation, uncatchable termination, optional profile
+inference without a receipt, and update/uninstall/repair behavior. These do not
+block the current slice.
+
+#### Required Changes
+
+1. Make skill-token guards honor actual word boundaries, including uppercase,
+   underscore, and Unicode word characters, while retaining intended rewrites
+   at punctuation/path boundaries and avoiding double-prefixing. Add a
+   synthetic regression containing the reproduced variants.
+2. Reject ancestor/descendant conflicts across the fully rendered write plan,
+   including the generated receipt, as configuration/schema errors before a
+   clean dry-run or install. Cover raw manifest, receipt, and slug-rendered
+   hierarchy variants and preserve exact-duplicate behavior.
+3. Require a user-owned template destination to resolve to a file for
+   `PRESENT`; directories and dangling symlinks must produce a finding. Add
+   receipt-backed no-write regressions for both reproduced replacements.
+4. Re-run the focused suite, full gate, disposable install/doctor probe, and
+   Python 3.11–3.13 CI matrix, then return the branch for Round 2.
+
+#### Optional Improvements
+
+- Reject control characters in target-controlled receipt paths if later
+  hardening needs machine-stable diagnostic output.
+- Compare receipt provenance with the invoking checkout only if a future
+  product decision wants cross-version compatibility diagnostics; the current
+  receipt remains an intentionally unsigned local baseline.
+
+### Session Completion (codex-b, Reviewer, Round 1)
+
+#### Work completed
+
+Independently audited the Installer v2 implementation, reproduced its focused,
+full, CI, manifest-boundary, Git-preservation, rendering, no-write, receipt,
+and doctor evidence, and recorded three acceptance-blocking false negatives
+without editing implementation files.
+
+#### Evidence
+
+The 24-test focused run, 82-test unified gate, CI run `30444837171`, exact
+22-file mapping comparison, fixed-tip diff checks, and six concrete boundary
+variants are recorded in the Review above.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Focused distribution suite; full verification; CI metadata and log
+inspection; manifest mapping/diff checks; synthetic word-boundary rendering;
+raw and receipt hierarchy-conflict plans; and receipt-backed directory and
+dangling-symlink template replacements.
+
+#### Known limitations
+
+Only the explicitly scoped cases under Missing Cases remain outside the
+required corrections.
+
+#### Unresolved questions
+
+None requiring human input. All three fixes are local consequences of the
+already recorded interfaces.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-a` implements the three bounded validation fixes, updates the
+durable audit, collects fresh local/CI evidence, and returns Task 007 for Round
+2 independent review.
+
+### Handoff (codex-a, Driver, Round 2)
+
+#### Objective
+
+Independently reproduce Reviewer Round 1's three counterexamples against fixed
+implementation tip `337e5b9` and attempt to falsify their bounded corrections:
+Unicode-aware exact-token guards, hierarchy-safe complete write plans, and
+file-only template presence.
+
+#### Changes
+
+- Commit `49db6a5` changes the inline token guards from ASCII lowercase/digits
+  to Unicode `\w` plus hyphen boundaries. Uppercase, underscore, and Unicode
+  word-character adjacency no longer rewrites; punctuation and path separators
+  still do; an existing slug prefix prevents a second prefix.
+- The same commit adds one destination-hierarchy invariant at all three
+  relevant boundaries: raw manifest plus reserved receipt, rendered payload,
+  and complete rendered write plan including generated receipt. Exact
+  duplicates and ancestor/descendant pairs now raise `ManifestError`; install
+  and dry-run return exit 2 before output or target writes.
+- Template and missing-receipt presence now require destinations that resolve
+  to files. Directories and dangling symlinks are `MISSING` findings; a symlink
+  that resolves to a file remains presence-valid under the recorded
+  user-ownership policy.
+- Four focused regression methods cover every Reviewer reproducer, both
+  install and dry-run configuration classification, intended
+  punctuation/path rewrites, idempotence, and filesystem no-write snapshots.
+- Commit `337e5b9` updates `docs/audits/installer-v2.md` with the independent
+  Round 1 findings, their dispositions, severity, and fresh evidence. No
+  README, manifest payload, dependency, interface, or ARA file changed.
+
+#### Evidence
+
+- Before the fix, the new tests reproduced twelve failing subcases: both
+  non-file template replacements returned false-clean exit 0; all three raw
+  hierarchy manifests loaded; slug/receipt plans returned clean dry-runs or
+  operational failures; and every recorded adjacent identifier variant was
+  rewritten.
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`: 28/28
+  focused tests passed after `49db6a5`.
+- `./scripts/verify.sh`: all five local gates passed at `337e5b9`; Ruff lint
+  and format were clean, workflow state and 14 ARA claims validated, and 86/86
+  regressions passed.
+- Fresh GitHub Actions run `30446106512`, tied to `337e5b9`, passed the verbatim
+  gate on CPython 3.11, 3.12, and 3.13.
+- Disposable Git target: slugged install wrote the 22 payload files plus
+  receipt; installed validation found 11 skills and zero archives; doctor
+  exited 0 clean; replacing `current-task.md` with a directory produced
+  `MISSING` and exit 1; Git HEAD and `main` remained unchanged.
+- Sorting and diffing baseline `5262f9d`'s v1 rows against the current v2
+  `core` rows produced no difference; `core-count=22`.
+- `git diff --check 206ef8d..337e5b9` passed. The revision changes only
+  `scripts/install_agent_workflow.py`, `tests/test_distribution.py`, and
+  `docs/audits/installer-v2.md`; no `ara/` or `.ara/` path changed.
+
+#### Assumptions
+
+- “Unicode word character” follows Python's default Unicode `\w` semantics;
+  hyphen is additionally guarded because it separates an existing slug prefix
+  from the skill token.
+- “PRESENT when the destination resolves to a file” intentionally accepts a
+  non-dangling symlink whose target is a file and rejects directories,
+  dangling symlinks, and absent paths.
+- Hierarchy safety is lexical over already validated relative `Path` values;
+  target-time symlink and node-type changes remain covered by collision and
+  doctor checks.
+
+#### Uncertainties
+
+- The existing accepted-scope residuals remain: unsigned receipt integrity,
+  presence-only unknown fallback without a receipt, cooperative rather than
+  transactional filesystem preflight, and no Windows-specific evidence.
+- No further correctness uncertainty was identified in the three revised
+  boundaries. Independent Round 2 falsification remains required.
+
+#### Review Focus
+
+1. Re-run the exact `Ximplementation`, `implementationX`,
+   `implementation_detail`, and `préimplementation` reproducers alongside
+   punctuation/path and already-prefixed controls.
+2. Challenge raw cross-group, reserved-receipt, and post-slug
+   ancestor/descendant paths in both ordering directions; confirm exit 2 and
+   unchanged targets for dry-run and install.
+3. Replace a receipt-owned template with a directory, dangling symlink, and
+   symlink to a real file; confirm the first two are `MISSING` findings and the
+   last is `PRESENT`, all read-only.
+4. Reproduce 28 focused tests, the 86-test full gate, exact 22-row mapping, and
+   inspect the three-file revision diff for expansion beyond required fixes.
+
+#### Recommended Next Action
+
+Reviewer `codex-b` performs independent Round 2 review at fixed implementation
+tip `337e5b9`, records a structured verdict, and returns `Turn` to `driver`.
+
+### Session Completion (codex-a, Driver, Round 2)
+
+#### Work completed
+
+Implemented only the three required Reviewer corrections, added reproducing
+regressions, updated the durable audit, completed the Driver revision audit,
+and collected fresh local, disposable-target, mapping, scope, and CI evidence.
+
+#### Evidence
+
+28/28 focused tests; 86/86 full local tests; CI run `30446106512` green on
+Python 3.11/3.12/3.13; disposable install/validator/doctor/non-file-template
+probe passed; exact 22-row `core` mapping preserved; no ARA changes.
+
+#### Files changed
+
+- `scripts/install_agent_workflow.py`
+- `tests/test_distribution.py`
+- `docs/audits/installer-v2.md`
+- `.agents/state/current-task.md` (Round 2 handoff metadata only)
+
+#### Tests or experiments run
+
+- Pre-fix focused regression run reproducing every Reviewer counterexample
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`
+- `./scripts/verify.sh`
+- Disposable slugged Git install, installed validator, clean doctor,
+  directory-template finding, and Git HEAD/branch comparison
+- Baseline-v1/current-v2 mapping diff, core count, revision scope and
+  whitespace checks
+- GitHub Actions run `30446106512`
+
+#### Known limitations
+
+Receipt authenticity, missing-receipt profile inference, adversarial
+filesystem transactions, uncatchable termination, Windows-specific behavior,
+and update/uninstall/repair remain outside the accepted task scope.
+
+#### Unresolved questions
+
+None for the Driver. Round 2 independent verdict remains pending.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer `codex-b` begins from this Round 2 handoff and fixed implementation
+tip `337e5b9`, reproduces the three corrected boundaries, and records the
+verdict before Driver closeout.
+
+### Review (codex-b, Reviewer, Round 2)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+Implementation tip `337e5b9` closes every Round 1 counterexample without
+weakening the accepted Installer v2 behavior:
+
+- Unicode `\w` plus hyphen guards rewrite exact skill tokens at punctuation
+  and path boundaries while preserving uppercase-, underscore-, Unicode-, and
+  existing-prefix-adjacent forms. A second application is idempotent.
+- One hierarchy invariant now rejects exact and ancestor/descendant
+  destinations in raw manifests, after slug rendering, and after the generated
+  receipt joins the plan. Parent-first, child-first, cross-group,
+  receipt-descendant, and slug-created conflicts all fail as configuration
+  errors before dry-run or install writes.
+- Receipt-backed and fallback presence checks now require a destination that
+  resolves to a file. Directories and dangling symlinks are `MISSING`
+  findings; a symlink resolving to a real file remains `PRESENT` under the
+  recorded user-ownership decision.
+
+The original slugged/no-prefix install paths, complete dry-run report,
+receipt-backed immutable hashing, user-template content ownership, doctor
+classifications, collision refusal, exclusive creation, rollback, installed
+validation, and target Git preservation remain intact.
+
+#### Evidence Quality
+
+- Independent local focused suite: 28/28 tests pass.
+- Independent local `./scripts/verify.sh`: all five gates and 86/86 tests pass;
+  workflow validation finds six archives and the ARA checker accepts 14
+  claims.
+- Independent variants confirm both hierarchy orderings, a cross-group
+  conflict, a receipt-descendant conflict, ASCII/Unicode exact-token controls,
+  idempotence, directory/dangling-template findings, a live file symlink
+  control, and unchanged doctor snapshots.
+- GitHub Actions runs `30446106512` at implementation tip `337e5b9` and
+  `30446215181` at handoff tip `570f08e` each pass the verbatim gate on Python
+  3.11, 3.12, and 3.13.
+- Baseline v1 and current v2 `core` mappings remain identical at 22 files;
+  `git diff --check 206ef8d..337e5b9` passes, and the revision changes only the
+  installer, its tests, and its durable audit.
+
+#### Simplicity
+
+The revision reuses one small lexical hierarchy check at the three real plan
+boundaries, tightens one regex, and replaces generic node existence with the
+existing `Path.is_file()` primitive. It adds no dependency, abstraction layer,
+repair mode, speculative profile content, or new interface.
+
+#### Missing Cases
+
+Receipt signing, cross-version receipt provenance comparison, Windows-specific
+paths, concurrent adversarial mutation, uncatchable termination,
+missing-receipt profile inference, update, uninstall, and repair remain
+explicitly outside Task 007. The accepted implementation and audit state these
+boundaries without promoting claims beyond the evidence.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+- Control-character rejection for receipt paths can remain a later
+  machine-output hardening item if a consumer requires it.
+- Cross-version provenance comparison should remain a separate product
+  decision rather than changing the approved local-baseline receipt semantics.
+
+### Session Completion (codex-b, Reviewer, Round 2)
+
+#### Work completed
+
+Independently reproduced all Round 1 fixes and nearby variants, reran focused,
+full, mapping, scope, no-write, and CI evidence, and accepted the bounded
+Installer v2 implementation without modifying product files.
+
+#### Evidence
+
+The 28 focused tests, 86-test unified gate, two green CI matrices, hierarchy
+order/cross-group controls, Unicode token controls, file-node diagnostics, and
+unchanged 22-row mapping are recorded in the Review above.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+Focused distribution suite; full verification; both CI run inspections;
+Unicode/exact/idempotent token probes; reversed and cross-group hierarchy
+probes; receipt hierarchy probe; directory, dangling-link, and live-file-link
+template probes; core mapping and revision diff checks.
+
+#### Known limitations
+
+Only the explicitly documented out-of-scope boundaries remain.
+
+#### Unresolved questions
+
+None.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-a` merges the accepted Task 007 branch and runs the accepted-flow
+`repo-organization` completion update on the default branch.

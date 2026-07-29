@@ -153,3 +153,14 @@ observations:
     promoted_to: null
     crystallized_via: null
     stale: false
+  - id: O15
+    timestamp: "2026-07-29T11:58+02:00"
+    provenance: ai-suggested
+    content: "Task 006 provides one five-stage verification command that is mirrored verbatim in CI on Python 3.11-3.13 and passes 64 regression tests after independent acceptance."
+    context: "The owner-authorized final revision closed both residual false negatives; independent review accepted it and the Driver merged and archived the task."
+    potential_type: claim
+    bound_to: [N30, N31, N32]
+    promoted: true
+    promoted_to: "logic/claims.md:C14"
+    crystallized_via: artifact-commitment
+    stale: false

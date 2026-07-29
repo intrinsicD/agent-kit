@@ -21,20 +21,41 @@ detailed behavior lives in focused skills under `.agents/skills/`.
 
 ## Installation
 
-The installable boundary is the fixed source-to-destination allowlist in
-[`distribution/manifest.json`](distribution/manifest.json). Inspect that file,
-then run the installer from the agent-kit checkout:
+The installable boundary is the named-group allowlist in
+[`distribution/manifest.json`](distribution/manifest.json). Its `core` group
+contains the 22 reusable payload files. Inspect it, create or choose an existing
+target directory, then preview a namespaced installation from the agent-kit
+checkout:
 
 ```bash
-python3 agent-kit/scripts/install_agent_workflow.py target-repository
+python3 agent-kit/scripts/install_agent_workflow.py \
+  install target-repository --slug my-project --dry-run
 ```
 
-The target directory must already exist. Before writing, the installer checks
-every declared destination plus every required parent. If any destination
-exists, is a symlink, or is blocked by a file/symlink ancestor, it reports all
-collisions and exits nonzero without creating payload files. There is no
-overwrite mode. Run it while no other process is changing target paths; the
-preflight protects a stable target, not one being concurrently rewritten.
+The slug must match `^[a-z][a-z0-9-]*$` and contain at most 24 characters.
+It prefixes all eleven skill directory names, frontmatter names, and
+backtick-quoted cross-references so skills remain distinct in multi-repository
+discovery surfaces. If the target is deliberately used in isolation, the
+explicit escape hatch is `--no-prefix`:
+
+```bash
+python3 agent-kit/scripts/install_agent_workflow.py \
+  install target-repository --no-prefix --dry-run
+```
+
+Remove `--dry-run` to install after reviewing the complete write plan and
+collision report. The target directory must already exist. `core` is always
+selected; repeat `--profile NAME` to add manifest groups when optional profiles
+become available.
+
+Before writing, the installer checks every selected destination, the generated
+`.agents/kit-install.json` receipt, and every required parent. If any protected
+path exists, is a symlink, or is blocked by a file/symlink ancestor, it reports
+all collisions and exits without creating payload files. Files are created
+exclusively, and an interrupted ordinary write rolls back only paths created by
+that invocation. There is no overwrite, update, uninstall, or repair mode. Run
+the installer while no other process is changing target paths; preflight is not
+an adversarial filesystem transaction.
 
 The payload contains the reusable authority, skills, validator, and separate
 blank project-state/index templates. It deliberately excludes agent-kit's root
@@ -42,13 +63,17 @@ README, live state, ARA, audits, completed tasks, dated sessions, and regression
 tests. It never enters `.git/`, so the target's history, branch, remotes, and
 unrelated files remain owned by the target repository.
 
-Expected layout:
+Expected slugged layout:
 
 ```text
 repository/
 ├── AGENTS.md
 ├── .agents/
+│   ├── kit-install.json
 │   ├── skills/
+│   │   ├── my-project-code-audit/
+│   │   ├── my-project-implementation/
+│   │   └── ... nine more prefixed skills
 │   └── state/
 │       ├── current-task.md
 │       ├── state.md
@@ -63,6 +88,25 @@ repository/
 └── scripts/
     └── validate_agent_workflow.py
 ```
+
+The receipt records the manifest version and SHA-256, selected slug/prefix and
+groups, installation time, hashes for immutable payload files, and the paths of
+user-owned templates. Diagnose an installation without modifying it:
+
+```bash
+python3 agent-kit/scripts/install_agent_workflow.py doctor target-repository
+```
+
+Doctor reports immutable files as `OK`, `MODIFIED`, or `MISSING`; state and
+documentation templates are user-owned after installation and are checked only
+as `PRESENT` or `MISSING`. A missing receipt reports an unknown installation
+and falls back to bounded `core` presence checks. Exit codes are 0 for a clean
+result, 1 for collisions/findings/install failure, and 2 for usage,
+environment, manifest, or receipt-schema errors. Doctor never repairs or
+writes.
+
+The previous positional installer form is intentionally unsupported; use the
+`install` subcommand and choose either `--slug` or `--no-prefix`.
 
 Run `python3 scripts/validate_agent_workflow.py` after installation and after
 any structural change. It checks two things:

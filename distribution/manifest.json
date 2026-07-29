@@ -1,6 +1,7 @@
 {
-  "version": 1,
-  "files": [
+  "version": 2,
+  "groups": {
+    "core": [
     {
       "source": "AGENTS.md",
       "destination": "AGENTS.md"
@@ -89,5 +90,6 @@
       "source": "distribution/templates/docs/tasks/README.md",
       "destination": "docs/tasks/README.md"
     }
-  ]
+    ]
+  }
 }

@@ -50,3 +50,9 @@ entries:
       - "Routed the mandatory post-two-round human choice as open question N29 rather than silently authorizing a third revision."
       - "Staged O14 instead of crystallizing a capability claim because Task 006 remains unaccepted and the topic is explicitly open."
       - "Found no contradiction with C13: its fixed historical Ruff baseline remains true after the separate format-only commit."
+  - turn: "2026-07-29_001#9"
+    notes:
+      - "Routed the user's option-1 authorization as N30 and the final independent acceptance as N31."
+      - "Routed accepted-flow merge/archive as N32 and the two blocking Installer v2 interface choices as open questions N33-N34."
+      - "Staged O15 and crystallized C14 through artifact commitment because accepted code, CI, archive, and repository state now depend on the verification capability."
+      - "Left O14 unpromoted as a time-scoped intermediate state; the final revision superseded its open limitation without making the earlier review result false."

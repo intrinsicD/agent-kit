@@ -495,5 +495,90 @@ tree:
           - "431e249"
           - "5e1153c"
           - ".agents/state/current-task.md"
+        status: resolved
+        children:
+          - id: N30
+            type: decision
+            title: "Authorize the final bounded Task 006 revision"
+            provenance: user
+            timestamp: "2026-07-29T11:58+02:00"
+            choice: >
+              Apply the two bounded fixes for empty or punctuation-only claim
+              statuses and gate duplicates hidden by trailing shell comments,
+              then run one final independent review.
+            alternatives:
+              - "Accept the two known false negatives and weaken the claims"
+              - "Close Task 006 as inconclusive without merging"
+            evidence:
+              - "N28"
+              - "N29"
+              - "docs/tasks/006-verification-foundation.md"
+            status: resolved
+            children:
+              - id: N31
+                type: experiment
+                title: "Accept the final verification revision"
+                provenance: ai-executed
+                timestamp: "2026-07-29T11:58+02:00"
+                result: >
+                  Commit 2a77376 rejected the two remaining false negatives,
+                  passed all 64 local tests, and passed CI on Python
+                  3.11-3.13. Independent final review reproduced status and
+                  commented-gate variants, confirmed the unchanged 22-file
+                  distribution, and returned Accepted.
+                evidence:
+                  - "2a77376"
+                  - "0cdc89c"
+                  - "https://github.com/intrinsicD/agent-kit/actions/runs/30440422028"
+                  - "docs/tasks/006-verification-foundation.md"
+                  - "docs/audits/verification-foundation.md"
+                status: resolved
+                children:
+                  - id: N32
+                    type: decision
+                    title: "Merge and archive accepted Task 006"
+                    provenance: ai-executed
+                    timestamp: "2026-07-29T11:58+02:00"
+                    choice: >
+                      Merge the independently accepted verification foundation,
+                      archive its complete task record, restore the blank
+                      active-task template, and make Installer v2 the next
+                      validated maturity slice.
+                    alternatives:
+                      - "Leave the accepted branch unmerged"
+                      - "Begin Installer v2 before completing Task 006 state"
+                    evidence:
+                      - "N31"
+                      - "3239e99"
+                      - "487b78f"
+                      - "docs/tasks/006-verification-foundation.md"
+                    status: resolved
+                    children: []
+      - id: N33
+        type: question
+        title: "Choose the Installer v2 prefix policy"
+        provenance: ai-suggested
+        timestamp: "2026-07-29T11:58+02:00"
+        description: >
+          Decide whether Task 007 requires --slug with an explicit
+          --no-prefix escape hatch or keeps unprefixed installation as the
+          default with optional --slug.
+        evidence:
+          - "docs/research/maturity-program-plan.md"
+          - ".agents/state/current-task.md"
+        status: open
+        children: []
+      - id: N34
+        type: question
+        title: "Choose the Installer v2 doctor receipt policy"
+        provenance: ai-suggested
+        timestamp: "2026-07-29T11:58+02:00"
+        description: >
+          Decide whether doctor uses a bounded installation receipt that
+          hashes immutable payload and presence-checks user-owned templates,
+          hashes every installed file, or operates without a receipt.
+        evidence:
+          - "docs/research/maturity-program-plan.md"
+          - ".agents/state/current-task.md"
         status: open
         children: []

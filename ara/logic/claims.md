@@ -217,3 +217,21 @@ present.
 - **Dependencies**: []
 - **Tags**: formatting, evidence-scope, regression-baseline
 - **From staging**: O13
+
+## C14: Task 006 provides one cross-version verification gate
+- **Statement**: At implementation commit `2a77376`, `scripts/verify.sh` runs
+  Ruff lint, Ruff format checking, workflow-state validation, ARA-ledger
+  validation, and all 64 regression tests; `.github/workflows/ci.yml` invokes
+  that command verbatim on Python 3.11, 3.12, and 3.13, and independent final
+  review accepted the result.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `2a77376`, any documented stage is absent or
+  can fail without a nonzero gate result, CI re-lists the stages instead of
+  invoking the command verbatim, any supported Python job fails, the 64-test
+  suite fails, or the archived task lacks an independent Accepted verdict.
+- **Proof**: [scripts/verify.sh, .github/workflows/ci.yml, tests/test_verification.py, tests/test_check_ara.py, docs/audits/verification-foundation.md, docs/tasks/006-verification-foundation.md, 2a77376, 0cdc89c]
+- **Dependencies**: [C07]
+- **Tags**: verification, ci, ara, regression-tests, independent-review
+- **From staging**: O15
