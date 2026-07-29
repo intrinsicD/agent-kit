@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: human
 
 ## Mode
 
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-Revision required
+Blocked on human decision
 
 ## Human Decisions
 
@@ -112,6 +112,38 @@ chat is not recorded. Use one block per decision:
 ### Decision
 ### Date
 ```
+
+### Question
+
+After two independent `Revision required` rounds, should task 006 receive one
+final bounded correction and review?
+
+### Options
+
+1. **Authorize one final bounded revision.** Add two regressions and fixes:
+   reject empty or punctuation-only `Status` values, and detect repeated gate
+   commands after removing trailing shell comments. Re-run the local/CI matrix
+   and one final independent review. This preserves the task's success criteria
+   with a small, reversible change.
+2. **Accept the known false negatives.** Keep the implementation as-is and
+   weaken the documented status and exact-stage claims. This avoids another
+   round but knowingly permits malformed claims and duplicate executed gates.
+3. **Close as inconclusive.** Do not merge the branch; retain the task record
+   and leave the maturity program blocked on its verification dependency.
+
+### Recommendation
+
+Option 1. Both defects are reproduced, acceptance-blocking false negatives with
+small local fixes; neither requires a new dependency, abstraction, or scope
+expansion.
+
+### Decision
+
+Pending the repository owner's answer in the task conversation.
+
+### Date
+
+2026-07-29
 
 ## Handoff Log
 
@@ -540,3 +572,28 @@ Driver `codex-b` follows the two-round escalation rule: record the two options,
 evidence, consequences, and recommendation under Human Decisions, set
 `Status: Blocked on human decision` and `Turn: human`, commit, and raise the
 decision through the task conversation before any third revision.
+
+### Escalation (codex-b, Driver)
+
+#### Trigger
+
+Round 1 and Round 2 both returned independent `Revision required` verdicts.
+Repository policy prohibits beginning a third revision without a human
+decision.
+
+#### Evidence
+
+Round 2 confirms every Round 1 bypass is closed and the clean 61-test gate plus
+Python 3.11–3.13 CI are green. It also reproduces two remaining false
+negatives: empty/punctuation-only Status values pass, and a duplicated gate
+with a trailing shell comment runs twice while the stage-list test passes.
+
+#### Recommendation
+
+Authorize one final bounded correction comprising two tests, the minimal
+validation changes, fresh local/CI evidence, and one final independent review.
+
+#### Recommended Next Action
+
+The repository owner chooses one option under Human Decisions. The receiving
+Driver records that answer and date before any implementation work resumes.

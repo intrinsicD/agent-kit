@@ -28,12 +28,17 @@ maturity-plan corrections.
 6. No further correctness, API, or maintainability defect was found in the
    Driver's revision audit after 21 checker fixtures, four verification tests,
    the full suite, and disposable counterexample probes.
+7. Round 2 independent review confirmed the Round 1 fixes and found two nearby
+   false negatives: empty or punctuation-only Status values are treated as
+   absent, and a repeated gate with a trailing shell comment escapes exact-line
+   counting. Both remain open pending the required human decision after two
+   non-accepting rounds.
 
 ## Severity
 
-The four plan mismatches and four Round 1 review findings were blocking but are
-corrected in the reviewed branch history. No unresolved Driver-audit finding
-remains; independent Round 2 review is still required.
+The four plan mismatches and four Round 1 review findings are corrected. The two
+Round 2 false negatives remain acceptance-blocking, and task 006 is blocked on
+the repository owner's decision whether to authorize a final bounded revision.
 
 ## Evidence
 
@@ -50,8 +55,12 @@ remains; independent Round 2 review is still required.
 
 ## Required Fixes
 
-Round 1's four required fixes are implemented at `04322dc`. No Driver-identified
-fix remains before Round 2 independent review.
+Round 1's four required fixes are implemented at `04322dc`. Round 2 requires:
+
+1. Reject a present Status field whose normalized disposition is empty.
+2. Detect repeated expected gate commands with trailing shell comments.
+
+Repository policy requires human authorization before another revision.
 
 ## Optional Improvements
 
@@ -72,4 +81,4 @@ permits a Git dependency.
 
 ## Verdict
 
-Ready for independent falsification; this Driver audit is not acceptance.
+Blocked on human decision after two non-accepting independent review rounds.
