@@ -12,7 +12,7 @@ Implement the maturity program verification foundation
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -98,7 +98,7 @@ verification entry point or CI workflow.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -397,3 +397,146 @@ action SHA pinning are out of scope.
 Perform Round 2 independent review. If the four required changes are closed,
 record `Accepted`, return `Turn: driver`, and let the Driver run the accepted
 closeout flow.
+
+### Review (codex-a, Reviewer, Round 2)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+Commit `04322dc` closes each exact Round 1 counterexample:
+
+- `supported:` with commit-only proof is rejected, as is the nearby
+  `:SuPpOrTeD;,` spelling; an unknown `accepted:` disposition is also rejected.
+- `Mystery-key`, slash, underscore, and Unicode-punctuation field names are
+  parsed and rejected as unknown.
+- The original traversal to `/etc/passwd`, a direct external symlink, and a
+  symlinked external directory are rejected. Normalized traversal and symlinks
+  that resolve inside the repository remain valid.
+- An exact duplicate gate command, including one indented with whitespace,
+  reaches the regression stage and fails its uniqueness assertion.
+
+Two nearby counterexamples still violate the documented invariants:
+
+1. `status_disposition()` normalizes punctuation-only input to an empty string,
+   and `check_claim_statuses()` treats that result like an absent field and
+   silently continues. Replacing C01's status with either `- **Status**: :;,.`
+   or an empty `- **Status**:` makes `check_ara.py` exit 0. A present Status
+   field therefore need not have the documented first-word disposition.
+2. Gate uniqueness is based on exact stripped-line equality. Duplicating
+   `PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_ara.py` with only a trailing
+   `# duplicated gate` comment executes the ARA checker twice, yet
+   `./scripts/verify.sh` exits 0 and all 61 tests pass. The regression therefore
+   still permits a directly re-listed gate and does not fully pin the five-stage
+   command list.
+
+These are bounded false negatives in success criteria 3 and 4, not requests
+for a richer value grammar or a general shell parser.
+
+#### Evidence Quality
+
+- Local Python 3.12.9 with Ruff 0.15.20: clean `./scripts/verify.sh` exited 0,
+  accepted 13 live claims, and passed 61 tests.
+- GitHub Actions run `30439177610` is tied to implementation commit `04322dc`.
+  Its CPython 3.11.15, 3.12.13, and 3.13.14 jobs each installed Ruff 0.15.20,
+  invoked `./scripts/verify.sh`, accepted 13 claims, and passed 61 tests.
+- Disposable archives of branch HEAD `57b5c7c` reproduced all exact and nearby
+  status, field, traversal, symlink, and duplicate-gate cases described above.
+- The original external traversal and two external-symlink variants exited 1;
+  an internal normalized path and internal symlink each exited 0, confirming
+  containment rather than blanket symlink rejection.
+- The exact duplicate gate exited 1 at the unit-test stage. The same executed
+  command with a trailing comment ran twice and exited 0, isolating the
+  remaining regression-test gap.
+- The Round 2 implementation commit changes only `scripts/check_ara.py`,
+  `tests/test_check_ara.py`, and `tests/test_verification.py`; distribution
+  content remains unchanged.
+
+#### Simplicity
+
+The shared normalization helper, resolved-path containment check, wider
+field-like pattern, and per-command uniqueness assertion are small and
+proportionate. The remaining corrections require only rejecting an empty
+normalized status and making the existing textual uniqueness check recognize
+an executed command with an inline comment. No new dependency, parser
+framework, or payload change is justified.
+
+#### Missing Cases
+
+The Round 1 accepted limits—reference-style PAPER links, Git lookup of
+commit-shaped proofs, Windows support, and immutable action SHA pinning—remain
+out of scope. This review also does not require recognizing arbitrary
+shell-equivalent rewrites; the failing variant repeats the complete expected
+command text on an executable line and adds only an inline comment.
+
+#### Required Changes
+
+1. Treat an empty normalized disposition as invalid when the Status field is
+   present. Add focused regressions for an empty value and punctuation-only
+   value, while preserving the corrected punctuated-supported behavior.
+2. Make the stage-list regression reject the complete expected gate command
+   when it is repeated on an executable line with an inline shell comment.
+   Preserve the existing order and exact-duplicate checks and add the reviewed
+   trailing-comment fixture.
+3. Re-run the focused counterexamples, clean verification, and supported Python
+   matrix after any authorized correction.
+
+#### Optional Improvements
+
+- Keep arbitrary semantic shell-command equivalence outside this textual
+  regression's scope.
+- Retain the previously recorded optional reference-link, commit-resolution,
+  and action-SHA hardening as separate future work.
+
+### Session Completion (codex-a, Reviewer, Round 2)
+
+#### Work completed
+
+Independently inspected the Round 2 revision, reproduced the clean local and CI
+evidence, exercised the four exact fixes and nearby variants, and recorded the
+remaining two false negatives without changing implementation.
+
+#### Evidence
+
+The clean 61-test gate, CI run `30439177610`, status and field variants,
+traversal and symlink boundaries, and exact/commented duplicate-gate outcomes
+are recorded in the Review above.
+
+#### Files changed
+
+`.agents/state/current-task.md` only.
+
+#### Tests or experiments run
+
+`./scripts/verify.sh`; GitHub run/job/log inspection; three status variants
+plus empty and punctuation-only statuses; four unknown-field spellings;
+external and internal traversal; direct and directory external symlinks;
+an internal symlink; and exact, indented, and inline-comment duplicate gates.
+
+#### Known limitations
+
+Only the explicitly scoped cases under Missing Cases remain untested or
+unrequired.
+
+#### Unresolved questions
+
+Per the repository protocol, two full revision rounds have now ended without
+an accepting verdict. A human must decide whether to authorize one final
+bounded correction or accept the two known false negatives.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-b` follows the two-round escalation rule: record the two options,
+evidence, consequences, and recommendation under Human Decisions, set
+`Status: Blocked on human decision` and `Turn: human`, commit, and raise the
+decision through the task conversation before any third revision.
