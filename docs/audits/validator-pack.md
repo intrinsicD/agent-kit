@@ -2,7 +2,8 @@
 
 ## Scope
 
-Driver audit and independent Reviewer Round 1 falsification of Task 008's three
+Driver audit, two independent Reviewer falsification rounds, and the
+repository owner's accepted-with-follow-up promotion of Task 008's three
 standard-library checkers, source verification wiring, six-file opt-in
 `verify` manifest group, target verification entry point, CI template,
 installer ownership classification, and regression fixtures. The audit covers
@@ -39,7 +40,7 @@ Independent Reviewer Round 1 reproduced five additional correction groups:
    semantically equivalent relisted checker command.
 
 Exact inputs and full dispositions are recorded in
-`.agents/state/current-task.md`.
+`docs/tasks/008-validator-pack.md`.
 
 Driver revision commit `41e9dee` closes four groups and partially closes the
 fifth:
@@ -100,14 +101,17 @@ fifth:
   and the disposable install controls. Direct, spaced, quoted, and compact
   block workflow mutations were caught; named scalar and named block steps
   reproduced the remaining bypass.
+- After the repository owner explicitly directed merge with the remaining gap
+  preserved as follow-up, the accepted task record passed the complete
+  seven-stage source gate again: both strict live checkers, 17 ARA claims,
+  and all 109 regressions passed before merge.
 
-## Required Fixes
+## Accepted Follow-up
 
-One bounded fix remains after Round 2: count `run` mapping keys that follow a
-named step, add named scalar and named block mutation regressions, and
-reconcile this audit. Because this is the second non-accepting review round,
-starting that correction requires the repository owner's explicit decision
-recorded in Task 008.
+One bounded test fix remains after owner-authorized merge: count `run` mapping
+keys that follow a named step and add named scalar and named block mutation
+regressions. It is preserved in `.agents/state/backlog.md`; acceptance does
+not claim those mutations are currently detected.
 
 ## Optional Improvements
 
@@ -136,6 +140,8 @@ recorded in Task 008.
 
 ## Verdict
 
-Blocked on human decision after independent Round 2. The remaining gap is
-test-only and bounded, but repository policy forbids beginning a third
-correction/review cycle without explicit authorization.
+Accepted with follow-up by repository-owner promotion on 2026-07-29 after two
+independent `Revision required` rounds. The opt-in validator profile, installed
+gate, clean workflow template, and four closed correction groups are accepted
+for merge. Named-step mutation-test coverage remains a documented medium
+follow-up and is not represented as complete.

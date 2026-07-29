@@ -12,12 +12,22 @@ Only add work that has evidence, a clear motivation, or an accepted dependency.
     independently accepted as `docs/tasks/007-installer-v2.md`
   - Suggested skills: `task-orchestration`, `implementation`, `code-audit`,
     `handoff`, `repo-organization`
-- [ ] Generic validator pack and target CI template
+- [x] Generic validator pack and target CI template
   - Motivation: Fresh targets receive structural validation but no single gate
     command or CI wiring.
   - Priority: High
   - Dependencies: Installer v2
-  - Evidence: `docs/research/maturity-program-plan.md` plan 007
+  - Evidence: `docs/research/maturity-program-plan.md` plan 007; accepted with
+    follow-up as `docs/tasks/008-validator-pack.md`
+  - Suggested skills: `task-orchestration`, `implementation`, `code-audit`,
+    `handoff`, `repo-organization`
+- [ ] Harden target-workflow anti-drift regression for named steps
+  - Motivation: Task 008's shipped workflow is clean, but the regression helper
+    misses a relisted checker when a valid YAML step puts `run:` after `name:`.
+  - Priority: Medium
+  - Dependencies: Generic validator pack and target CI template
+  - Evidence: `docs/tasks/008-validator-pack.md` Round 2 Review;
+    `docs/audits/validator-pack.md`
   - Suggested skills: `task-orchestration`, `implementation`, `code-audit`,
     `handoff`, `repo-organization`
 - [ ] Task-tree profile

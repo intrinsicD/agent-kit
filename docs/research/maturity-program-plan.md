@@ -2,10 +2,11 @@
 
 Date: 2026-07-29
 
-Status: **Active planning reference.** The verification foundation and
-Installer v2 were independently accepted and merged as actual tasks 006 and
-007. Later slices remain validated backlog, not accepted implementation; the
-generic validator pack is next as actual task 008. A decision in this document
+Status: **Active planning reference.** The verification foundation, Installer
+v2, and generic validator pack were merged as actual tasks 006–008. Task 008
+was accepted by repository-owner promotion with one bounded test follow-up;
+later slices remain validated backlog, not accepted implementation. The
+task-tree profile is next as actual task 009. A decision in this document
 becomes accepted only when a Driver lifts it into
 `.agents/state/current-task.md` under the two-agent workflow and it survives
 review. Task IDs are indicative; real IDs bind at initialization ("next unused
@@ -55,6 +56,17 @@ Independent Round 2 review accepted implementation tip `337e5b9` at
 `43845cd`; 28 focused tests and the 86-test gate passed locally, and CI passed
 on Python 3.11–3.13. The accepted branch merged at `b45d101`. Plan 007 is next
 and binds as actual task 008.
+
+Amendment (2026-07-29, task 008 acceptance with follow-up): proposed plan 007
+bound to actual task 008. The six-file opt-in `verify` group keeps `core` at
+22 files and adds the three standard-library checkers, empty target-owned
+docs-sync policy, four-stage target gate, and verbatim CI template. Two
+independent review rounds closed four of five correction groups; the shipped
+workflow is clean, but the mutation-test helper still misses named steps whose
+`run:` key follows `name:`. The repository owner explicitly directed merge
+with that gap preserved as follow-up. The 109-test source gate and disposable
+`core` + `verify` install/gate/doctor path pass; the branch merged at
+`c38abb5`. Plan 008 is next and would bind as actual task 009.
 
 ---
 
@@ -130,9 +142,10 @@ then.
 - [x] The installer is dry-runnable, doctorable, collision-refusing, and
       slug-prefix-aware; the distribution regression suite covers all of it.
       (bound as actual task 007)
-- [ ] A fresh install is self-enforcing on day one: authority-redirect,
+- [x] A fresh install is self-enforcing on day one: authority-redirect,
       doc-link, and docs-sync checks plus a verify entry point and a CI
-      workflow template ship as an opt-in profile. (next as actual task 008)
+      workflow template ship as an opt-in profile. (actual task 008, accepted
+      with a named-step mutation-test follow-up)
 - [ ] A target whose backlog outgrows one file can adopt a validated,
       dependency-aware backlog directory with a generated unblocked view,
       without creating a second active-task authority. (008)
@@ -468,7 +481,7 @@ M (likely two sessions: decisions+manifest+renderer, then dry-run+doctor).
 
 ---
 
-## Plan 007 — Generic validator pack and target CI template (next as actual task 008)
+## Plan 007 — Generic validator pack and target CI template (actual task 008; accepted with follow-up)
 
 ### Goal
 
@@ -594,7 +607,7 @@ M–L (two slices, one session each).
 
 ---
 
-## Plan 008 — Task-tree profile (indicative task 008)
+## Plan 008 — Task-tree profile (next as actual task 009)
 
 ### Goal
 
@@ -708,7 +721,7 @@ M (decision slice + implementation slice).
 
 ---
 
-## Plan 009 — Evidence profile and skill-text hardening (indicative task 009)
+## Plan 009 — Evidence profile and skill-text hardening (indicative task 010)
 
 ### Goal
 
@@ -821,7 +834,7 @@ M. M1 alone: XS.
 
 ---
 
-## Plan 010 — Growth loop and process-audit skill (indicative task 010)
+## Plan 010 — Growth loop and process-audit skill (indicative task 011)
 
 ### Goal
 
