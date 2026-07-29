@@ -335,3 +335,98 @@ tree:
                                       - "scripts/validate_agent_workflow.py"
                                     status: resolved
                                     children: []
+  - id: N21
+    type: question
+    title: "Revalidate cross-repository workflow adoption"
+    provenance: user
+    timestamp: "2026-07-29T10:34+02:00"
+    description: >
+      Reassess whether Prospect, StructSplat, realtime-gs, or IntrinsicEngine
+      should add or replace their workflows with agent-kit after Task 004, and
+      whether any remaining target mechanism should move into agent-kit.
+    also_depends_on: [N09, N13, N20]
+    status: resolved
+    children:
+      - id: N22
+        type: experiment
+        title: "Probe the revised target snapshots"
+        provenance: ai-executed
+        timestamp: "2026-07-29T10:34+02:00"
+        result: >
+          At the timed Task 005 snapshot, Prospect was one commit beyond its
+          Task 003 baseline, StructSplat and realtime-gs were unchanged, and
+          IntrinsicEngine was three commits beyond its baseline. Changed-path
+          classification found no new workflow policy, skill, validator, or CI
+          change; fixed-commit target checks passed. The fixed payload
+          preflight reported 0/1/1/1 collisions, with AGENTS.md as every
+          nonzero collision.
+        evidence:
+          - "docs/research/cross-repository-agent-workflow-adoption.md"
+          - "docs/tasks/005-revalidate-cross-repository-workflow-adoption.md"
+          - "21b16952b4ebe930bde312c9f0bb0468ed46fc6e"
+          - "cf4fe4196c4d7816ec38a519171ac5f0b2e108db"
+        status: resolved
+        children: []
+      - id: N23
+        type: experiment
+        title: "Falsify the first Task 005 snapshot"
+        provenance: ai-executed
+        timestamp: "2026-07-29T10:34+02:00"
+        result: >
+          Independent Round 1 review showed that the first artifact's
+          zero-drift premise missed one Prospect and two IntrinsicEngine
+          commits that predated handoff. It also found that Task 004 had not
+          implemented target-authority adaptation. The verdict was Revision
+          required while the substantive target dispositions, P0/P1 closure,
+          collision counts, and conditional installer-preview recommendation
+          survived.
+        evidence:
+          - "d7c2950036ffe964910debf5a3d528174dbc2361"
+          - "docs/tasks/005-revalidate-cross-repository-workflow-adoption.md"
+        status: resolved
+        children: []
+      - id: N24
+        type: experiment
+        title: "Accept the corrected timed assessment"
+        provenance: ai-executed
+        timestamp: "2026-07-29T10:34+02:00"
+        result: >
+          The Driver replaced timeless HEAD claims with explicit fixed commits,
+          included the third IntrinsicEngine commit, reran impacted disposable
+          checks, and limited Task 004 completion to the clean payload and
+          optional results audit. Round 2 reproduced distances 1/0/0/3, all
+          changed-path classifications and checks, all 36 agent-kit tests, and
+          live validation, then returned Accepted.
+        evidence:
+          - "c2222147ba5c46b7dc67ca81a97d183ee9884b63"
+          - "3a27431e74d3d2443b7ee69ac1be6aaf28308cf6"
+          - "docs/tasks/005-revalidate-cross-repository-workflow-adoption.md"
+        status: resolved
+        children: []
+      - id: N25
+        type: decision
+        title: "Retain the bounded no-adoption disposition"
+        provenance: ai-executed
+        timestamp: "2026-07-29T10:34+02:00"
+        choice: >
+          Do not normally install agent-kit into or replace any target
+          workflow. If explicitly prioritized, test the smallest coordination
+          slice in realtime-gs first and Prospect separately later; use only
+          failure-triggered in-place identity/verdict checks in StructSplat or
+          IntrinsicEngine. Keep agent-kit's fixed payload and results audit,
+          and add a read-only installer plan only before an authorized
+          zero-collision pilot.
+        alternatives:
+          - "Treat safe packaging as evidence for immediate adoption"
+          - "Install a parallel task authority in every target"
+          - "Import IntrinsicEngine's general generator platform"
+          - "Discard the target-specific evidence and task workflows"
+        evidence:
+          - "N22"
+          - "N23"
+          - "N24"
+          - "docs/research/cross-repository-agent-workflow-adoption.md"
+          - "docs/tasks/005-revalidate-cross-repository-workflow-adoption.md"
+          - "9896501"
+        status: resolved
+        children: []

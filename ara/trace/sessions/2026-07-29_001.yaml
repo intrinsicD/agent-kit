@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T09:20+02:00"
-  turn_count: 6
-  summary: "Workflow defects were remediated, target adoption was assessed, and Task 004 was independently accepted, merged, and archived."
+  last_turn: "2026-07-29T10:34+02:00"
+  turn_count: 7
+  summary: "Workflow defects were remediated; target adoption was assessed and revalidated; Tasks 004 and 005 were independently accepted and archived."
 
 events_logged:
   - turn: 1
@@ -139,6 +139,36 @@ events_logged:
     routing: direct
     provenance: ai-executed
     summary: "Clean-main post-closeout verification passed 6 distribution tests, 36 total tests, and live validation."
+  - turn: 7
+    type: question
+    id: N21
+    routing: direct
+    provenance: user
+    summary: "Revalidate target workflow adoption and remaining reciprocal imports after Task 004."
+  - turn: 7
+    type: experiment
+    id: N22
+    routing: direct
+    provenance: ai-executed
+    summary: "Timed target snapshot and fixed-commit checks reproduced distances 1/0/0/3 and payload collisions 0/1/1/1."
+  - turn: 7
+    type: experiment
+    id: N23
+    routing: direct
+    provenance: ai-executed
+    summary: "Round 1 falsified the zero-drift premise and one Task 004 scope statement."
+  - turn: 7
+    type: experiment
+    id: N24
+    routing: direct
+    provenance: ai-executed
+    summary: "Round 2 reproduced the corrected timed assessment and returned Accepted."
+  - turn: 7
+    type: decision
+    id: N25
+    routing: direct
+    provenance: ai-executed
+    summary: "Retain no normal installation or replacement, with only explicitly prioritized bounded pilots."
 
 ai_actions:
   - turn: 1
@@ -220,6 +250,19 @@ ai_actions:
     action: "Independently reran the focused, full, and live checks on clean main after Task 004 closeout."
     provenance: ai-executed
     files_changed: []
+  - turn: 7
+    action: "Revalidated four target workflow snapshots, ran disposable checks, and corrected the assessment through two independent review rounds."
+    provenance: ai-executed
+    files_changed:
+      - "docs/research/cross-repository-agent-workflow-adoption.md"
+      - ".agents/state/current-task.md"
+  - turn: 7
+    action: "Merged and archived accepted Task 005, restored blank active state, and updated compact repository state."
+    provenance: ai-executed
+    files_changed:
+      - "docs/tasks/005-revalidate-cross-repository-workflow-adoption.md"
+      - ".agents/state/current-task.md"
+      - ".agents/state/state.md"
 
 claims_touched:
   - id: C01
@@ -287,8 +330,11 @@ key_context:
     excerpt: "Round 2 independently accepted Task 004; the Driver merged and archived the complete task."
   - turn: 6
     excerpt: "Final clean-main verification confirmed the accepted distribution and results-audit integration survived merge and archive closeout."
+  - turn: 7
+    excerpt: "Independent review corrected moving-target snapshot evidence and accepted the unchanged no-replacement, conditional-pilot disposition."
 
 open_threads:
-  - "If prioritized, measure whether a bounded realtime-gs or Prospect pilot earns adoption."
+  - "If explicitly prioritized, add a read-only installer plan and measure whether a bounded realtime-gs pilot earns adoption; consider Prospect separately later."
 
-ai_suggestions_pending: []
+ai_suggestions_pending:
+  - "Before an authorized zero-collision target pilot, add a read-only installer plan or --dry-run mode."
