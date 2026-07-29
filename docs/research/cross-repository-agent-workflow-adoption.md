@@ -11,9 +11,12 @@ should be integrated into `agent-kit` or replace part of it?
 
 ## Decision Summary
 
-Do not replace any target repository's workflow wholesale, and do not run the
-current `git archive HEAD` installation command against any of them. The
-evidence supports two bounded pilots, not an adoption decision.
+Do not replace any target repository's workflow wholesale, and do not install
+the full agent-kit workflow into any of them as default policy. Task 004
+replaced the unsafe tracked-tree export with a fixed, collision-refusing
+22-file payload, but safe distribution is an enabler for evaluation rather
+than evidence that adoption will help. The evidence supports two bounded
+pilots, not an adoption decision.
 
 The useful part of `agent-kit` is its independently validated coordination
 kernel: explicit Driver and Reviewer labels, a turn marker, repository-persisted
@@ -30,17 +33,19 @@ must remain authoritative.
 
 | Repository | Evidence-backed disposition | Minimal invariant to test |
 | --- | --- | --- |
-| `prospect` | Pilot only after the distribution blocker is fixed; no adoption decision yet | Bind one task Driver label, final Reviewer label, turn, and verdict in repository state without replacing the existing multi-pass non-author evidence reviews. |
-| `realtime-gs` | Pilot only after the distribution blocker is fixed; no adoption decision yet | Add one durable current-task/handoff record with a distinct final Reviewer label; preserve all experiment and result-bundle gates. |
+| `prospect` | Eligible for a bounded pilot after explicit prioritization; no adoption decision yet | Bind one task Driver label, final Reviewer label, turn, and verdict in repository state without replacing the existing multi-pass non-author evidence reviews. |
+| `realtime-gs` | Preferred first bounded pilot after explicit prioritization; no adoption decision yet | Add one durable current-task/handoff record with a distinct final Reviewer label; preserve all experiment and result-bundle gates. |
 | `structsplat` | Do not install a parallel workflow; consider a schema/checker experiment | Test distinct proposer/reviewer labels and a terminal verdict inside the existing task authority. |
 | `IntrinsicEngine` | Do not install or replace; consider a high-risk-only enforcement experiment | For research claims, architecture decisions, and critical implementations, test persisted proposer/reviewer labels and a verdict in the existing task/PR record. |
 
-The first implementation task should be in `agent-kit`, not a target
-repository: create an explicit clean payload boundary that never ships this
-repository's own state, audit history, ARA records, or regression fixtures, and
-prove it in a disposable target. A manifest-driven export and
-IntrinsicEngine-style generator are implementation candidates, not yet a
-preselected architecture.
+Task 004 completed the two repository-level imports justified by this
+assessment: the clean fixed distribution boundary and the optional generic
+results-audit procedure distilled from Prospect, StructSplat, and realtime-gs.
+No further target mechanism currently justifies replacing agent-kit's core.
+If a pilot is prioritized, a read-only installer plan or `--dry-run` mode is a
+small useful safety improvement borrowed from IntrinsicEngine; it does not
+justify importing IntrinsicEngine's generator, overwrite mode, task graph, or
+CI platform.
 
 ## Evidence Classification
 
@@ -123,6 +128,66 @@ The assessment covers checked-in local workflow behavior. It does not inspect
 private issue trackers, branch-protection settings, remote-only branches, or
 human practices not represented in the repositories.
 
+## Revalidation After Task 004
+
+### Repository observations
+
+On 2026-07-29, Task 005 compared every target's current `HEAD` with the Task 003
+snapshot. All four commit distances are zero:
+
+| Repository | Current commit | Commits since Task 003 |
+| --- | --- | ---: |
+| `prospect` | `537966bf88c0ca9ecc89af10b6d7dbebef3872bd` | 0 |
+| `structsplat` | `ebf860bcf29d15e33d1be32315c6856baa30abb5` | 0 |
+| `realtime-gs` | `dd84c28deb3378d57992cd10b20f08bb594f102a` | 0 |
+| `IntrinsicEngine` | `5f7843c99be6f978b2939b463f48abfb39348c66` | 0 |
+
+Prospect still has local uncommitted research work and an untracked `discuss/`
+directory. IntrinsicEngine has local uncommitted RUNTIME-201 work. Task 005 did
+not inspect those changes as workflow authority and did not write to any target
+checkout. StructSplat and realtime-gs remain clean.
+
+The target checks were rerun from disposable `git archive HEAD` snapshots so
+the live working trees stayed untouched:
+
+- Prospect's epistemic diagnostics exited zero while retaining
+  `claim_supported: false` and blocked/reference-only dispositions.
+- StructSplat's docs, ARA, task, and script checks passed; its focused workflow
+  tests passed 8/8.
+- realtime-gs's docs, ARA, and script checks passed; its focused workflow tests
+  passed 12/12.
+- IntrinsicEngine validated 175 task files and 811 task IDs, reported its
+  session brief and skill mirrors current, passed its ARA check, and passed the
+  generator self-test.
+
+### Established results
+
+At agent-kit commit `e16513d`, plus Task 005 state, all 36 regression tests and
+the live workflow validator pass. Task 004's fixed manifest contains 22
+payload files, emits blank state, excludes source history, and refuses all
+collisions before writes.
+
+Against the current target files, the new manifest preflight reports:
+
+| Repository | Fixed-payload collisions | Collision |
+| --- | ---: | --- |
+| `prospect` | 0 | None |
+| `structsplat` | 1 | `AGENTS.md` |
+| `realtime-gs` | 1 | `AGENTS.md` |
+| `IntrinsicEngine` | 1 | `AGENTS.md` |
+
+These are payload-path results, not fit or adoption results. In particular,
+Prospect's zero-collision result means the current CLI would begin writing
+immediately; it does not prove that adding a second coordination lifecycle is
+worth its cost.
+
+### Agent inference
+
+No target-side evidence has changed the Task 003 dispositions. Task 004 makes
+a bounded pilot safe to package, while the benefit and process cost remain
+unmeasured. A target change still requires a separately prioritized,
+falsifiable pilot.
+
 ## Evaluation Criteria
 
 1. **Authority**: one clear source of agent policy across harnesses.
@@ -140,10 +205,10 @@ human practices not represented in the repositories.
 
 ## Established Results
 
-### The current installer is not a distributable boundary
+### The former tracked-tree installer was not a distributable boundary
 
-**Repository observation.** `agent-kit/README.md` installs every tracked path
-with:
+**Repository observation at Task 003.** `agent-kit/README.md` installed every
+tracked path with:
 
 ```text
 git -C agent-kit archive --format=tar HEAD | tar -x -C target-repository
@@ -210,9 +275,16 @@ Every target collides with its existing ARA; three also collide with
 agent-kit state, task-001/task-002 archives, and dated ARA session would still
 be copied into all four targets.
 
-**Agent inference.** Collision safety prevents accidental overwrite, but it
-does not make the tracked repository a clean installation payload. Deployment
-must remain blocked until packaging is separated from development history.
+**Agent inference at Task 003.** Collision safety would prevent accidental
+overwrite, but it would not make the tracked repository a clean installation
+payload. Deployment therefore remained blocked until packaging was separated
+from development history.
+
+**Established resolution.** Task 004 retired this command. The current
+installer uses a fixed 22-file manifest, blank state templates, complete
+preflight collision refusal, exclusive file creation, and rollback of only
+installer-created paths. Its distribution tests and independent review close
+the historical P0 blocker without establishing target fit.
 
 ### The coordination kernel is the genuine differentiator
 
@@ -291,10 +363,11 @@ question in Prospect and realtime-gs.
 
 #### Recommendation
 
-**Run a selective coordination pilot after packaging is fixed; do not replace
-the current workflow and do not treat the pilot as an adoption decision.**
+**Run a selective coordination pilot only after explicit prioritization; do
+not replace the current workflow and do not treat the pilot as an adoption
+decision.**
 
-After the distribution blocker is fixed:
+The distribution blocker is fixed. A separately authorized pilot should:
 
 1. Add one clean project task record that binds a Driver label, final Reviewer
    label, turn, verdict, and repository-persisted handoff.
@@ -483,15 +556,18 @@ inevitable drift.
 ### Selective coordination experiments
 
 Selected as the only reversible next evaluation method, not as an adoption
-decision. Preserve each target's authority and domain workflow. After the
-distribution blocker is fixed, Prospect and realtime-gs are candidates for
-separate bounded pilots of the minimal invariants named above. StructSplat and
-IntrinsicEngine should run an in-place schema/checker experiment only when a
-concrete coordination failure justifies one.
+decision. Preserve each target's authority and domain workflow. Prospect and
+realtime-gs are candidates for separate bounded pilots of the minimal
+invariants named above now that Task 004 closed the distribution blocker.
+StructSplat and IntrinsicEngine should run an in-place schema/checker
+experiment only when a concrete coordination failure justifies one.
 
 ## Relevant Implementations to Bring Back into `agent-kit`
 
-### P0 — Universal distribution blocker
+### P0 — Universal distribution blocker (completed in Task 004)
+
+Task 004 implemented and independently accepted the behavior specified below
+using a fixed manifest rather than a general generator.
 
 #### Create an explicit clean payload boundary
 
@@ -527,10 +603,10 @@ The test must exercise the artifact users would actually install:
 - Enumerate the produced archive or manifest output and compare it to the
   declared allowlist.
 
-P0 ends when that clean boundary and regression are independently reviewed.
-It does not include target-specific authority, naming, or CI work.
+P0 ended when Task 004's clean boundary and regression were independently
+reviewed. It did not include target-specific authority, naming, or CI work.
 
-### P1 — High-value, bounded additions
+### P1 — High-value, bounded additions (completed in Task 004)
 
 #### Add a generic research-results audit skill
 
@@ -542,9 +618,10 @@ requires a results claim table, raw recomputation, exact source/config binding,
 control/accounting audit, evidence-scope classification, and explicit
 confirm/narrow/refute/retire disposition.
 
-Add this as an optional research profile, not a universal software-task gate.
-Repository-specific rules such as complete-stream bit accounting, calibrated
-viewer handoffs, or checkpoint custody remain local extensions.
+Task 004 added this as an optional research profile, not a universal
+software-task gate. Repository-specific rules such as complete-stream bit
+accounting, calibrated viewer handoffs, or checkpoint custody remain local
+extensions.
 
 ### Target-conditioned pilot requirements
 
@@ -555,6 +632,11 @@ These are integration decisions, not universal distribution blockers:
 - Prefix or rename an installed coordination skill only if a preflight finds a
   real name collision or the target deliberately exposes several repositories
   in one skill-discovery surface.
+- Before an authorized pilot targets a zero-collision repository, add a
+  read-only plan or `--dry-run` path so operators can inspect the exact payload
+  without beginning installation. Borrow only this safety behavior from
+  IntrinsicEngine's generator; do not add overwrite, update, or general
+  generator scope.
 - Add the target state validator to CI before a pilot becomes normal
   repository policy. A disposable or local pilot may run it explicitly.
 
@@ -635,17 +717,19 @@ generic workflow rules.
 
 ## Smallest Safe Decision Sequence
 
-1. Fix and independently review agent-kit's distribution boundary.
-2. Add the disposable fresh-target, collision-refusal, no-history, and payload
-   allowlist regression described in P0.
-3. Pilot only the named minimal coordination invariants in `realtime-gs`.
-4. After one ordinary task and one results-bearing task, assess coordination
+1. Completed in Task 004: fix and independently review agent-kit's distribution
+   boundary and the disposable fresh-target, collision-refusal, no-history, and
+   payload-allowlist regression.
+2. If a target pilot becomes an explicit repository priority, add the
+   read-only installation plan and frame only the named minimal coordination
+   invariants in `realtime-gs`.
+3. After one ordinary task and one results-bearing task, assess coordination
    time, duplicate-state incidents, handoff reconstruction, and material
    findings; then adopt, revise, or remove that pilot.
-5. Run a separate Prospect pilot only if the realtime-gs result or a local
+4. Run a separate Prospect pilot only if the realtime-gs result or a local
    Prospect coordination failure supports its cost. Preserve Prospect's
    multi-reviewer scientific gates.
-6. Consider a narrow existing-schema identity/verdict experiment in
+5. Consider a narrow existing-schema identity/verdict experiment in
    StructSplat or IntrinsicEngine only after a concrete high-risk failure
    defines the need. Do not install a parallel workflow there.
 
@@ -654,9 +738,6 @@ generic workflow rules.
 - Should independent review be mandatory for every substantial target task, or
   only research, architecture, critical implementation, and release tasks?
   The proposed realtime-gs pilot can measure this.
-- Should the clean payload be an explicit static manifest or a small
-  generator? The evidence constrains its output and failure behavior, not this
-  implementation choice.
 - How should a task record additional non-author scientific reviewers beyond
   the assigned final Reviewer?
 - Which existing CI workflow should host the validator in Prospect and
@@ -664,8 +745,8 @@ generic workflow rules.
 
 ## Implications for This Repository
 
-The two-agent protocol should remain agent-kit's core. Its deployment and
-integration model should change substantially:
+The two-agent protocol should remain agent-kit's core. Task 004 made the
+required deployment changes:
 
 - distribute clean templates, not the repository's tracked history;
 - expose an explicit, auditable payload boundary before any installation;
@@ -676,6 +757,7 @@ integration model should change substantially:
 - treat stronger target evidence systems as extensions to keep, not workflows
   to replace.
 
-The present decision for all four repositories is **do not install or
-replace**. Completing P0 would make bounded pilots safe to attempt; it would
-not itself establish that any target should adopt agent-kit.
+The present standing decision for all four repositories is **do not install as
+normal policy and do not replace**. P0 makes a separately authorized bounded
+pilot safe to package; it does not establish that any target should adopt
+agent-kit.
