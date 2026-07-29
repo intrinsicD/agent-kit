@@ -19,6 +19,12 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 - Active and archived task state is validated for exact structure, unique
   visible fields, review semantics, status/turn pairing, terminal status, and
   matching ids.
+- `scripts/verify.sh` is the single source-repository gate for Ruff lint and
+  format, workflow structure, the ARA claim ledger, and all 64 regression
+  tests. GitHub Actions invokes it verbatim on Python 3.11, 3.12, and 3.13.
+- The standard-library ARA checker enforces required artifacts, claim shape,
+  dispositions, dependencies, repository-contained proof paths, staging
+  references, and ledger discoverability.
 - Accepted merge closeout and metadata-only non-merge closeout are documented
   and covered by executable Git probes.
 - The four target-workflow dispositions were revalidated at explicit commits:
@@ -61,21 +67,22 @@ accepted remediations remain in `docs/audits/` and `docs/tasks/`.
 - Routed skills: 11.
 - Fixed payload files: 22.
 - Workflow regression tests: 36.
-- Archived operational tasks: 5.
+- Unified verification tests: 64.
+- ARA checker fixtures: 23.
+- Archived operational tasks: 6.
 - Remediated audit findings: 6 of 6.
 - Assessed target workflows: 4.
-- Task 005 independent verdict: Accepted.
+- Task 006 independent verdict: Accepted.
 
 ## Immediate Next Step
 
-No target workflow change is currently justified. If a target pilot becomes a
-repository priority, first add a read-only installation plan, then frame the
-smallest measurable realtime-gs coordination pilot with `task-orchestration`;
-do not infer adoption from packaging alone. The next substantial agent-kit
-task swaps the roles recorded below.
+Initialize the validated Installer v2 slice as task 007 with roles swapped.
+Record human outcomes for the prefix-policy and doctor-receipt interface
+questions before implementation; do not infer either choice from the planning
+reference alone.
 
 ## Last Completed Task
 
-- Task ID: 005
-- Driver: codex-a
-- Reviewer: codex-b
+- Task ID: 006
+- Driver: codex-b
+- Reviewer: codex-a

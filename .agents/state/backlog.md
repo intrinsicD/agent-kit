@@ -7,7 +7,7 @@ Only add work that has evidence, a clear motivation, or an accepted dependency.
     collisions, while the current installer cannot preview or diagnose an
     installation.
   - Priority: High
-  - Dependencies: Verification foundation (active task 006)
+  - Dependencies: Verification foundation (accepted task 006)
   - Evidence: `docs/research/maturity-program-plan.md` plan 006
   - Suggested skills: `task-orchestration`, `implementation`, `code-audit`,
     `handoff`, `repo-organization`

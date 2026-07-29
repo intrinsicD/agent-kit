@@ -2,12 +2,12 @@
 
 Date: 2026-07-29
 
-Status: **Active planning reference.** The verification foundation is
-initialized as task 006; later slices remain validated backlog, not accepted
-implementation. A decision in this document becomes accepted only when a
-Driver lifts it into `.agents/state/current-task.md` under the two-agent
-workflow and it survives review. Task IDs are indicative; real IDs bind at
-initialization ("next unused number in `docs/tasks/`").
+Status: **Active planning reference.** The verification foundation was
+independently accepted and merged as task 006; later slices remain validated
+backlog, not accepted implementation. A decision in this document becomes
+accepted only when a Driver lifts it into `.agents/state/current-task.md`
+under the two-agent workflow and it survives review. Task IDs are indicative;
+real IDs bind at initialization ("next unused number in `docs/tasks/`").
 
 Provenance: requested by the repository owner. Evidence sources are the
 independently reviewed cross-repository assessment
@@ -34,6 +34,14 @@ those actual link destinations. The owner's instruction to check, fix, and
 implement this plan authorizes the proposed dependency order and Python
 3.11–3.13 floor. D1 remains proposed because it affects another repository;
 later interface decisions bind in their own tasks.
+
+Amendment (2026-07-29, task 006 acceptance): after two required revision
+rounds, the owner authorized one final bounded correction. Commit `2a77376`
+rejects empty or punctuation-only claim statuses and detects repeated gate
+commands hidden by trailing shell comments. Independent final review accepted
+the slice with 64/64 local tests, green CI on Python 3.11–3.13, and no
+distribution change. The complete record is
+`docs/tasks/006-verification-foundation.md`.
 
 ---
 
@@ -104,8 +112,8 @@ then.
 
 ## Program definition of done
 
-- [ ] One command (`scripts/verify.sh`) runs every agent-kit gate; CI runs it
-      verbatim on 3.11/3.12/3.13. (005)
+- [x] One command (`scripts/verify.sh`) runs every agent-kit gate; CI runs it
+      verbatim on 3.11/3.12/3.13. (bound as actual task 006)
 - [ ] The installer is dry-runnable, doctorable, collision-refusing, and
       slug-prefix-aware; the distribution regression suite covers all of it. (006)
 - [ ] A fresh install is self-enforcing on day one: authority-redirect,

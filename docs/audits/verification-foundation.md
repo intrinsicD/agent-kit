@@ -37,27 +37,30 @@ maturity-plan corrections.
 ## Severity
 
 The four plan mismatches, four Round 1 findings, and two Round 2 findings are
-corrected. No Driver-audit blocker remains; final independent review is
-required before acceptance.
+corrected. Final independent review accepted the bounded implementation; no
+known blocker remains.
 
 ## Evidence
 
-- `./scripts/verify.sh`: pass with 61 tests after the Round 1 revision.
+- `./scripts/verify.sh`: pass with 64 tests after the final authorized
+  revision.
 - `scripts/check_ara.py`: pass on 13 live claims.
 - `tests/test_check_ara.py`: valid fixture plus one or more negative fixtures
   for every documented checker invariant, including punctuated status/fields
   and traversal/symlink proof escapes.
 - Disposable archive probes: lint, format, workflow-state, ARA-proof, and unit
   test mutations each stop the corresponding stage with exit 1.
-- GitHub Actions runs `30438019981` (initial) and `30439177610` (Round 1
-  revision): success on Python 3.11, 3.12, and 3.13.
-- `distribution/manifest.json` is unchanged from `main`.
+- GitHub Actions runs `30438019981` (initial), `30439177610` (Round 1
+  revision), and `30440422028` (final authorized revision): success on Python
+  3.11, 3.12, and 3.13.
+- `distribution/manifest.json` is unchanged from pre-task main `878018d`.
+- Final independent review at `0cdc89c` reproduced empty, whitespace-only, and
+  punctuation-only statuses plus commented duplicate variants for every gate.
 
 ## Required Fixes
 
 Round 1's four required fixes are implemented at `04322dc`; the owner-authorized
-Round 2 fixes are implemented at `2a77376`. No known required fix remains before
-final independent review.
+Round 2 fixes are implemented at `2a77376`. No known required fix remains.
 
 ## Optional Improvements
 
@@ -78,4 +81,4 @@ permits a Git dependency.
 
 ## Verdict
 
-Ready for final independent review after the authorized bounded revision.
+Accepted by independent Reviewer `codex-a`; merged for Driver closeout.
