@@ -2,8 +2,8 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T09:18+02:00"
-  turn_count: 5
+  last_turn: "2026-07-29T09:20+02:00"
+  turn_count: 6
   summary: "Workflow defects were remediated, target adoption was assessed, and Task 004 was independently accepted, merged, and archived."
 
 events_logged:
@@ -133,6 +133,12 @@ events_logged:
     routing: direct
     provenance: ai-executed
     summary: "Merged, archived, and closed the accepted Task 004 workflow."
+  - turn: 6
+    type: experiment
+    id: N20
+    routing: direct
+    provenance: ai-executed
+    summary: "Clean-main post-closeout verification passed 6 distribution tests, 36 total tests, and live validation."
 
 ai_actions:
   - turn: 1
@@ -210,6 +216,10 @@ ai_actions:
       - "docs/tasks/004-refactor-distribution-results-audit.md"
       - ".agents/state/current-task.md"
       - ".agents/state/state.md"
+  - turn: 6
+    action: "Independently reran the focused, full, and live checks on clean main after Task 004 closeout."
+    provenance: ai-executed
+    files_changed: []
 
 claims_touched:
   - id: C01
@@ -275,6 +285,8 @@ key_context:
     excerpt: "Round 1 required only exact Ruff evidence correction, with no unrelated legacy formatting or behavior change."
   - turn: 5
     excerpt: "Round 2 independently accepted Task 004; the Driver merged and archived the complete task."
+  - turn: 6
+    excerpt: "Final clean-main verification confirmed the accepted distribution and results-audit integration survived merge and archive closeout."
 
 open_threads:
   - "If prioritized, measure whether a bounded realtime-gs or Prospect pilot earns adoption."

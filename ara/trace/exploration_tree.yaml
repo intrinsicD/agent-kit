@@ -314,4 +314,24 @@ tree:
                                   - "6384e36"
                                   - "docs/tasks/004-refactor-distribution-results-audit.md"
                                 status: resolved
-                                children: []
+                                children:
+                                  - id: N20
+                                    type: experiment
+                                    title: "Verify Task 004 after main closeout"
+                                    provenance: ai-executed
+                                    timestamp: "2026-07-29T09:20+02:00"
+                                    result: >
+                                      A final independent check on clean main
+                                      passed all six distribution tests, all
+                                      36 repository tests, and live validation
+                                      with 11 routed skills and four archives.
+                                      The active task matched the exact blank
+                                      template and Task 004 retained its
+                                      Accepted verdict.
+                                    evidence:
+                                      - "d0e374f"
+                                      - "docs/tasks/004-refactor-distribution-results-audit.md"
+                                      - "tests/test_distribution.py"
+                                      - "scripts/validate_agent_workflow.py"
+                                    status: resolved
+                                    children: []
