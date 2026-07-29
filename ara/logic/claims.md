@@ -166,3 +166,38 @@ present.
 - **Dependencies**: []
 - **Tags**: results-audit, evidence, reciprocal-integration
 - **From staging**: O10
+
+## C11: Task 004 implements a fixed clean distribution boundary
+- **Statement**: At implementation commit `92148b4`, the installer copies only
+  the manifest's 22 files into a fresh target; that target validates with 11
+  skills and no task archives, retains its pre-existing Git HEAD, branch, and
+  remote, and exact or blocking-ancestor collision fixtures exit nonzero
+  without changing the target.
+- **Status**: testing
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: Reproduce an undeclared installed file, leaked
+  live/history artifact, overwritten collision, changed tested Git metadata,
+  invalid fresh target, or failure to report all fixture collisions at
+  `92148b4`.
+- **Proof**: [tests/test_distribution.py, docs/audits/distribution-installer.md, 92148b4c19b84614301c03ff77b736de54cb65d7]
+- **Dependencies**: [C08]
+- **Tags**: installation, distribution, collisions, regression-tests
+- **From staging**: O11
+
+## C12: Task 004 adds the bounded generic results-audit procedure
+- **Statement**: At implementation commit `92148b4`, agent-kit routes an
+  optional `results-audit` skill that requires exact claim inventory, raw
+  recomputation, source/config binding, controls and accounting checks,
+  evidence-boundary classification, and explicit claim dispositions while
+  leaving domain-specific rules local.
+- **Status**: testing
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: Any stated generic invariant is absent from the
+  installed skill, the skill is not routed or optional, or repository-specific
+  policy is imposed as generic core at `92148b4`.
+- **Proof**: [.agents/skills/results-audit/SKILL.md, AGENTS.md, tests/test_distribution.py, 92148b4c19b84614301c03ff77b736de54cb65d7]
+- **Dependencies**: [C10]
+- **Tags**: results-audit, reciprocal-integration, evidence
+- **From staging**: O12

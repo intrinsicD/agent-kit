@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T00:55+02:00"
-  turn_count: 2
-  summary: "Workflow defects were remediated; four target workflows were then assessed without replacement or installation."
+  last_turn: "2026-07-29T08:59+02:00"
+  turn_count: 3
+  summary: "Workflow defects were remediated, target adoption was assessed, and the clean distribution plus results-audit implementation entered independent review."
 
 events_logged:
   - turn: 1
@@ -79,6 +79,30 @@ events_logged:
     routing: crystallized
     provenance: ai-suggested
     summary: "Three targets share stronger reusable results-audit invariants."
+  - turn: 3
+    type: decision
+    id: N14
+    routing: direct
+    provenance: user
+    summary: "Implement the clean payload boundary and bounded generic results audit."
+  - turn: 3
+    type: experiment
+    id: N15
+    routing: direct
+    provenance: ai-executed
+    summary: "Six distribution and all 36 repository tests passed at the implementation commit."
+  - turn: 3
+    type: claim
+    id: O11
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 004 implements a tested fixed 22-file clean distribution boundary."
+  - turn: 3
+    type: claim
+    id: O12
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 004 adds the bounded optional generic results-audit procedure."
 
 ai_actions:
   - turn: 1
@@ -122,6 +146,23 @@ ai_actions:
       - "docs/tasks/003-cross-repository-agent-workflow-adoption.md"
       - ".agents/state/current-task.md"
       - ".agents/state/state.md"
+  - turn: 3
+    action: "Implemented and tested the fixed distribution payload, installer, blank templates, and generic results-audit routing."
+    provenance: ai-executed
+    files_changed:
+      - "distribution/manifest.json"
+      - "distribution/templates/"
+      - "scripts/install_agent_workflow.py"
+      - ".agents/skills/results-audit/SKILL.md"
+      - "AGENTS.md"
+      - "README.md"
+      - "tests/test_distribution.py"
+  - turn: 3
+    action: "Recorded the Driver code audit and committed the structured Task 004 handoff for independent review."
+    provenance: ai-executed
+    files_changed:
+      - "docs/audits/distribution-installer.md"
+      - ".agents/state/current-task.md"
 
 claims_touched:
   - id: C01
@@ -154,16 +195,23 @@ claims_touched:
   - id: C10
     action: crystallized
     turn: 2
+  - id: C11
+    action: crystallized
+    turn: 3
+  - id: C12
+    action: crystallized
+    turn: 3
 
 key_context:
   - turn: 1
     excerpt: "The user asked to fix all problems identified by the accepted workflow audit."
   - turn: 2
     excerpt: "The user asked whether agent-kit should be added to or replace four sibling workflows, and what should flow back into agent-kit."
+  - turn: 3
+    excerpt: "The user asked to fix the accepted workflow-distribution and reciprocal results-audit problems."
 
 open_threads:
-  - "Implement and independently review the clean payload boundary and disposable distribution regression."
+  - "Independently review and close out the clean payload boundary and results-audit implementation."
   - "After packaging is safe, measure whether the realtime-gs and Prospect pilots earn adoption."
 
-ai_suggestions_pending:
-  - "Evaluate a generic research-results audit as the leading reciprocal P1 addition after the distribution blocker."
+ai_suggestions_pending: []

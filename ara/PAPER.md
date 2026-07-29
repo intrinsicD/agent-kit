@@ -27,3 +27,6 @@ The reader-facing result is
 - [`docs/research/cross-repository-agent-workflow-adoption.md`](../docs/research/cross-repository-agent-workflow-adoption.md):
   independently reviewed assessment of four target workflows and reciprocal
   integration candidates.
+- [`docs/audits/distribution-installer.md`](../docs/audits/distribution-installer.md):
+  Driver audit of the clean distribution and results-audit implementation
+  awaiting independent Task 004 review.

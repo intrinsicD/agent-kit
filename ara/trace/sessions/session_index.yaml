@@ -8,8 +8,8 @@ sessions:
     open_threads: 1
   - id: "2026-07-29_001"
     date: "2026-07-29"
-    summary: "Workflow defects were remediated; four target workflows were then assessed without replacement or installation."
-    turn_count: 2
-    events_count: 12
-    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10]
+    summary: "Workflow defects were remediated, target adoption was assessed, and the clean distribution plus results-audit implementation entered independent review."
+    turn_count: 3
+    events_count: 16
+    claims_touched: [C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12]
     open_threads: 2

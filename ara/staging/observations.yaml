@@ -109,3 +109,25 @@ observations:
     promoted_to: "logic/claims.md:C10"
     crystallized_via: artifact-commitment
     stale: false
+  - id: O11
+    timestamp: "2026-07-29T08:59+02:00"
+    provenance: ai-suggested
+    content: "Task 004 commit 92148b4 implements a fixed 22-file clean payload whose disposable fresh install and collision behavior pass six focused regressions."
+    context: "Driver implementation, executable validation, code audit, and committed handoff pending independent review."
+    potential_type: claim
+    bound_to: [N14, N15]
+    promoted: true
+    promoted_to: "logic/claims.md:C11"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O12
+    timestamp: "2026-07-29T08:59+02:00"
+    provenance: ai-suggested
+    content: "Task 004 commit 92148b4 adds an optional routed results-audit skill with the recurring generic invariants from the accepted three-target comparison."
+    context: "Bounded reciprocal integration implemented and committed for independent review."
+    potential_type: claim
+    bound_to: [N14, N15]
+    promoted: true
+    promoted_to: "logic/claims.md:C12"
+    crystallized_via: artifact-commitment
+    stale: false
