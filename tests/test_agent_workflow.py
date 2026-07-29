@@ -153,9 +153,7 @@ def task_record(
     selected_skills="- `task-orchestration`",
     handoff_log="",
 ):
-    indented_selected_skills = textwrap.indent(
-        selected_skills.strip(), "        "
-    )
+    indented_selected_skills = textwrap.indent(selected_skills.strip(), "        ")
     indented_handoff_log = textwrap.indent(handoff_log.strip(), "        ")
     return textwrap.dedent(
         f"""\
@@ -240,9 +238,7 @@ class WorkflowFixture(unittest.TestCase):
         self.temporary_directory.cleanup()
 
     def write_current_task(self, text):
-        (self.root / ".agents/state/current-task.md").write_text(
-            text, encoding="utf-8"
-        )
+        (self.root / ".agents/state/current-task.md").write_text(text, encoding="utf-8")
 
     def run_validator(self):
         return subprocess.run(
@@ -296,9 +292,7 @@ class AuditMatrixTests(WorkflowFixture):
                 handoff_log=review(),
             )
         )
-        self.assert_invalid(
-            "independent review requires distinct Driver and Reviewer"
-        )
+        self.assert_invalid("independent review requires distinct Driver and Reviewer")
 
     def test_review_focus_is_not_a_review(self):
         self.write_current_task(
@@ -372,15 +366,11 @@ class ReviewerRegressionTests(WorkflowFixture):
         self.assert_invalid("unexpected `## Unexpected` section")
 
     def test_template_requires_root_heading(self):
-        self.write_current_task(
-            UNFILLED_TASK.removeprefix("# Current Task\n\n")
-        )
+        self.write_current_task(UNFILLED_TASK.removeprefix("# Current Task\n\n"))
         self.assert_invalid("root heading must be exactly '# Current Task'")
 
     def test_active_task_rejects_duplicate_sections(self):
-        self.write_current_task(
-            task_record() + "\n## Status\n\nIn progress\n"
-        )
+        self.write_current_task(task_record() + "\n## Status\n\nIn progress\n")
         self.assert_invalid("duplicate `## Status` section")
 
     def test_fenced_review_example_cannot_approve_task(self):
@@ -490,9 +480,7 @@ class StructuredFieldRegressionTests(WorkflowFixture):
                         f"{field_line}\n- {name}: {duplicate}",
                     )
                 )
-                self.assert_invalid(
-                    f"duplicate Role Assignment field {name!r}"
-                )
+                self.assert_invalid(f"duplicate Role Assignment field {name!r}")
 
     def test_duplicate_review_state_fields_are_rejected(self):
         duplicate_verdict = review(verdict="Rejected").replace(
@@ -515,9 +503,7 @@ class StructuredFieldRegressionTests(WorkflowFixture):
                         handoff_log=handoff_log,
                     )
                 )
-                self.assert_invalid(
-                    f"duplicate `#### {name}` field"
-                )
+                self.assert_invalid(f"duplicate `#### {name}` field")
 
         self.write_current_task(
             task_record(
@@ -720,18 +706,15 @@ class GitWorkflowTests(unittest.TestCase):
         self.assertTrue((self.root / "docs/tasks/002-accepted.md").is_file())
         self.assertEqual(
             UNFILLED_TASK,
-            (self.root / ".agents/state/current-task.md").read_text(
-                encoding="utf-8"
-            ),
+            (self.root / ".agents/state/current-task.md").read_text(encoding="utf-8"),
         )
 
     def test_terminal_metadata_closeout_excludes_unmerged_task_changes(self):
         for status in ("Rejected", "Inconclusive", "Superseded"):
             with self.subTest(status=status):
-                case_root = (
-                    Path(self.temporary_directory.name)
-                    / status.lower().replace(" ", "-")
-                )
+                case_root = Path(
+                    self.temporary_directory.name
+                ) / status.lower().replace(" ", "-")
                 subprocess.run(
                     ["git", "clone", str(self.root), str(case_root)],
                     env=self.git_environment,
@@ -781,8 +764,7 @@ class GitWorkflowTests(unittest.TestCase):
                 case_git("commit", "-m", "task changes")
 
                 archive_path = (
-                    case_root
-                    / f"docs/tasks/002-{status.lower().replace(' ', '-')}.md"
+                    case_root / f"docs/tasks/002-{status.lower().replace(' ', '-')}.md"
                 )
                 archive_path.parent.mkdir(parents=True, exist_ok=True)
                 archive_path.write_text(
@@ -807,9 +789,7 @@ class GitWorkflowTests(unittest.TestCase):
                 case_git("switch", "main")
                 case_git("cherry-pick", closeout_commit)
 
-                self.assertFalse(
-                    (case_root / "rejected-implementation.txt").exists()
-                )
+                self.assertFalse((case_root / "rejected-implementation.txt").exists())
                 self.assertTrue(archive_path.is_file())
                 self.assertEqual(
                     UNFILLED_TASK, current_path.read_text(encoding="utf-8")
