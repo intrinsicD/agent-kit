@@ -12,7 +12,7 @@ Implement generic validator pack and target CI template
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -130,7 +130,7 @@ policy.
 
 ## Status
 
-In review
+Revision required
 
 ## Human Decisions
 
@@ -496,3 +496,162 @@ Reviewer `codex-a` reproduces the fixed tip independently and records a Round 2
 structured verdict. If any correction group still fails, return only the exact
 remaining counterexample; otherwise accept and return `Turn: driver` for
 merge/closeout.
+
+### Review (codex-a, Reviewer, Round 2)
+
+#### Verdict
+
+Revision required
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+Revision tip `74e05f91a5dbaf5e4f0dd91e1a1bbcb25d987e89` closes the
+authority-comment, scan-root containment, balanced-link-label, and eager-glob
+validation findings from Round 1. It also catches compact, spaced, quoted, and
+compact block-form relisted `run` directives. One bounded counterexample keeps
+Success Criterion 4 unproved:
+
+```yaml
+- name: Relisted authority
+  run: python3 scripts/check_authority.py --root . --strict
+```
+
+The equally valid block form is also missed:
+
+```yaml
+- name: Relisted authority
+  run: |
+    python3 scripts/check_authority.py --root . --strict
+```
+
+`workflow_run_directives()` anchors every detected key at `^-`, so a `run` key
+is counted only when it is the first key of the sequence-item mapping.
+Appending either named step above leaves its result exactly
+`("- run: ./scripts/verify.sh",)`. The assertion in
+`test_target_ci_invokes_only_the_target_verify_entry_point` therefore still
+passes while the workflow relists a delegated checker stage. The shipped
+workflow itself remains clean; the defect is in the required anti-drift
+regression guarantee.
+
+#### Evidence Quality
+
+- Independent `./scripts/verify.sh` passed Ruff, workflow validation, strict
+  live authority and link checks, all 15 ARA claims, and all 109 regressions.
+  Focused suites independently passed 19/19 validator-pack, 30/30
+  distribution, and 7/7 verification tests.
+- Exact Round 1 probes now reject a comment-only Codex contract reference,
+  empty and populated external `docs` symlinks, nested and escaped missing-link
+  labels, and malformed `[z-a]`, `[!]`, and `[unterminated` classes in both
+  `trigger` and `one_of` before explicit-file or empty-Git-diff evaluation.
+- Nearby positive controls pass for plain, quoted, and quoted-`#` visible YAML
+  references; empty and populated internal scan-root aliases; inline-code
+  masking; existing balanced and escaped destinations; and valid ranged and
+  negated character classes under explicit files and an empty Git diff.
+- Workflow mutations with compact, spaced, quoted, and compact block-form
+  `run` keys are detected. Named scalar and named block-form steps reproduce
+  the sole remaining bypass above.
+- A fresh committed disposable Git target received 28 `core` + `verify`
+  payload files and a receipt. Its installed four-stage gate and doctor exited
+  0; the receipt classified 16 immutable files and 12 user-owned templates;
+  `0755`/`0664` modes were exact; and target HEAD, branch, and seed content
+  remained unchanged.
+- The Task 007 `core` mapping remains byte-for-byte equal at 22 rows, and the
+  `verify` group remains the intended six physical sources. Revision scope is
+  limited to the three checker fixes, two test files, README, and the validator
+  audit; `git diff --check e57d88e..74e05f9` passes. The handoff commit changes
+  only this task record.
+- The two recorded green Python 3.11–3.13 CI runs could not be independently
+  re-opened during this review because the GitHub API was unreachable. This
+  does not change the local counterexample or verdict.
+
+#### Simplicity
+
+The implementation remains bounded to three standard-library checkers and
+three target-owned templates, with no dependency, core, or policy expansion.
+The remaining correction belongs only in the existing workflow assertion; it
+does not justify a YAML framework or a new validation interface.
+
+#### Missing Cases
+
+The documented exclusions for cross-line Markdown constructs, raw HTML,
+autolinks, fragments, non-POSIX/non-UTF-8 behavior, working-tree inference, and
+concurrent filesystem mutation remain acceptable. Named workflow steps are
+ordinary syntax inside the claimed interface and are not covered by those
+exclusions.
+
+#### Required Changes
+
+1. Make the target-workflow anti-drift assertion count executable `run` mapping
+   keys when they follow another step key, not only when `run` begins the
+   sequence item. Add both named scalar and named `run: |` block regressions,
+   retain the existing spelling controls, and update the audit disposition
+   after the complete mutation set passes.
+
+#### Optional Improvements
+
+None. Keep the correction within the existing test surface.
+
+### Session Completion (codex-a, Reviewer, Round 2)
+
+#### Work completed
+
+Independently reviewed the fixed revision and Driver handoff, reran every Round
+1 failure plus adjacent positive controls, audited the changed implementations
+and regressions, reproduced the source/focused/disposable evidence, and
+falsified the remaining target-workflow anti-drift claim without changing
+implementation or tests.
+
+#### Evidence
+
+Four Round 1 correction groups now pass completely. The fifth catches four
+alternate `run` spellings but misses both ordinary named scalar and named block
+steps. Full and focused gates remain green, so the structured Review above
+separates the passing implementation evidence from the one unclosed regression
+guarantee.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+No implementation, test, manifest, template, README, or audit file was changed.
+
+#### Tests or experiments run
+
+- `./scripts/verify.sh`
+- Focused validator-pack, distribution, and verification unittest discovery
+- Authority comment/visible/quoted-reference probes
+- Empty/populated internal and external scan-root symlink probes
+- Nested/escaped label, inline-code, and balanced-destination probes
+- Malformed and valid ranged/negated glob probes under explicit files and
+  empty Git diffs
+- Compact, spaced, quoted, compact-block, named-scalar, and named-block
+  workflow mutation probes
+- Independent manifest baseline/mode and disposable
+  install/gate/doctor/ownership/Git probe
+- Revision/handoff scope and whitespace checks
+
+#### Known limitations
+
+The accepted residual boundaries listed in the Review are unchanged. GitHub
+Actions run metadata was unavailable for independent reinspection because the
+API connection failed.
+
+#### Unresolved questions
+
+None. The remaining counterexample has a bounded, test-only disposition and
+does not require a product or architecture decision.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-b` closes only the named-step detection gap, adds the two
+regressions above, reconciles the durable audit, reruns focused/full/CI and
+disposable evidence, and returns the fixed commit for the next independent
+review.
