@@ -12,7 +12,7 @@ Revalidate cross-repository agent workflow adoption
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -94,7 +94,7 @@ results, not evidence of workflow benefit.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -408,3 +408,118 @@ Yes
 Driver `codex-a` corrects the two evidence defects without changing target
 repositories, reruns the bounded currency checks, and returns a new fixed
 artifact for Round 2 review.
+
+### Handoff (codex-a, Driver, Revision Round 1)
+
+#### Objective
+
+Verify that the revised assessment uses accurate timed target snapshots,
+classifies all post-Task-003 commits, and limits Task 004 completion claims to
+the behavior it actually delivered.
+
+#### Changes
+
+- Replaced the false zero-drift table with the timed
+  `2026-07-29T10:23:47+02:00` snapshot.
+- Classified Prospect `21b1695` and IntrinsicEngine `ecd484d`, `41c4f73`, and
+  `cf4fe419` by changed workflow/evidence surface and disposition impact.
+- Re-ran the impacted Prospect and IntrinsicEngine checks from archives fixed
+  to the recorded commits.
+- Separated completed Task 004 behavior from future target-specific authority
+  adaptation.
+- Updated Current Evidence to match the revised artifact.
+
+#### Evidence
+
+- Revised artifact commit:
+  `c2222147ba5c46b7dc67ca81a97d183ee9884b63`.
+- Task 003 baseline distances at the revised snapshot are Prospect 1,
+  StructSplat 0, realtime-gs 0, and IntrinsicEngine 3.
+- Prospect `21b1695` changes ten Q1 evidence, ARA, runbook, implementation, and
+  test paths; no authority, skill, task-coordination, validator, or CI path
+  changed. Its diagnostics still exit zero with all four claims unsupported.
+- The three IntrinsicEngine commits change its existing RUNTIME-201 task state,
+  generated brief, runtime documentation/code, and tests; no workflow policy,
+  skill, validator, or CI path changed. At `cf4fe419`, strict task validation
+  passes for 175 files, state links index 811 IDs, the session brief and 17
+  skill mirrors are current, and the ARA check passes.
+- All four target commit IDs still matched the revised table at the immediate
+  pre-handoff recheck at `2026-07-29T10:25:54+02:00`.
+- At that recheck, Prospect retained only untracked `discuss/`; IntrinsicEngine
+  had three new uncommitted implementation/test modifications at the same
+  checked-in commit. They were preserved and excluded from workflow authority.
+- Agent-kit live validation and `git diff --check` pass.
+
+#### Assumptions
+
+- A timestamped fixed-commit snapshot is the reproducible boundary for
+  repositories that remain under active development.
+- Post-snapshot dirty changes are not checked-in workflow authority.
+- Unchanged policy/validator surfaces plus passing impacted checks are
+  sufficient to retain, but not broaden, the prior dispositions.
+
+#### Uncertainties
+
+- IntrinsicEngine continued active uncommitted work after the snapshot; future
+  commits require a future currency check, not a timeless claim in this task.
+- No target pilot or remote-policy inspection was performed.
+- Pilot benefit and coordination cost remain unmeasured.
+
+#### Review Focus
+
+- Confirm the four recorded commits, distances, changed-path classifications,
+  and immediate pre-handoff recheck.
+- Verify the report no longer attributes target-authority adaptation to Task
+  004.
+- Check that the new Prospect evidence and actively exercised IntrinsicEngine
+  task lifecycle do not require a different disposition.
+- Confirm the historical false evidence remains only in the append-only
+  Round 1 Handoff/Review record, not in Current Evidence or the research note.
+
+#### Recommended Next Action
+
+Accept if the bounded corrections fully resolve Round 1 without introducing a
+new adoption claim; otherwise name the exact remaining evidence defect.
+
+### Session Completion (codex-a, Driver, Revision Round 1)
+
+#### Work completed
+
+Applied every required Round 1 correction, reran impacted checks, committed the
+revised artifact, and rechecked all target heads immediately before handoff.
+
+#### Evidence
+
+Recorded in the preceding revision Handoff.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+- `docs/research/cross-repository-agent-workflow-adoption.md`
+
+#### Tests or experiments run
+
+- Current target status, commit-distance, log, and changed-path probes.
+- Prospect diagnostics from disposable commit `21b1695`.
+- IntrinsicEngine task policy, state links, session brief, skill mirrors, and
+  ARA checks from disposable commit `cf4fe419`.
+- `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_agent_workflow.py`.
+- `git diff --check`.
+
+#### Known limitations
+
+The assessment is a timed checked-in snapshot. Uncommitted target work,
+remote-only policy, and actual pilot outcomes remain outside scope.
+
+#### Unresolved questions
+
+Whether any bounded coordination pilot earns adoption remains unresolved by
+design.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+codex-b reviews commit `c222214` in Round 2.
