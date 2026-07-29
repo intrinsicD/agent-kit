@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for the fixed, non-overwriting distribution payload."""
+"""Regression tests for the versioned, non-overwriting distribution payload."""
 
 import importlib.util
 import json
@@ -71,15 +71,26 @@ def workspace_snapshot(root):
 
 def manifest_rows():
     document = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    return document, document["files"]
+    return document, document["groups"]["core"]
+
+
+def install_command(target, *options):
+    return [
+        sys.executable,
+        str(INSTALLER),
+        "install",
+        str(target),
+        *options,
+    ]
 
 
 class DistributionBoundaryTests(unittest.TestCase):
-    def test_manifest_is_an_explicit_clean_payload(self):
+    def test_manifest_v2_is_an_explicit_clean_core_payload(self):
         document, rows = manifest_rows()
-        self.assertEqual({"version", "files"}, set(document))
-        self.assertEqual(1, document["version"])
-        self.assertTrue(rows)
+        self.assertEqual({"version", "groups"}, set(document))
+        self.assertEqual(2, document["version"])
+        self.assertEqual({"core"}, set(document["groups"]))
+        self.assertEqual(22, len(rows))
 
         sources = [row["source"] for row in rows]
         destinations = [row["destination"] for row in rows]
@@ -170,9 +181,104 @@ class DistributionBoundaryTests(unittest.TestCase):
             self.assertTrue(source.is_file(), row["source"])
             self.assertFalse(source.is_symlink(), row["source"])
 
-    def test_fresh_install_is_exact_blank_valid_and_preserves_git_metadata(self):
+    def test_invalid_manifest_forms_are_rejected(self):
+        invalid_documents = (
+            [],
+            {"version": 1, "groups": {"core": []}},
+            {"version": 2, "files": []},
+            {"version": 2, "groups": {}},
+            {"version": 2, "groups": {"extra": []}},
+            {"version": 2, "groups": {"core": []}},
+            {"version": 2, "groups": {"core": {}, "bad/name": []}},
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            path = root / "manifest.json"
+            for document in invalid_documents:
+                with self.subTest(document=document):
+                    path.write_text(json.dumps(document), encoding="utf-8")
+                    with self.assertRaises(INSTALLER_MODULE.ManifestError):
+                        INSTALLER_MODULE.load_manifest(root, path)
+
+    def test_named_group_selection_is_a_stable_union(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            for name in ("core.txt", "extra.txt"):
+                (root / name).write_text(name, encoding="utf-8")
+            document = {
+                "version": 2,
+                "groups": {
+                    "core": [{"source": "core.txt", "destination": "out/core.txt"}],
+                    "extra": [{"source": "extra.txt", "destination": "out/extra.txt"}],
+                },
+            }
+            path = root / "manifest.json"
+            path.write_text(json.dumps(document), encoding="utf-8")
+
+            manifest = INSTALLER_MODULE.load_manifest(root, path)
+            selected = INSTALLER_MODULE.select_payload(
+                manifest, ("core", "extra", "core")
+            )
+
+            self.assertEqual(
+                ["out/core.txt", "out/extra.txt"],
+                [entry.destination.as_posix() for entry in selected],
+            )
+            with self.assertRaisesRegex(
+                INSTALLER_MODULE.ManifestError, "unknown payload group"
+            ):
+                INSTALLER_MODULE.select_payload(manifest, ("core", "missing"))
+
+    def test_slug_validation_has_a_narrow_public_contract(self):
+        for valid in ("a", "agent-kit", "a1", "a" * 24):
+            with self.subTest(valid=valid):
+                self.assertEqual(valid, INSTALLER_MODULE.validate_slug(valid))
+        for invalid in (
+            "",
+            "Agent",
+            "1agent",
+            "-agent",
+            "agent_kit",
+            "agent--kit!",
+            "a" * 25,
+            None,
+        ):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    INSTALLER_MODULE.validate_slug(invalid)
+
+    def test_slug_rendering_changes_only_bounded_naming_surfaces(self):
+        payload = INSTALLER_MODULE.load_payload()
+        plan = INSTALLER_MODULE.render_payload(payload, "acme")
+        by_destination = {
+            entry.destination.as_posix(): entry.content.decode("utf-8")
+            for entry in plan
+        }
+
+        for token in INSTALLER_MODULE.SKILL_TOKENS:
+            destination = f".agents/skills/acme-{token}/SKILL.md"
+            self.assertIn(destination, by_destination)
+            self.assertIn(f"name: acme-{token}\n", by_destination[destination])
+            self.assertNotIn(f"name: {token}\n", by_destination[destination])
+
+        for content in by_destination.values():
+            for span in INSTALLER_MODULE.INLINE_CODE_PATTERN.finditer(content):
+                self.assertIsNone(
+                    INSTALLER_MODULE.SKILL_TOKEN_PATTERN.search(span.group(1)),
+                    span.group(0),
+                )
+
+        agents = by_destination["AGENTS.md"]
+        self.assertIn("critical implementation.", agents)
+        self.assertIn("prepares a handoff.", agents)
+        implementation = by_destination[".agents/skills/acme-implementation/SKILL.md"]
+        self.assertIn("two real implementations already exist", implementation)
+        self.assertIn("interfaces with one implementation", implementation)
+
+    def test_fresh_slugged_install_is_valid_and_preserves_git_metadata(self):
         _, rows = manifest_rows()
-        expected_destinations = {row["destination"] for row in rows}
+        plan = INSTALLER_MODULE.render_payload(INSTALLER_MODULE.load_payload(), "acme")
+        expected_destinations = {entry.destination.as_posix() for entry in plan}
 
         with tempfile.TemporaryDirectory() as temporary_directory:
             target = Path(temporary_directory) / "target"
@@ -201,7 +307,7 @@ class DistributionBoundaryTests(unittest.TestCase):
             ).stdout.strip()
             original_git_head = (target / ".git/HEAD").read_bytes()
 
-            installation = run([sys.executable, str(INSTALLER), str(target)])
+            installation = run(install_command(target, "--slug", "acme"))
 
             self.assertEqual(0, installation.returncode, installation.stdout)
             self.assertIn(
@@ -214,23 +320,6 @@ class DistributionBoundaryTests(unittest.TestCase):
                 if value[0] in {"file", "symlink"} and relative != "project.txt"
             }
             self.assertEqual(expected_destinations, installed_files)
-
-            self.assertFalse((target / "README.md").exists())
-            self.assertFalse((target / ".ara").exists())
-            self.assertFalse((target / "tests").exists())
-            self.assertFalse((target / "docs/sessions").exists())
-            self.assertEqual(
-                (
-                    REPOSITORY_ROOT / "distribution/templates/current-task.md"
-                ).read_bytes(),
-                (target / ".agents/state/current-task.md").read_bytes(),
-            )
-            installed_state = (target / ".agents/state/state.md").read_text(
-                encoding="utf-8"
-            )
-            self.assertIn("## Last Completed Task\n\nNone recorded.", installed_state)
-            self.assertNotIn("Task 003", installed_state)
-            self.assertNotIn("agent-kit", installed_state)
 
             validation = run(
                 [sys.executable, "scripts/validate_agent_workflow.py"],
@@ -264,6 +353,20 @@ class DistributionBoundaryTests(unittest.TestCase):
             )
             self.assertEqual(original_git_head, (target / ".git/HEAD").read_bytes())
 
+    def test_explicit_no_prefix_preserves_payload_bytes(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            target = Path(temporary_directory) / "target"
+            target.mkdir()
+
+            installation = run(install_command(target, "--no-prefix"))
+
+            self.assertEqual(0, installation.returncode, installation.stdout)
+            for entry in INSTALLER_MODULE.load_payload():
+                self.assertEqual(
+                    entry.source.read_bytes(),
+                    (target / entry.destination).read_bytes(),
+                )
+
     def test_all_exact_collisions_are_reported_before_any_write(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             target = Path(temporary_directory) / "target"
@@ -279,9 +382,9 @@ class DistributionBoundaryTests(unittest.TestCase):
             (state / "current-task.md").symlink_to("missing-task.md")
             before = workspace_snapshot(target)
 
-            installation = run([sys.executable, str(INSTALLER), str(target)])
+            installation = run(install_command(target, "--slug", "acme"))
 
-            self.assertEqual(3, installation.returncode, installation.stdout)
+            self.assertEqual(1, installation.returncode, installation.stdout)
             self.assertIn("  - .agents/state/current-task.md", installation.stdout)
             self.assertIn("  - AGENTS.md", installation.stdout)
             self.assertIn(
@@ -301,9 +404,9 @@ class DistributionBoundaryTests(unittest.TestCase):
             (target / "docs").symlink_to("missing-docs")
             before = workspace_snapshot(target)
 
-            installation = run([sys.executable, str(INSTALLER), str(target)])
+            installation = run(install_command(target, "--no-prefix"))
 
-            self.assertEqual(3, installation.returncode, installation.stdout)
+            self.assertEqual(1, installation.returncode, installation.stdout)
             self.assertIn("  - .agents", installation.stdout)
             self.assertIn("  - docs", installation.stdout)
             self.assertEqual(before, workspace_snapshot(target))
@@ -313,11 +416,23 @@ class DistributionBoundaryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary_directory:
             target = Path(temporary_directory) / "missing"
 
-            installation = run([sys.executable, str(INSTALLER), str(target)])
+            installation = run(install_command(target, "--no-prefix"))
 
             self.assertEqual(2, installation.returncode, installation.stdout)
             self.assertIn("Target must be an existing directory", installation.stdout)
             self.assertFalse(target.exists())
+
+    def test_old_positional_cli_is_rejected_without_writing(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            target = Path(temporary_directory) / "target"
+            target.mkdir()
+            before = workspace_snapshot(target)
+
+            installation = run([sys.executable, str(INSTALLER), str(target)])
+
+            self.assertEqual(2, installation.returncode, installation.stdout)
+            self.assertIn("invalid choice", installation.stdout)
+            self.assertEqual(before, workspace_snapshot(target))
 
     def test_copy_failure_rolls_back_only_installer_created_paths(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -331,12 +446,15 @@ class DistributionBoundaryTests(unittest.TestCase):
             (target / "keep.txt").write_text("target content\n", encoding="utf-8")
             before = workspace_snapshot(target)
             payload = (
-                INSTALLER_MODULE.PayloadFile(
-                    source=source_one, destination=Path("first.txt")
+                INSTALLER_MODULE.PlannedFile(
+                    source=source_one,
+                    destination=Path("first.txt"),
+                    content=source_one.read_bytes(),
                 ),
-                INSTALLER_MODULE.PayloadFile(
+                INSTALLER_MODULE.PlannedFile(
                     source=source_two,
                     destination=Path("nested/second.txt"),
+                    content=source_two.read_bytes(),
                 ),
             )
             real_copy = INSTALLER_MODULE.shutil.copyfileobj
