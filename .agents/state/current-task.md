@@ -12,7 +12,7 @@ Revalidate cross-repository agent workflow adoption
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: reviewer
+- Turn: driver
 
 ## Mode
 
@@ -94,7 +94,7 @@ results, not evidence of workflow benefit.
 
 ## Status
 
-In review
+Accepted
 
 ## Human Decisions
 
@@ -523,3 +523,153 @@ Yes
 #### Recommended next action
 
 codex-b reviews commit `c222214` in Round 2.
+
+### Review (codex-b, Reviewer, Round 2)
+
+#### Verdict
+
+Accepted
+
+#### Self-reviewed
+
+No
+
+#### Correctness
+
+The revision satisfies all four Round 1 required changes:
+
+1. It replaces the false zero-drift premise with a timed snapshot at
+   `2026-07-29T10:23:47+02:00` and records commit distances `1/0/0/3` for
+   Prospect, StructSplat, realtime-gs, and IntrinsicEngine. Current Evidence,
+   the research note, and the revision Handoff agree on the fixed commits.
+2. It classifies Prospect `21b1695` and IntrinsicEngine `ecd484d`, `41c4f73`,
+   and `cf4fe419`, distinguishes changed evidence/task-state surfaces from
+   unchanged workflow policy and validators, records the impacted checks, and
+   explains why the changes retain rather than broaden the dispositions.
+3. It now states explicitly that Task 004 did not implement target-specific
+   authority adaptation. Completed Task 004 behavior is limited to the fixed
+   clean payload boundary and optional generic results-audit procedure; target
+   adaptation remains future pilot work.
+4. The revised Current Evidence and Handoff cite artifact `c222214`, include an
+   immediate pre-handoff commit recheck, preserve moving dirty work outside
+   checked-in authority, and introduce no target or installer change.
+
+The resulting dispositions remain evidence-proportionate:
+
+- Do not replace or normally install agent-kit in any of the four targets.
+- If explicitly prioritized, test the smallest coordination slice in
+  realtime-gs first and treat Prospect as a separate later pilot that preserves
+  its multi-review scientific gates.
+- In StructSplat or IntrinsicEngine, consider only an in-place
+  identity/verdict check after a concrete coordination failure; do not add a
+  parallel task authority.
+- Keep agent-kit's completed fixed distribution boundary and optional generic
+  results audit. Add a read-only installer plan only as a target-conditioned
+  prerequisite to an authorized zero-collision pilot.
+
+No pilot result or adoption benefit is claimed.
+
+#### Evidence Quality
+
+- The four recorded commits remain the current target commits during Round 2.
+  Independent baseline comparisons reproduce distances `1/0/0/3`, and the
+  recorded commits are ancestors of the current target heads.
+- Prospect's single changed commit affects exactly the ten reported Q1
+  evidence, ARA, runbook, implementation, and test paths. No authority, skill,
+  validator, task-coordination, or CI path changed.
+- IntrinsicEngine's three commits affect its existing RUNTIME-201 task state,
+  generated brief, runtime documentation/code, and contract tests. No workflow
+  policy, skill, validator, or CI path changed.
+- From disposable archives fixed to `21b1695` and `cf4fe419`, Prospect
+  diagnostics exit zero with four unsupported claims and dispositions
+  `reference_only/reference_only/blocked/blocked`; IntrinsicEngine validates
+  175 task files and 811 task IDs, reports the session brief and 17 skill
+  mirrors across three surfaces current, and passes its strict ARA check.
+- All 36 agent-kit tests and live workflow validation pass.
+- `git diff --check d7c2950..c222214` passes, and the revision changes no
+  authority, skill, distribution, script, or test implementation path.
+- Superseded zero-drift evidence remains only in the append-only Round 1
+  Handoff and Review record, not in Current Evidence or the research note.
+- Target heads stayed fixed during this review. Prospect and IntrinsicEngine
+  dirty-state fingerprints changed concurrently while only read-only commands
+  were issued against their live checkouts, corroborating the report's timed
+  snapshot boundary; StructSplat and realtime-gs remained clean.
+
+#### Simplicity
+
+The revision changes only the durable assessment and task evidence. It does not
+chase active uncommitted target work, add a generalized integration layer, or
+turn safe packaging into an adoption claim. The selective pilot sequence is
+the smallest reversible way to measure the remaining coordination hypothesis.
+
+#### Missing Cases
+
+Remote-only policy, unrecorded human practice, target changes after the timed
+snapshot, and actual pilot cost or benefit remain outside scope. The report
+states these as limits rather than widening its conclusion, so they do not
+block the assessment.
+
+#### Required Changes
+
+None.
+
+#### Optional Improvements
+
+- If the historical coordination-kernel result is edited later, label its
+  31-test/two-archive count explicitly as Task 003 evidence to contrast it with
+  the current 36-test/four-archive result.
+- A future currency check could persist a compact machine-readable snapshot
+  receipt if repeatedly changing target worktrees make prose timestamps
+  insufficient.
+
+### Session Completion (codex-b, Reviewer, Round 2)
+
+#### Work completed
+
+Verified every Round 1 correction against revised artifact `c222214`,
+independently reproduced the fixed target commit distances and changed-path
+classifications, reran the impacted disposable checks, confirmed the corrected
+Task 004 scope, and returned an independent Accepted verdict.
+
+#### Evidence
+
+Timed target distances `1/0/0/3`; Prospect diagnostics retain four unsupported
+claims; IntrinsicEngine task, state-link, brief, skill-mirror, and ARA checks
+pass at `cf4fe419`; all 36 agent-kit tests and live validation pass; no
+implementation path changed in the revision.
+
+#### Files changed
+
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+- Four read-only target head, baseline-distance, ancestry, reflog, status, and
+  changed-path probes.
+- Prospect diagnostics from a disposable `21b1695` archive.
+- IntrinsicEngine strict task policy, task-state link, session-brief,
+  skill-mirror, and ARA checks from a disposable `cf4fe419` archive.
+- Full 36-test agent-kit unit discovery.
+- Live agent-kit workflow validation.
+- Revision implementation-immutability and whitespace checks.
+
+#### Known limitations
+
+No target write, pilot, remote-policy inspection, or uncommitted-work review was
+performed. Prospect and IntrinsicEngine remained active during review, so the
+accepted result is explicitly bound to the recorded commits.
+
+#### Unresolved questions
+
+Whether a bounded realtime-gs or Prospect pilot earns adoption remains
+unresolved by design.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Driver `codex-a` runs the accepted-flow `repo-organization` completion on the
+default branch, archives Task 005 with `Turn: none`, and updates repository
+state without changing any target repository.
