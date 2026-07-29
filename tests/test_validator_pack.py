@@ -147,7 +147,12 @@ class DocumentLinkCheckerTests(unittest.TestCase):
             guide = root / "docs/guide.md"
             guide.parent.mkdir()
             guide.write_text(
-                '[state](../.agents/state/state.md "state")\n',
+                '[state](../.agents/state/state.md "state")\n'
+                "[parentheses](guide(with-parens).md)\n",
+                encoding="utf-8",
+            )
+            (root / "docs/guide(with-parens).md").write_text(
+                "# Parenthesized path\n",
                 encoding="utf-8",
             )
             state = root / ".agents/state/state.md"
@@ -160,7 +165,7 @@ class DocumentLinkCheckerTests(unittest.TestCase):
             result = run(checker_command(DOC_LINK_CHECKER, root, "--strict"))
 
             self.assertEqual(0, result.returncode, result.stdout)
-            self.assertIn("5 Markdown files", result.stdout)
+            self.assertIn("6 Markdown files", result.stdout)
 
     def test_missing_and_escaping_links_warn_or_fail(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -245,6 +250,40 @@ class DocumentationSyncCheckerTests(unittest.TestCase):
             self.assertEqual(1, strict.returncode, strict.stdout)
             self.assertEqual(0, satisfied.returncode, satisfied.stdout)
 
+    def test_globs_support_recursive_components_and_character_classes(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            (root / "docs-sync-rules.toml").write_text(
+                "[[rule]]\n"
+                'trigger = ["src/**/*.py"]\n'
+                'one_of = ["docs/[ab].md"]\n'
+                'reason = "Python changes need bounded documentation."\n',
+                encoding="utf-8",
+            )
+
+            immediate = run(
+                checker_command(
+                    DOCS_SYNC_CHECKER,
+                    root,
+                    "--strict",
+                    "--files",
+                    "src/api.py",
+                    "docs/a.md",
+                )
+            )
+            nested = run(
+                checker_command(
+                    DOCS_SYNC_CHECKER,
+                    root,
+                    "--strict",
+                    "--files",
+                    "src/nested/api.py",
+                )
+            )
+
+            self.assertEqual(0, immediate.returncode, immediate.stdout)
+            self.assertEqual(1, nested.returncode, nested.stdout)
+
     def test_git_base_uses_merge_base_for_the_complete_change(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
@@ -299,6 +338,33 @@ class DocumentationSyncCheckerTests(unittest.TestCase):
             self.assertEqual(0, warning.returncode, warning.stdout)
             self.assertIn("check_docs_sync: SKIPPED", warning.stdout)
             self.assertEqual(2, strict.returncode, strict.stdout)
+
+    def test_unsafe_changed_path_and_option_like_base_are_configuration_errors(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            (root / "docs-sync-rules.toml").write_text(
+                "# Empty policy still validates explicit inputs.\n",
+                encoding="utf-8",
+            )
+
+            unsafe_path = run(
+                checker_command(
+                    DOCS_SYNC_CHECKER,
+                    root,
+                    "--files",
+                    "../outside.py",
+                )
+            )
+            option_base = run(
+                checker_command(
+                    DOCS_SYNC_CHECKER,
+                    root,
+                    "--base=-arbitrary-option",
+                )
+            )
+
+            self.assertEqual(2, unsafe_path.returncode, unsafe_path.stdout)
+            self.assertEqual(2, option_base.returncode, option_base.stdout)
 
     def test_invalid_toml_schema_is_a_configuration_error(self):
         invalid_documents = (

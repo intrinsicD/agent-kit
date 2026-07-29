@@ -119,6 +119,14 @@ def normalize_changed_path(value: str) -> str:
     return PurePosixPath(value).as_posix()
 
 
+def validate_base(value: str) -> str:
+    if not value or value.startswith("-") or "\0" in value:
+        raise DocumentationSyncConfigurationError(
+            f"Git base must be a nonempty ref and may not start with '-': {value!r}"
+        )
+    return value
+
+
 def run_git(root: Path, arguments: list[str], *, binary: bool = False):
     try:
         return subprocess.run(
@@ -152,7 +160,13 @@ def changed_files_from_base(root: Path, base: str) -> tuple[str, ...]:
 
     difference = run_git(
         root,
-        ["diff", "--name-only", "-z", f"{merge_base.stdout.strip()}..HEAD"],
+        [
+            "diff",
+            "--no-renames",
+            "--name-only",
+            "-z",
+            f"{merge_base.stdout.strip()}..HEAD",
+        ],
         binary=True,
     )
     if difference.returncode != 0:
@@ -183,6 +197,22 @@ def glob_regex(pattern: str) -> re.Pattern[str]:
         elif pattern[index] == "?":
             pieces.append("[^/]")
             index += 1
+        elif pattern[index] == "[":
+            boundary = pattern.find("]", index + 1)
+            if boundary < 0:
+                pieces.append(r"\[")
+                index += 1
+                continue
+            content = pattern[index + 1 : boundary]
+            if not content:
+                pieces.append(r"\[\]")
+            else:
+                if content.startswith("!"):
+                    content = "^" + content[1:]
+                elif content.startswith("^"):
+                    content = "\\" + content
+                pieces.append(f"[{content}]")
+            index = boundary + 1
         else:
             pieces.append(re.escape(pattern[index]))
             index += 1
@@ -240,17 +270,21 @@ def main(argv: list[str] | None = None) -> int:
     arguments = build_parser().parse_args(argv)
     try:
         root = resolve_root(arguments.root)
+        explicit_changed = None
+        if arguments.files is not None:
+            explicit_changed = tuple(
+                sorted({normalize_changed_path(value) for value in arguments.files})
+            )
+        base = validate_base(arguments.base) if arguments.base is not None else None
         rules = load_rules(root)
         if not rules:
             print("check_docs_sync: OK (0 rules)")
             return 0
 
-        if arguments.files is not None:
-            changed = tuple(
-                sorted({normalize_changed_path(value) for value in arguments.files})
-            )
-        elif arguments.base is not None:
-            changed = changed_files_from_base(root, arguments.base)
+        if explicit_changed is not None:
+            changed = explicit_changed
+        elif base is not None:
+            changed = changed_files_from_base(root, base)
         else:
             raise ChangeSetUnavailable("no changed-file source; pass --files or --base")
         findings = evaluate(rules, changed)

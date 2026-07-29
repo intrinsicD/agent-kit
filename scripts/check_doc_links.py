@@ -17,7 +17,7 @@ SCAN_DIRECTORIES = (
     Path(".agents/skills"),
 )
 FENCE_OPEN = re.compile(r"^[ ]{0,3}(`{3,}|~{3,}).*$")
-INLINE_LINK = re.compile(r"!?\[[^\]\n]*\]\(\s*(<[^>\n]+>|[^)\n]+)\)")
+INLINE_LINK_START = re.compile(r"!?\[[^\]\n]*\]\(")
 REFERENCE_LINK = re.compile(
     r"^[ ]{0,3}\[[^\]\n]+\]:[ \t]*(<[^>\n]+>|\S+)",
     re.MULTILINE,
@@ -75,6 +75,47 @@ def link_destination(raw: str) -> str:
         boundary = value.find(">")
         return value[1:boundary] if boundary >= 0 else value
     return value.split(maxsplit=1)[0]
+
+
+def inline_link_destinations(line: str):
+    """Yield inline destinations, retaining balanced parentheses in paths."""
+
+    for match in INLINE_LINK_START.finditer(line):
+        index = match.end()
+        while index < len(line) and line[index].isspace():
+            index += 1
+        if index >= len(line):
+            continue
+        if line[index] == "<":
+            boundary = line.find(">", index + 1)
+            if boundary >= 0:
+                yield line[index : boundary + 1]
+            continue
+
+        destination = []
+        nested = 0
+        escaped = False
+        while index < len(line):
+            character = line[index]
+            if escaped:
+                destination.append(character)
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == "(":
+                nested += 1
+                destination.append(character)
+            elif character == ")":
+                if nested == 0:
+                    break
+                nested -= 1
+                destination.append(character)
+            elif character.isspace() and nested == 0:
+                break
+            else:
+                destination.append(character)
+            index += 1
+        yield "".join(destination)
 
 
 class DocumentLinkChecker:
@@ -177,7 +218,7 @@ class DocumentLinkChecker:
         text = self.read_text(path)
         for line_number, line in visible_markdown_lines(text):
             matches = [
-                *(match.group(1) for match in INLINE_LINK.finditer(line)),
+                *inline_link_destinations(line),
                 *(match.group(1) for match in REFERENCE_LINK.finditer(line)),
             ]
             for destination in matches:

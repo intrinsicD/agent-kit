@@ -108,6 +108,61 @@ writes.
 The previous positional installer form is intentionally unsupported; use the
 `install` subcommand and choose either `--slug` or `--no-prefix`.
 
+### Opt-in verification profile
+
+Select the `verify` profile during the initial installation to add a generic
+target gate and CI wiring:
+
+```bash
+python3 agent-kit/scripts/install_agent_workflow.py \
+  install target-repository --slug my-project --profile verify --dry-run
+```
+
+The profile is not an update mechanism: if `core` is already installed, the
+existing receipt and payload correctly collide. A `core` + `verify` install
+adds the same three standard-library checker files used by agent-kit, plus
+three target-owned templates:
+
+- `scripts/check_authority.py` detects divergent `AGENTS.md`/`CLAUDE.md`,
+  duplicate physical skill roots, mismatched skill frontmatter names, and an
+  optional `.codex/config.yaml` that does not reference `AGENTS.md`;
+- `scripts/check_doc_links.py` resolves local Markdown links under the
+  authority, README, `docs/`, state, and skill trees while ignoring fenced
+  examples, external schemes, and same-document anchors;
+- `scripts/check_docs_sync.py` evaluates repository-owned
+  `docs-sync-rules.toml` obligations against explicit changed files or a Git
+  merge base;
+- `docs-sync-rules.toml`, `scripts/verify.sh`, and
+  `.github/workflows/agent-workflow.yml` are editable templates. The target
+  gate includes a marked `# TODO: repository-specific gates` extension point,
+  and the workflow invokes that gate once instead of duplicating its stages.
+
+Run the installed gate locally with:
+
+```bash
+./scripts/verify.sh
+```
+
+Authority and link findings warn by default when their checkers are invoked
+directly; `--strict` changes findings to exit 1. The target gate runs both in
+strict mode. `CLAUDE.md` may symlink to `AGENTS.md` or contain the exact marker
+`<!-- agent-kit: authority=AGENTS.md -->`.
+
+The shipped docs-sync rules file contains only a commented example. Add
+target-specific `[[rule]]` entries with nonempty `trigger`, `one_of`, and
+`reason` values, then supply the change set explicitly:
+
+```bash
+python3 scripts/check_docs_sync.py --root . --strict \
+  --files src/example.py docs/example.md
+python3 scripts/check_docs_sync.py --root . --strict --base origin/main
+```
+
+With configured rules, omitting both change-set options or using an
+unresolvable Git base emits a skip warning and exits 0 in the default
+warning-only mode; strict mode returns exit 2 because no reliable input was
+available. An empty rules file passes without requiring Git.
+
 Run `python3 scripts/validate_agent_workflow.py` after installation and after
 any structural change. It checks two things:
 
@@ -132,9 +187,11 @@ python3 -m pip install -r requirements-dev.txt
 ```
 
 The command runs Ruff lint and formatting checks, validates workflow state,
-checks the source repository's claim ledger, and runs the full regression
-suite. Source-repository verification tooling and tests are not installed into
-targets.
+strictly checks authority surfaces and local document links, checks the source
+repository's claim ledger, and runs the full regression suite. The ARA checker,
+source gate, development dependency, and tests are not installed into targets;
+the optional `verify` profile instead ships the three generic checkers and a
+distinct target gate.
 
 ## Evidence and claims
 
