@@ -17,7 +17,6 @@ SCAN_DIRECTORIES = (
     Path(".agents/skills"),
 )
 FENCE_OPEN = re.compile(r"^[ ]{0,3}(`{3,}|~{3,}).*$")
-INLINE_LINK_START = re.compile(r"!?\[[^\]\n]*\]\(")
 REFERENCE_LINK = re.compile(
     r"^[ ]{0,3}\[[^\]\n]+\]:[ \t]*(<[^>\n]+>|\S+)",
     re.MULTILINE,
@@ -77,45 +76,123 @@ def link_destination(raw: str) -> str:
     return value.split(maxsplit=1)[0]
 
 
-def inline_link_destinations(line: str):
-    """Yield inline destinations, retaining balanced parentheses in paths."""
+def without_inline_code(line: str) -> str:
+    """Blank same-line Markdown code spans while preserving column positions."""
 
-    for match in INLINE_LINK_START.finditer(line):
-        index = match.end()
-        while index < len(line) and line[index].isspace():
+    visible = list(line)
+    index = 0
+    while index < len(line):
+        if line[index] != "`":
             index += 1
-        if index >= len(line):
             continue
-        if line[index] == "<":
-            boundary = line.find(">", index + 1)
-            if boundary >= 0:
-                yield line[index : boundary + 1]
+        run_end = index
+        while run_end < len(line) and line[run_end] == "`":
+            run_end += 1
+        marker_length = run_end - index
+
+        boundary = run_end
+        closing_end = None
+        while boundary < len(line):
+            if line[boundary] != "`":
+                boundary += 1
+                continue
+            candidate_end = boundary
+            while candidate_end < len(line) and line[candidate_end] == "`":
+                candidate_end += 1
+            if candidate_end - boundary == marker_length:
+                closing_end = candidate_end
+                break
+            boundary = candidate_end
+
+        if closing_end is None:
+            index = run_end
+            continue
+        visible[index:closing_end] = " " * (closing_end - index)
+        index = closing_end
+    return "".join(visible)
+
+
+def parse_inline_destination(line: str, index: int) -> tuple[str, int] | None:
+    """Parse one destination after a matched link-text opening parenthesis."""
+
+    while index < len(line) and line[index].isspace():
+        index += 1
+    if index >= len(line):
+        return None
+    if line[index] == "<":
+        boundary = line.find(">", index + 1)
+        if boundary < 0:
+            return None
+        return line[index : boundary + 1], boundary + 1
+
+    destination = []
+    nested = 0
+    escaped = False
+    while index < len(line):
+        character = line[index]
+        if escaped:
+            destination.append(character)
+            escaped = False
+        elif character == "\\":
+            escaped = True
+        elif character == "(":
+            nested += 1
+            destination.append(character)
+        elif character == ")":
+            if nested == 0:
+                return "".join(destination), index + 1
+            nested -= 1
+            destination.append(character)
+        elif character.isspace() and nested == 0:
+            return "".join(destination), index
+        else:
+            destination.append(character)
+        index += 1
+    return "".join(destination), index
+
+
+def inline_link_destinations(line: str):
+    """Yield destinations after balanced, backslash-aware inline link text."""
+
+    index = 0
+    while index < len(line):
+        if line[index] == "\\":
+            index += 2
+            continue
+        if line[index] != "[":
+            index += 1
             continue
 
-        destination = []
-        nested = 0
+        label_boundary = index + 1
+        depth = 1
         escaped = False
-        while index < len(line):
-            character = line[index]
+        while label_boundary < len(line):
+            character = line[label_boundary]
             if escaped:
-                destination.append(character)
                 escaped = False
             elif character == "\\":
                 escaped = True
-            elif character == "(":
-                nested += 1
-                destination.append(character)
-            elif character == ")":
-                if nested == 0:
+            elif character == "[":
+                depth += 1
+            elif character == "]":
+                depth -= 1
+                if depth == 0:
                     break
-                nested -= 1
-                destination.append(character)
-            elif character.isspace() and nested == 0:
-                break
-            else:
-                destination.append(character)
-            index += 1
-        yield "".join(destination)
+            label_boundary += 1
+
+        destination_open = label_boundary + 1
+        if (
+            depth == 0
+            and destination_open < len(line)
+            and line[destination_open] == "("
+        ):
+            parsed = parse_inline_destination(line, destination_open + 1)
+            if parsed is not None:
+                destination, end = parsed
+                yield destination
+                index = max(end, destination_open + 1)
+                continue
+        index += 1
 
 
 class DocumentLinkChecker:
@@ -142,6 +219,14 @@ class DocumentLinkChecker:
         for relative in SCAN_DIRECTORIES:
             directory = self.root / relative
             if not directory.exists() and not directory.is_symlink():
+                continue
+            try:
+                resolved = directory.resolve(strict=True)
+            except (OSError, RuntimeError):
+                self.finding(f"Markdown scan root cannot be resolved: {relative}")
+                continue
+            if not resolved.is_relative_to(self.root):
+                self.finding(f"Markdown scan root escapes repository root: {relative}")
                 continue
             if not directory.is_dir():
                 self.finding(f"Markdown scan root is not a directory: {relative}")
@@ -217,6 +302,7 @@ class DocumentLinkChecker:
     def check_file(self, path: Path) -> None:
         text = self.read_text(path)
         for line_number, line in visible_markdown_lines(text):
+            line = without_inline_code(line)
             matches = [
                 *inline_link_destinations(line),
                 *(match.group(1) for match in REFERENCE_LINK.finditer(line)),

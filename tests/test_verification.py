@@ -33,6 +33,7 @@ TARGET_EXPECTED_STAGES = (
     "PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_docs_sync.py --root .",
 )
 TRAILING_SHELL_COMMENT = re.compile(r"\s+#.*$")
+WORKFLOW_RUN_KEY = re.compile(r"^-\s*(?:run|['\"]run['\"])\s*:")
 
 
 def normalized_shell_lines(script_text):
@@ -40,6 +41,14 @@ def normalized_shell_lines(script_text):
         TRAILING_SHELL_COMMENT.sub("", line.strip()).rstrip()
         for line in script_text.splitlines()
     ]
+
+
+def workflow_run_directives(workflow_text):
+    return tuple(
+        line.strip()
+        for line in workflow_text.splitlines()
+        if WORKFLOW_RUN_KEY.match(line.strip())
+    )
 
 
 class VerificationEntryPointTests(unittest.TestCase):
@@ -97,9 +106,19 @@ class VerificationEntryPointTests(unittest.TestCase):
 
     def test_target_ci_invokes_only_the_target_verify_entry_point(self):
         workflow = TARGET_CI_WORKFLOW.read_text(encoding="utf-8")
-        self.assertEqual(1, workflow.count("run: ./scripts/verify.sh"))
+        expected = ("- run: ./scripts/verify.sh",)
+        self.assertEqual(expected, workflow_run_directives(workflow))
         for command in (*TARGET_EXPECTED_STAGES, *EXPECTED_STAGES):
             self.assertNotIn(command, workflow)
+
+        for relisted_stage in (
+            "- run: python3 scripts/check_authority.py --root . --strict",
+            "- run : python3 scripts/check_authority.py --strict",
+            '- "run": python3 scripts/check_authority.py',
+        ):
+            with self.subTest(relisted_stage=relisted_stage):
+                relisted = workflow + "\n      " + relisted_stage + "\n"
+                self.assertNotEqual(expected, workflow_run_directives(relisted))
 
     def test_ruff_version_and_python_floor_are_explicit(self):
         self.assertEqual(

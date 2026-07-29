@@ -33,6 +33,38 @@ def resolve_root(value: Path) -> Path:
     return root
 
 
+def without_yaml_comments(text: str) -> str:
+    """Remove YAML comments while preserving quoted ``#`` characters."""
+
+    visible_lines = []
+    for line in text.splitlines():
+        visible = []
+        quote: str | None = None
+        escaped = False
+        for index, character in enumerate(line):
+            if quote == '"':
+                visible.append(character)
+                if escaped:
+                    escaped = False
+                elif character == "\\":
+                    escaped = True
+                elif character == quote:
+                    quote = None
+            elif quote == "'":
+                visible.append(character)
+                if character == quote:
+                    quote = None
+            elif character in {'"', "'"}:
+                quote = character
+                visible.append(character)
+            elif character == "#" and (index == 0 or line[index - 1].isspace()):
+                break
+            else:
+                visible.append(character)
+        visible_lines.append("".join(visible))
+    return "\n".join(visible_lines)
+
+
 class AuthorityChecker:
     """Collect generic authority-surface findings for one repository."""
 
@@ -180,7 +212,8 @@ class AuthorityChecker:
         if not config.is_file():
             self.finding(".codex/config.yaml must be a readable file when present")
             return
-        if not CONTRACT_REFERENCE.search(self.read_text(config)):
+        visible_config = without_yaml_comments(self.read_text(config))
+        if not CONTRACT_REFERENCE.search(visible_config):
             self.finding(".codex/config.yaml must reference the AGENTS.md contract")
 
     def run(self) -> list[str]:

@@ -116,6 +116,34 @@ class AuthorityCheckerTests(unittest.TestCase):
             self.assertIn("frontmatter name", result.stdout)
             self.assertIn(".codex/config.yaml", result.stdout)
 
+    def test_codex_contract_reference_must_not_exist_only_in_a_comment(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            make_authority_tree(root)
+            config = root / ".codex/config.yaml"
+            config.parent.mkdir()
+            config.write_text(
+                "# Contract: AGENTS.md\nmodel: example\n",
+                encoding="utf-8",
+            )
+
+            comment_only = run(checker_command(AUTHORITY_CHECKER, root, "--strict"))
+            self.assertEqual(1, comment_only.returncode, comment_only.stdout)
+            self.assertIn(".codex/config.yaml", comment_only.stdout)
+
+            config.write_text(
+                "instructions: AGENTS.md # canonical contract\n",
+                encoding="utf-8",
+            )
+            visible_reference = run(
+                checker_command(AUTHORITY_CHECKER, root, "--strict")
+            )
+            self.assertEqual(
+                0,
+                visible_reference.returncode,
+                visible_reference.stdout,
+            )
+
     def test_invalid_root_is_an_environment_error(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             missing = Path(temporary_directory) / "missing"
@@ -140,6 +168,7 @@ class DocumentLinkCheckerTests(unittest.TestCase):
                 "[readme](/README.md)\n"
                 "[external](https://example.invalid/missing)\n"
                 "[anchor](#local)\n"
+                "`[inline-example](missing-inline.md)`\n"
                 "```\n[example](missing-in-fence.md)\n```\n",
                 encoding="utf-8",
             )
@@ -186,6 +215,63 @@ class DocumentLinkCheckerTests(unittest.TestCase):
             self.assertEqual(1, strict.returncode, strict.stdout)
             self.assertIn("does not exist", strict.stdout)
             self.assertIn("escapes repository root", strict.stdout)
+
+    def test_present_scan_root_must_resolve_inside_repository(self):
+        for populated in (False, True):
+            with self.subTest(populated=populated):
+                with tempfile.TemporaryDirectory() as temporary_directory:
+                    workspace = Path(temporary_directory)
+                    root = workspace / "repository"
+                    root.mkdir()
+                    (root / "AGENTS.md").write_text(
+                        "# Authority\n",
+                        encoding="utf-8",
+                    )
+                    external = workspace / "external-docs"
+                    external.mkdir()
+                    if populated:
+                        (external / "guide.md").write_text(
+                            "# External\n",
+                            encoding="utf-8",
+                        )
+                    (root / "docs").symlink_to(
+                        external,
+                        target_is_directory=True,
+                    )
+
+                    result = run(checker_command(DOC_LINK_CHECKER, root, "--strict"))
+
+                    self.assertEqual(1, result.returncode, result.stdout)
+                    self.assertIn(
+                        "Markdown scan root escapes repository root: docs",
+                        result.stdout,
+                    )
+
+    def test_balanced_and_escaped_brackets_in_link_text_are_scanned(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            (root / "AGENTS.md").write_text(
+                "[outer [inner]](missing-nested.md)\n"
+                r"[outer \[inner\]](missing-escaped.md)" + "\n",
+                encoding="utf-8",
+            )
+
+            missing = run(checker_command(DOC_LINK_CHECKER, root, "--strict"))
+
+            self.assertEqual(1, missing.returncode, missing.stdout)
+            self.assertIn("missing-nested.md", missing.stdout)
+            self.assertIn("missing-escaped.md", missing.stdout)
+
+            (root / "missing-nested.md").write_text(
+                "# Nested\n",
+                encoding="utf-8",
+            )
+            (root / "missing-escaped.md").write_text(
+                "# Escaped\n",
+                encoding="utf-8",
+            )
+            existing = run(checker_command(DOC_LINK_CHECKER, root, "--strict"))
+            self.assertEqual(0, existing.returncode, existing.stdout)
 
 
 class DocumentationSyncCheckerTests(unittest.TestCase):
@@ -365,6 +451,46 @@ class DocumentationSyncCheckerTests(unittest.TestCase):
 
             self.assertEqual(2, unsafe_path.returncode, unsafe_path.stdout)
             self.assertEqual(2, option_base.returncode, option_base.stdout)
+
+    def test_malformed_globs_are_configuration_errors_before_diff_evaluation(self):
+        for pattern in ("[z-a]", "[!]", "[unterminated"):
+            with self.subTest(pattern=pattern):
+                with tempfile.TemporaryDirectory() as temporary_directory:
+                    root = Path(temporary_directory)
+                    (root / "docs-sync-rules.toml").write_text(
+                        "[[rule]]\n"
+                        f'trigger = ["{pattern}"]\n'
+                        'one_of = ["docs/**"]\n'
+                        'reason = "Malformed patterns are never policy."\n',
+                        encoding="utf-8",
+                    )
+                    run(["git", "init", "-b", "main"], cwd=root)
+                    run(["git", "add", "docs-sync-rules.toml"], cwd=root)
+                    run(["git", "commit", "-m", "rules"], cwd=root)
+
+                    explicit = run(
+                        checker_command(
+                            DOCS_SYNC_CHECKER,
+                            root,
+                            "--strict",
+                            "--files",
+                            "unrelated.txt",
+                        )
+                    )
+                    empty_diff = run(
+                        checker_command(
+                            DOCS_SYNC_CHECKER,
+                            root,
+                            "--strict",
+                            "--base",
+                            "HEAD",
+                        )
+                    )
+
+                    for result in (explicit, empty_diff):
+                        self.assertEqual(2, result.returncode, result.stdout)
+                        self.assertIn("invalid glob", result.stdout)
+                        self.assertNotIn("Traceback", result.stdout)
 
     def test_invalid_toml_schema_is_a_configuration_error(self):
         invalid_documents = (

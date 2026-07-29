@@ -23,6 +23,10 @@ class ChangeSetUnavailable(RuntimeError):
     """No reliable changed-file set can be established."""
 
 
+class GlobSyntaxError(ValueError):
+    """A repository glob cannot be translated deterministically."""
+
+
 @dataclass(frozen=True)
 class Rule:
     triggers: tuple[str, ...]
@@ -95,13 +99,17 @@ def load_rules(root: Path) -> tuple[Rule, ...]:
             raise DocumentationSyncConfigurationError(
                 f"rule {index} reason must be a nonempty string"
             )
-        rules.append(
-            Rule(
-                triggers=validate_globs(row["trigger"], "trigger", index),
-                one_of=validate_globs(row["one_of"], "one_of", index),
-                reason=reason.strip(),
-            )
-        )
+        triggers = validate_globs(row["trigger"], "trigger", index)
+        one_of = validate_globs(row["one_of"], "one_of", index)
+        for field, patterns in (("trigger", triggers), ("one_of", one_of)):
+            for pattern in patterns:
+                try:
+                    glob_regex(pattern)
+                except GlobSyntaxError as error:
+                    raise DocumentationSyncConfigurationError(
+                        f"rule {index} {field} has invalid glob {pattern!r}: {error}"
+                    ) from error
+        rules.append(Rule(triggers=triggers, one_of=one_of, reason=reason.strip()))
     return tuple(rules)
 
 
@@ -198,26 +206,32 @@ def glob_regex(pattern: str) -> re.Pattern[str]:
             pieces.append("[^/]")
             index += 1
         elif pattern[index] == "[":
-            boundary = pattern.find("]", index + 1)
+            search_from = index + 1
+            if search_from < len(pattern) and pattern[search_from] == "!":
+                search_from += 1
+            if search_from < len(pattern) and pattern[search_from] == "]":
+                search_from += 1
+            boundary = pattern.find("]", search_from)
             if boundary < 0:
-                pieces.append(r"\[")
-                index += 1
-                continue
+                raise GlobSyntaxError("unterminated character class")
             content = pattern[index + 1 : boundary]
-            if not content:
-                pieces.append(r"\[\]")
-            else:
-                if content.startswith("!"):
-                    content = "^" + content[1:]
-                elif content.startswith("^"):
-                    content = "\\" + content
-                pieces.append(f"[{content}]")
+            if "/" in content:
+                raise GlobSyntaxError("character class may not contain '/'")
+            if content.startswith("!"):
+                content = "^" + content[1:]
+            elif content.startswith("^"):
+                content = "\\" + content
+            content = re.sub(r"([&~|])", r"\\\1", content)
+            pieces.append(f"[{content}]")
             index = boundary + 1
         else:
             pieces.append(re.escape(pattern[index]))
             index += 1
     pieces.append("$")
-    return re.compile("".join(pieces))
+    try:
+        return re.compile("".join(pieces))
+    except re.error as error:
+        raise GlobSyntaxError(str(error)) from error
 
 
 def matches_any(path: str, patterns: tuple[str, ...]) -> bool:
