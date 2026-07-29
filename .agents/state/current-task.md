@@ -12,7 +12,7 @@ Implement generic validator pack and target CI template
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -130,7 +130,7 @@ policy.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -152,3 +152,84 @@ blocks here in chronological order. Entries use `###` headings and their fields
 use `####` headings so every entry remains nested under this Handoff Log. Do
 not delete earlier entries. On task completion this file is archived to
 `docs/tasks/<task-id>-<slug>.md`.
+
+### Handoff (codex-b, Driver)
+
+#### Objective
+
+Independently falsify the generic validator pack at fixed implementation tip
+`a14d5547cec70e4de7799cd63b1dda3eb917ee0c`: checker correctness and exit
+semantics, the unchanged 22-file `core`, the six-file opt-in `verify` profile,
+receipt ownership, the installed four-stage gate, and the target workflow's
+single-command anti-drift property.
+
+#### Changes
+
+- Added standard-library `check_authority.py`, `check_doc_links.py`, and
+  `check_docs_sync.py` with `--root`, warning/strict behavior, and the accepted
+  0/1/2 exit convention.
+- Expanded the source gate from five to seven stages by adding strict authority
+  and document-link checks.
+- Added the six-file `verify` manifest group: three immutable checker sources
+  plus user-owned rules, target-gate, and `agent-workflow.yml` templates.
+- Added live-tree, induced-failure, TOML schema, safe-path, merge-base,
+  glob/parser, installed-gate, receipt, executable-mode, and CI anti-drift
+  regressions.
+- Updated README installation and CI guidance and recorded the Driver audit in
+  `docs/audits/validator-pack.md`.
+
+#### Evidence
+
+- `./scripts/verify.sh`: pass at the implementation tip; Ruff lint/format,
+  workflow validation, strict live authority and link checks, 14-claim ARA
+  validation, and all 105 regressions pass.
+- Focused suites: 15 validator-pack, 30 distribution, and seven verification
+  tests pass.
+- Disposable Git probe: slugged `core` + `verify` installed 28 payload files;
+  the target gate passed all four stages; doctor reported 16 immutable files
+  `OK`, 12 templates `PRESENT`, and zero findings.
+- Induced fixtures prove warning/strict distinctions: authority and link
+  findings return 0/1; docs-sync findings return 0/1; unavailable change sets
+  return 0/2; malformed TOML, unsafe paths, option-like bases, and invalid
+  roots return 2.
+- GitHub Actions run `30448167432` passed the verbatim source gate on Python
+  3.11, 3.12, and 3.13 at the implementation tip.
+
+#### Assumptions
+
+- `AGENTS.md` is the physical canonical contract. `CLAUDE.md` is optional and
+  may either symlink to it or contain the exact documented redirect marker.
+- Docs-sync policy is target-owned and empty by default. Once rules exist,
+  callers supply either explicit files or a Git base; inability to establish a
+  change set is warning-only outside strict mode and an environment error in
+  strict mode.
+- A Git-base comparison covers committed paths from merge base through `HEAD`;
+  working-tree and untracked paths use `--files`.
+
+#### Uncertainties
+
+- The Markdown scanner intentionally does not implement all CommonMark, raw
+  HTML links, autolinks, or heading-fragment validation.
+- The evidence remains POSIX/Linux and UTF-8 bounded; Windows, concurrent
+  adversarial mutation, and non-UTF-8 Git paths are not approved.
+- No target-specific docs-sync rule has been promoted, so the mechanism is
+  tested but the shipped policy deliberately makes no behavioral claim.
+
+#### Review Focus
+
+- Try to bypass single-authority detection with dangling, chained, external,
+  or dual symlinks and malformed skill frontmatter.
+- Challenge Markdown containment, balanced/escaped destinations, fenced code,
+  reference definitions, and scan-root coverage.
+- Challenge TOML type/schema handling, `*`/`**`/`?`/character-class matching,
+  rename accounting, unsafe refs and paths, no-Git behavior, and merge-base
+  completeness.
+- Confirm manifest ownership and modes, `core` count, installed slug rendering,
+  clean doctor output, and that target CI contains exactly one
+  `./scripts/verify.sh` invocation with no relisted gates.
+
+#### Recommended Next Action
+
+Reviewer `codex-a` checks out the handoff commit, reproduces the fixed
+implementation tip and disposable install independently, adds adversarial
+probes beyond the Driver fixtures, and records an evidence-based verdict.
