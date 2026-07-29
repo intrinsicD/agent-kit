@@ -12,7 +12,7 @@ Refactor distribution boundary and add results-audit skill
 
 - Driver: codex-b
 - Reviewer: codex-a
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -111,7 +111,7 @@ generic skill set.
 
 ## Status
 
-Revision required
+In review
 
 ## Human Decisions
 
@@ -409,3 +409,118 @@ Yes
 Driver corrects the durable audit and handoff evidence without changing the
 accepted implementation scope, reruns the exact checks, and returns the same
 implementation for Round 2 review.
+
+### Handoff (codex-b, Driver, Revision Round 1)
+
+#### Objective
+
+Return the unchanged Task 004 behavior for Round 2 review after correcting only
+the overbroad Ruff-format evidence identified in Round 1.
+
+#### Changes
+
+- Commit `0b1bd0ac1389db6b2790698996815aaafa7bf22b` replaces the audit's
+  broad formatting statement with exact lint and formatting commands, paths,
+  and outcomes.
+- The prior Driver claim that Ruff format passed for all changed Python paths
+  is withdrawn. Only `scripts/install_agent_workflow.py` and
+  `tests/test_distribution.py` pass the Task 004 format check.
+- No implementation, manifest, template, skill, validator, or test behavior
+  changed. The reviewable implementation remains commit
+  `92148b4c19b84614301c03ff77b736de54cb65d7`.
+- The two optional improvements from Round 1 remain outside this bounded
+  evidence correction.
+
+#### Evidence
+
+- In separate `git archive` checkouts of setup commit `0a66c6f` and
+  implementation commit `92148b4`, the exact command `ruff format --check
+  scripts/validate_agent_workflow.py tests/test_agent_workflow.py` exited 1
+  identically: both runs named those two files and reported `2 files would be
+  reformatted`.
+- `ruff check scripts/install_agent_workflow.py
+  scripts/validate_agent_workflow.py tests/test_distribution.py
+  tests/test_agent_workflow.py` passed all four changed Python paths.
+- `ruff format --check scripts/install_agent_workflow.py
+  tests/test_distribution.py` exited 0 and reported `2 files already
+  formatted`.
+- With `PYTHONDONTWRITEBYTECODE=1`, `python3 tests/test_distribution.py -v`
+  passed 6 of 6 focused tests.
+- With `PYTHONDONTWRITEBYTECODE=1`, `python3 -m unittest discover -s tests -p
+  'test_*.py' -v` passed all 36 tests.
+- With `PYTHONDONTWRITEBYTECODE=1`, `python3
+  scripts/validate_agent_workflow.py` passed with 11 routed skills and 3 task
+  archives.
+- `git diff --check` passed after the evidence correction.
+
+#### Assumptions
+
+- The identical Ruff-format output at setup and implementation commits is
+  evidence of pre-existing formatting debt, not permission to claim those
+  legacy files pass formatting.
+- Reformatting unrelated legacy files would expand this revision beyond the
+  Reviewer's required evidence correction.
+
+#### Uncertainties
+
+None beyond the independent Round 2 verdict. All functional findings from
+Round 1 were already positive and no behavior changed.
+
+#### Review Focus
+
+Confirm the durable audit now scopes Ruff lint and formatting separately,
+records the identical legacy failures at both fixed commits, and makes no
+remaining broad all-changed-path formatting claim.
+
+#### Recommended Next Action
+
+Reviewer `codex-a` should verify commit
+`0b1bd0ac1389db6b2790698996815aaafa7bf22b`, reproduce the bounded formatting
+commands, and append the Round 2 verdict.
+
+### Session Completion (codex-b, Driver, Revision Round 1)
+
+#### Work completed
+
+Corrected the one contradicted evidence statement, reproduced the identical
+legacy formatting failures at the setup and implementation commits, reran the
+complete requested check set, and returned the unchanged implementation for
+independent review.
+
+#### Evidence
+
+Evidence correction commit `0b1bd0ac1389db6b2790698996815aaafa7bf22b`;
+6 focused and 36 full tests passed; live validation passed; four-path Ruff lint
+passed; the two new Task 004 Python files passed Ruff format; the two legacy
+files failed identically at `0a66c6f` and `92148b4`; whitespace validation
+passed.
+
+#### Files changed
+
+- `docs/audits/distribution-installer.md`
+- `.agents/state/current-task.md`
+
+#### Tests or experiments run
+
+Focused distribution suite, full unit discovery, live workflow validator,
+four-path Ruff lint, two-new-file Ruff formatting, setup-versus-implementation
+legacy formatting comparison, and Git whitespace validation.
+
+#### Known limitations
+
+The validator and legacy workflow test retain their pre-existing Ruff
+formatting debt. No unrelated formatting or optional implementation hardening
+was added.
+
+#### Unresolved questions
+
+Only the independent Round 2 verdict.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer `codex-a` should reproduce the corrected evidence and record the
+terminal Task 004 verdict.
