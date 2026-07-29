@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T11:58+02:00"
-  turn_count: 9
-  summary: "Tasks 004-006 were accepted; Installer v2 is initialized as Task 007 and blocked on prefix and doctor-receipt policy."
+  last_turn: "2026-07-29T14:27+02:00"
+  turn_count: 12
+  summary: "Task 007 was accepted and merged; Task 008 is blocked after two reviews on one test-only named-step gap."
 
 events_logged:
   - turn: 1
@@ -235,6 +235,60 @@ events_logged:
     routing: crystallized
     provenance: ai-suggested
     summary: "Task 006 supplies one independently accepted cross-version verification gate."
+  - turn: 10
+    type: experiment
+    id: N35
+    routing: direct
+    provenance: ai-executed
+    summary: "Round 1 passed the main validator-pack path but reproduced five bounded authority, Markdown, glob, and anti-drift gaps."
+  - turn: 10
+    type: claim
+    id: O16
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 008 implementation tip a14d554 retains five independently reproduced boundary gaps."
+  - turn: 11
+    type: experiment
+    id: N36
+    routing: direct
+    provenance: ai-executed
+    summary: "Round 2 closed four boundary groups and reproduced one named-step workflow regression bypass."
+  - turn: 11
+    type: claim
+    id: O17
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 008 revision tip 74e05f9 retains one named scalar/block anti-drift gap."
+  - turn: 12
+    type: decision
+    id: N37
+    routing: direct
+    provenance: user
+    summary: "Selected required slug-with-escape and bounded immutable-hash receipt policies for Installer v2."
+  - turn: 12
+    type: experiment
+    id: N38
+    routing: direct
+    provenance: ai-executed
+    summary: "Installer v2 closed three independent review findings and passed 86 tests, disposable probes, and cross-version CI."
+  - turn: 12
+    type: decision
+    id: N39
+    routing: direct
+    provenance: ai-executed
+    summary: "Merged and archived independently accepted Task 007."
+  - turn: 12
+    type: claim
+    id: O18
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 007 supplies bounded configurable installation, receipt-backed diagnostics, and preserved safety guarantees."
+  - turn: 12
+    type: question
+    id: N40
+    routing: direct
+    provenance: ai-suggested
+    summary: "Ask whether to authorize one final test-only Task 008 correction after two non-accepting reviews."
 
 ai_actions:
   - turn: 1
@@ -364,6 +418,40 @@ ai_actions:
       - ".agents/state/backlog.md"
       - "docs/research/maturity-program-plan.md"
       - "docs/audits/verification-foundation.md"
+  - turn: 10
+    action: "Independently audited Task 008, ran source, focused, CI, disposable-target, and adversarial probes, and committed a Revision required verdict."
+    provenance: ai-executed
+    files_changed:
+      - ".agents/state/current-task.md"
+      - "docs/audits/validator-pack.md"
+  - turn: 11
+    action: "Independently audited the Task 008 revision, ran exact and adjacent counterexamples plus full and disposable verification, and committed the Round 2 verdict."
+    provenance: ai-executed
+    files_changed:
+      - ".agents/state/current-task.md"
+  - turn: 12
+    action: "Recorded both Installer v2 policy choices, implemented and revised Task 007, obtained independent acceptance, and completed merge/archive closeout."
+    provenance: ai-executed
+    files_changed:
+      - "scripts/install_agent_workflow.py"
+      - "distribution/manifest.json"
+      - "tests/test_distribution.py"
+      - "README.md"
+      - "docs/audits/installer-v2.md"
+      - "docs/tasks/007-installer-v2.md"
+      - ".agents/state/"
+  - turn: 12
+    action: "Implemented the opt-in validator profile, closed four independent boundary groups, and recorded the mandatory human escalation for one residual test-only anti-drift gap."
+    provenance: ai-executed
+    files_changed:
+      - "scripts/check_authority.py"
+      - "scripts/check_doc_links.py"
+      - "scripts/check_docs_sync.py"
+      - "distribution/templates/"
+      - "tests/test_validator_pack.py"
+      - "tests/test_verification.py"
+      - "docs/audits/validator-pack.md"
+      - ".agents/state/current-task.md"
 
 claims_touched:
   - id: C01
@@ -420,6 +508,15 @@ claims_touched:
   - id: C14
     action: crystallized
     turn: 9
+  - id: C15
+    action: crystallized
+    turn: 10
+  - id: C16
+    action: crystallized
+    turn: 11
+  - id: C17
+    action: crystallized
+    turn: 12
 
 key_context:
   - turn: 1
@@ -440,13 +537,16 @@ key_context:
     excerpt: "Two independent Revision required rounds leave Task 006 blocked on whether to authorize one final bounded two-fix revision."
   - turn: 9
     excerpt: "The user chose option 1; Task 006 was fixed, independently accepted, merged, and followed by two explicit Installer v2 policy questions."
+  - turn: 10
+    excerpt: "Independent Task 008 review passed 105 tests and the installed profile, but five exact counterexample groups required revision."
+  - turn: 11
+    excerpt: "Round 2 closed four Task 008 finding groups, but valid named scalar and named block run steps still bypass the workflow anti-drift assertion."
+  - turn: 12
+    excerpt: "The user selected both recommended Installer v2 policies; Task 007 was accepted, while Task 008 reached the mandatory two-round human decision boundary."
 
 open_threads:
   - "If explicitly prioritized, add a read-only installer plan and measure whether a bounded realtime-gs pilot earns adoption; consider Prospect separately later."
-  - "Human decision required for Task 007: require --slug with --no-prefix escape, or keep unprefixed installation as the default."
-  - "Human decision required for Task 007: use a bounded immutable-payload receipt, hash every installed file, or use no receipt."
+  - "Task 008 awaits the repository owner's choice: authorize one final named-step test correction/review or close Inconclusive without merging."
 
 ai_suggestions_pending:
-  - "Before an authorized zero-collision target pilot, add a read-only installer plan or --dry-run mode."
-  - "Require --slug with an explicit --no-prefix escape hatch for Task 007."
-  - "Use a bounded .agents/kit-install.json receipt that hashes immutable payload and presence-checks user-owned templates."
+  - "Authorize one bounded, test-only Task 008 correction and one final independent review."

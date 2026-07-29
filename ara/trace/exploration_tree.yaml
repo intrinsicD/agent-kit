@@ -566,7 +566,7 @@ tree:
         evidence:
           - "docs/research/maturity-program-plan.md"
           - ".agents/state/current-task.md"
-        status: open
+        status: resolved
         children: []
       - id: N34
         type: question
@@ -580,5 +580,125 @@ tree:
         evidence:
           - "docs/research/maturity-program-plan.md"
           - ".agents/state/current-task.md"
+        status: resolved
+        children: []
+      - id: N35
+        type: experiment
+        title: "Falsify the first Task 008 validator pack"
+        provenance: ai-executed
+        timestamp: "2026-07-29T13:59+02:00"
+        result: >
+          Independent Round 1 review passed the seven-stage 105-test source
+          gate, Python 3.11-3.13 CI inspection, and a fresh core-plus-verify
+          target install, but reproduced five bounded gaps: comment-only Codex
+          authority references, external empty Markdown scan roots, valid
+          balanced or escaped link-label omissions, input-dependent malformed
+          glob handling, and a workflow anti-drift mutation missed by its
+          regression. The verdict was Revision required.
+        evidence:
+          - "0184f1f"
+          - ".agents/state/current-task.md"
+          - "docs/audits/validator-pack.md"
+          - "tests/test_validator_pack.py"
+          - "tests/test_distribution.py"
+          - "tests/test_verification.py"
+        also_depends_on: [N32]
+        status: resolved
+        children:
+          - id: N36
+            type: experiment
+            title: "Review the Task 008 boundary revisions"
+            provenance: ai-executed
+            timestamp: "2026-07-29T14:22+02:00"
+            result: >
+              Independent Round 2 review passed the 109-test source gate,
+              focused 19/30/7 suites, disposable core-plus-verify gate and
+              doctor, and exact authority, scan-root, link, and glob
+              counterexamples. The workflow assertion caught compact, spaced,
+              quoted, and compact block forms but missed valid named scalar
+              and named block run steps, so the verdict remained Revision
+              required for one bounded regression gap.
+            evidence:
+              - "dd0e3fa"
+              - ".agents/state/current-task.md"
+              - "tests/test_verification.py"
+              - "tests/test_validator_pack.py"
+              - "tests/test_distribution.py"
+            status: resolved
+            children: []
+      - id: N37
+        type: decision
+        title: "Choose bounded Installer v2 naming and receipt policies"
+        provenance: user
+        timestamp: "2026-07-29T14:27+02:00"
+        choice: >
+          Require every install to choose --slug or the explicit --no-prefix
+          escape, and write .agents/kit-install.json with immutable hashes,
+          presence-only user templates, and an unknown-install fallback when
+          the receipt is absent.
+        alternatives:
+          - "Keep unprefixed installation as the implicit default"
+          - "Hash mutable user-owned templates"
+          - "Install without a receipt"
+        evidence:
+          - "N33"
+          - "N34"
+          - "docs/tasks/007-installer-v2.md"
+        status: resolved
+        children:
+          - id: N38
+            type: experiment
+            title: "Implement and independently falsify Installer v2"
+            provenance: ai-executed
+            timestamp: "2026-07-29T14:27+02:00"
+            result: >
+              The first implementation passed its 82-test suite and main
+              install path, but independent review found unsafe skill-token
+              boundaries, unchecked plan hierarchy conflicts, and false
+              presence for directory or dangling-template paths. The bounded
+              revision closed all three; 86 tests, disposable install,
+              dry-run, doctor/tamper checks, and Python 3.11-3.13 CI passed,
+              and Round 2 returned Accepted.
+            evidence:
+              - "docs/tasks/007-installer-v2.md"
+              - "docs/audits/installer-v2.md"
+              - "tests/test_distribution.py"
+              - "43845cd"
+            status: resolved
+            children:
+              - id: N39
+                type: decision
+                title: "Merge and archive accepted Installer v2"
+                provenance: ai-executed
+                timestamp: "2026-07-29T14:27+02:00"
+                choice: >
+                  Merge the independently accepted Task 007 branch, archive
+                  the complete task record, restore the blank active task, and
+                  advance to the opt-in generic validator profile.
+                alternatives:
+                  - "Leave the accepted installer branch unmerged"
+                  - "Begin the validator profile before installer closeout"
+                evidence:
+                  - "N38"
+                  - "b45d101"
+                  - "40d0b99"
+                  - "docs/tasks/007-installer-v2.md"
+                status: resolved
+                children: []
+      - id: N40
+        type: question
+        title: "Authorize a final bounded Task 008 test correction"
+        provenance: ai-suggested
+        timestamp: "2026-07-29T14:27+02:00"
+        description: >
+          After two non-accepting Task 008 review rounds, decide whether to
+          authorize one test-only correction for named workflow run steps and
+          one final independent review, or close the unmerged task as
+          Inconclusive.
+        evidence:
+          - "N36"
+          - "1ebcba1"
+          - ".agents/state/current-task.md"
+        also_depends_on: [N35, N36]
         status: open
         children: []

@@ -125,7 +125,7 @@ class DistributionBoundaryTests(unittest.TestCase):
         document, rows = manifest_rows()
         self.assertEqual({"version", "groups"}, set(document))
         self.assertEqual(2, document["version"])
-        self.assertEqual({"core"}, set(document["groups"]))
+        self.assertEqual({"core", "verify"}, set(document["groups"]))
         self.assertEqual(22, len(rows))
 
         sources = [row["source"] for row in rows]
@@ -216,6 +216,80 @@ class DistributionBoundaryTests(unittest.TestCase):
             source = REPOSITORY_ROOT / row["source"]
             self.assertTrue(source.is_file(), row["source"])
             self.assertFalse(source.is_symlink(), row["source"])
+
+    def test_verify_group_is_an_explicit_six_file_payload(self):
+        document, core_rows = manifest_rows()
+        rows = document["groups"]["verify"]
+
+        self.assertEqual(22, len(core_rows))
+        self.assertEqual(6, len(rows))
+        self.assertEqual(
+            {
+                "scripts/check_authority.py": "scripts/check_authority.py",
+                "scripts/check_doc_links.py": "scripts/check_doc_links.py",
+                "scripts/check_docs_sync.py": "scripts/check_docs_sync.py",
+                "docs-sync-rules.toml": ("distribution/templates/docs-sync-rules.toml"),
+                "scripts/verify.sh": ("distribution/templates/scripts/verify.sh"),
+                ".github/workflows/agent-workflow.yml": (
+                    "distribution/templates/.github/workflows/agent-workflow.yml"
+                ),
+            },
+            {row["destination"]: row["source"] for row in rows},
+        )
+        for row in rows:
+            source = REPOSITORY_ROOT / row["source"]
+            self.assertTrue(source.is_file(), row["source"])
+            self.assertFalse(source.is_symlink(), row["source"])
+
+    def test_core_plus_verify_install_passes_its_distributed_gate(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            target = Path(temporary_directory) / "target"
+            target.mkdir()
+            run(["git", "init", "-b", "main"], cwd=target, check=True)
+
+            installation = run(
+                install_command(
+                    target,
+                    "--slug",
+                    "acme",
+                    "--profile",
+                    "verify",
+                )
+            )
+
+            self.assertEqual(0, installation.returncode, installation.stdout)
+            verification = run(["./scripts/verify.sh"], cwd=target)
+            self.assertEqual(0, verification.returncode, verification.stdout)
+            self.assertIn("[1/4] Workflow structure", verification.stdout)
+            self.assertIn("check_authority: OK (11 skills)", verification.stdout)
+            self.assertIn("check_doc_links: OK", verification.stdout)
+            self.assertIn("check_docs_sync: OK (0 rules)", verification.stdout)
+
+            receipt = json.loads(
+                (target / ".agents/kit-install.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                ["core", "verify"],
+                receipt["config"]["groups"],
+            )
+            self.assertEqual(16, len(receipt["immutable_files"]))
+            self.assertEqual(12, len(receipt["user_owned_templates"]))
+            self.assertIn(
+                "scripts/check_authority.py",
+                receipt["immutable_files"],
+            )
+            self.assertIn(
+                "scripts/verify.sh",
+                receipt["user_owned_templates"],
+            )
+            self.assertTrue((target / "scripts/verify.sh").stat().st_mode & 0o100)
+
+            doctor = run(doctor_command(target))
+            self.assertEqual(0, doctor.returncode, doctor.stdout)
+            self.assertIn(
+                "Summary: 16 OK, 0 MODIFIED, 0 MISSING",
+                doctor.stdout,
+            )
 
     def test_invalid_manifest_forms_are_rejected(self):
         invalid_documents = (

@@ -235,3 +235,61 @@ present.
 - **Dependencies**: [C07]
 - **Tags**: verification, ci, ara, regression-tests, independent-review
 - **From staging**: O15
+
+## C15: Task 008's first validator pack has five reproducible boundary gaps
+- **Statement**: At implementation commit `a14d554`, the seven-stage source
+  gate and a fresh `core` plus `verify` target pass, but independent probes
+  reproduce five bounded gaps: comment-only Codex contract text passes,
+  an empty external Markdown scan-root symlink passes, valid balanced or
+  escaped link labels hide missing destinations, malformed docs-sync
+  character classes traceback or pass depending on the change set, and the
+  target-workflow regression accepts an alternate relisted checker command.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `a14d554`, any listed counterexample does not
+  reproduce under the exact Task 008 interface, or the committed Round 1
+  review does not require its correction.
+- **Proof**: [.agents/state/current-task.md, docs/audits/validator-pack.md, 0184f1f]
+- **Dependencies**: [C14]
+- **Tags**: validator-pack, authority, markdown, docs-sync, ci, falsification
+- **From staging**: O16
+
+## C16: Task 008's first revision retains one workflow anti-drift gap
+- **Statement**: At revision commit `74e05f9`, independent probes close the
+  four authority, Markdown scan-root, link-label, and glob-validation groups
+  from Round 1, but `workflow_run_directives()` still returns only the required
+  target gate after a valid named scalar or named block `run` step relists a
+  checker command.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `74e05f9`, either named-step mutation changes
+  the helper's detected-directive tuple and fails the anti-drift assertion, or
+  any of the four stated closed correction groups still reproduces its Round 1
+  failure.
+- **Proof**: [.agents/state/current-task.md, tests/test_verification.py, dd0e3fa]
+- **Dependencies**: [C15]
+- **Tags**: validator-pack, ci, yaml, regression-tests, falsification
+- **From staging**: O17
+
+## C17: Task 007 provides bounded configurable installation and diagnostics
+- **Statement**: At merged implementation commit `b45d101`, the schema-v2
+  installer keeps `core` at 22 files, requires either a validated slug or
+  explicit no-prefix mode, previews the selected receipt-inclusive plan
+  without writes, records immutable hashes and user-template paths in
+  `.agents/kit-install.json`, and diagnoses clean, modified, missing, or
+  unknown-receipt installations without writes; independent review accepted
+  the implementation after all 86 regressions passed.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `b45d101`, `core` differs from 22 files,
+  install accepts no explicit naming choice or corrupts bounded skill tokens,
+  dry-run changes the target, receipt/doctor violates the immutable versus
+  user-owned boundary, any accepted collision/rollback regression fails, or
+  the archived task lacks an independent Accepted verdict.
+- **Proof**: [scripts/install_agent_workflow.py, distribution/manifest.json, tests/test_distribution.py, docs/audits/installer-v2.md, docs/tasks/007-installer-v2.md, b45d101, 40d0b99]
+- **Dependencies**: [C11, C14]
+- **Tags**: installer, slug, dry-run, receipt, doctor, independent-review
+- **From staging**: O18

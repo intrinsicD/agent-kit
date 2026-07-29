@@ -90,6 +90,32 @@
       "source": "distribution/templates/docs/tasks/README.md",
       "destination": "docs/tasks/README.md"
     }
+    ],
+    "verify": [
+    {
+      "source": "scripts/check_authority.py",
+      "destination": "scripts/check_authority.py"
+    },
+    {
+      "source": "scripts/check_doc_links.py",
+      "destination": "scripts/check_doc_links.py"
+    },
+    {
+      "source": "scripts/check_docs_sync.py",
+      "destination": "scripts/check_docs_sync.py"
+    },
+    {
+      "source": "distribution/templates/docs-sync-rules.toml",
+      "destination": "docs-sync-rules.toml"
+    },
+    {
+      "source": "distribution/templates/scripts/verify.sh",
+      "destination": "scripts/verify.sh"
+    },
+    {
+      "source": "distribution/templates/.github/workflows/agent-workflow.yml",
+      "destination": ".github/workflows/agent-workflow.yml"
+    }
     ]
   }
 }

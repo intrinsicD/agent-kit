@@ -164,3 +164,36 @@ observations:
     promoted_to: "logic/claims.md:C14"
     crystallized_via: artifact-commitment
     stale: false
+  - id: O16
+    timestamp: "2026-07-29T13:59+02:00"
+    provenance: ai-suggested
+    content: "At Task 008 implementation tip a14d554, the green 105-test validator-pack branch still has five independently reproduced authority, Markdown, glob-validation, and anti-drift boundary gaps."
+    context: "Independent Round 1 review reproduced the source and installed-target success path, then committed exact counterexamples and a Revision required verdict."
+    potential_type: claim
+    bound_to: [N35]
+    promoted: true
+    promoted_to: "logic/claims.md:C15"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O17
+    timestamp: "2026-07-29T14:22+02:00"
+    provenance: ai-suggested
+    content: "At Task 008 revision tip 74e05f9, four Round 1 boundary groups are closed, but the target-workflow anti-drift assertion still accepts relisted checker commands in valid named scalar and named block run steps."
+    context: "Independent Round 2 review reproduced all correction groups, committed the remaining exact counterexample, and returned Revision required."
+    potential_type: claim
+    bound_to: [N35, N36]
+    promoted: true
+    promoted_to: "logic/claims.md:C16"
+    crystallized_via: artifact-commitment
+    stale: false
+  - id: O18
+    timestamp: "2026-07-29T14:27+02:00"
+    provenance: ai-suggested
+    content: "Accepted Task 007 adds explicit slug/no-prefix installation, schema-v2 profiles, no-write dry-run, a bounded receipt, and read-only doctor while preserving the 22-file core and collision/rollback guarantees."
+    context: "The owner selected both recommended Installer v2 policies; bounded implementation revisions passed independent review, merge, archive, 86 tests, and cross-version CI."
+    potential_type: claim
+    bound_to: [N33, N34, N37, N38, N39]
+    promoted: true
+    promoted_to: "logic/claims.md:C17"
+    crystallized_via: artifact-commitment
+    stale: false

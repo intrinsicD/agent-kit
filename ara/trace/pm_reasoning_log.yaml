@@ -56,3 +56,21 @@ entries:
       - "Routed accepted-flow merge/archive as N32 and the two blocking Installer v2 interface choices as open questions N33-N34."
       - "Staged O15 and crystallized C14 through artifact commitment because accepted code, CI, archive, and repository state now depend on the verification capability."
       - "Left O14 unpromoted as a time-scoped intermediate state; the final revision superseded its open limitation without making the earlier review result false."
+  - turn: "2026-07-29_001#10"
+    notes:
+      - "Routed the independent Task 008 source, target, and adversarial review as experiment N35."
+      - "Staged O16 and crystallized C15 through artifact commitment because the fixed-tip review verdict and durable audit depend on the five reproduced gaps."
+      - "Scoped C15 to a14d554 so a later corrected implementation will not contradict the historical finding."
+      - "Did not create a positive validator-pack capability claim because Task 008 remains Revision required."
+  - turn: "2026-07-29_001#11"
+    notes:
+      - "Routed the independent Task 008 Round 2 source, disposable-target, and mutation review as experiment N36."
+      - "Staged O17 and crystallized C16 through artifact commitment because the committed review verdict depends on the exact named-step bypass."
+      - "Scoped C16 to 74e05f9, so it complements rather than contradicts historical five-gap claim C15."
+      - "Left O14 unpromoted: its Task 006 intermediate state remains time-scoped and has no new closure signal this turn."
+  - turn: "2026-07-29_001#12"
+    notes:
+      - "Resolved N33-N34 through user decision N37, then routed Task 007 independent validation and accepted closeout as N38-N39."
+      - "Staged O18 and crystallized C17 through artifact commitment because merged code, the accepted archive, receipt behavior, and repository state depend on the Installer v2 capability."
+      - "Routed the mandatory post-two-round Task 008 choice as open question N40; did not start a third correction or create a positive validator-pack claim."
+      - "Kept C15-C16 as fixed-commit historical findings and left O14 unpromoted; neither conflicts with the current bounded escalation."
