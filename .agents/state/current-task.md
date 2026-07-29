@@ -12,7 +12,7 @@ Implement Installer v2 configuration and diagnostics
 
 - Driver: codex-a
 - Reviewer: codex-b
-- Turn: driver
+- Turn: reviewer
 
 ## Mode
 
@@ -146,7 +146,7 @@ overwrite-capable behavior remains explicitly excluded.
 
 ## Status
 
-In progress
+In review
 
 ## Human Decisions
 
@@ -268,3 +268,148 @@ user-owned templates as presence-only.
 The repository owner answers both pending questions. Driver `codex-a` records
 the answers and date, restores the implementing state, and only then begins the
 smallest manifest-and-renderer slice.
+
+### Handoff (codex-a, Driver)
+
+#### Objective
+
+Independently falsify the Installer v2 implementation at fixed implementation
+tip `e562259`: schema-v2 group selection, required naming choice and bounded
+slug rendering, receipt-inclusive dry-run/install behavior, and read-only
+doctor diagnostics, while confirming every pre-existing collision, ownership,
+rollback, and target-Git guarantee remains true.
+
+#### Changes
+
+- Commit `5ceaceb` migrates the unchanged 22-file payload to manifest schema v2
+  group `core`, adds strict group/source/destination validation and stable group
+  union, replaces the old positional CLI with `install`, requires `--slug` or
+  explicit `--no-prefix`, and renders only the eleven approved skill tokens in
+  directory names, exact frontmatter names, and single-backtick naming
+  surfaces.
+- Commit `c3c4fcb` makes one rendered plan authoritative for install and
+  `--dry-run`, adds the collision-protected generated
+  `.agents/kit-install.json`, preserves exclusive creation and owned-path
+  rollback through receipt failure, and adds receipt-backed `doctor` plus the
+  missing-receipt unknown/presence fallback. Immutable paths reached through
+  symlinked ancestors cannot pass integrity checks.
+- Commit `e562259` updates README installation, migration, receipt, doctor,
+  layout, and exit-code guidance and adds the durable Driver code audit at
+  `docs/audits/installer-v2.md`.
+- `tests/test_distribution.py` now has 24 focused cases spanning every success
+  criterion and named failure mode. No payload content, ARA file, dependency,
+  update/overwrite/uninstall/repair interface, or target pilot was added.
+
+#### Evidence
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`: 24/24
+  passed at `e562259`.
+- `./scripts/verify.sh`: all five gates passed at `e562259`; Ruff lint and
+  format were clean, workflow state and 14 ARA claims validated, and 82/82
+  regressions passed.
+- Separate disposable Git target: slugged install wrote 22 payload files plus
+  receipt; the installed validator found 11 valid skills and zero archives;
+  doctor exited 0 clean; after an `AGENTS.md` edit it reported `MODIFIED` and
+  exited 1; the target remained on `main` at its original HEAD.
+- Snapshot tests prove clean and colliding dry runs and every exercised doctor
+  path write nothing. Fault injection proves rollback after both a mid-payload
+  copy failure and a partial final receipt write.
+- `jq` reports manifest version 2, only group `core`, and `core_count: 22`.
+  `git diff --check 5262f9d..e562259` passed. The complete task diff contains
+  only `README.md`, `distribution/manifest.json`,
+  `docs/audits/installer-v2.md`, `scripts/install_agent_workflow.py`, and
+  `tests/test_distribution.py`; no `ara/` or `.ara/` path changed.
+
+#### Assumptions
+
+- The receipt is a local drift baseline, not a signature against an actor who
+  can rewrite both receipt and payload.
+- Files sourced from `distribution/templates/` are user-owned after install;
+  all other selected payload files are immutable for doctor accounting.
+- Single-backtick spans are the naming surfaces present in the approved
+  22-file payload. Ordinary prose tokens intentionally remain unprefixed.
+
+#### Uncertainties
+
+- A missing receipt cannot recover hashes or optional profile selection. The
+  fallback can recognize current unprefixed or valid slug-prefixed `core`
+  skills, but deliberately reports the installation as unknown.
+- Preflight plus exclusive creation is not an adversarial transaction. An
+  uncatchable termination can leave installer-created paths, and concurrent
+  target mutation can force refusal or rollback.
+- Local evidence used Python 3.12. The existing branch CI matrix is responsible
+  for independent Python 3.11 and 3.13 reproduction after push.
+
+#### Review Focus
+
+1. Attempt to falsify the rewrite boundary: all routing/frontmatter/directory
+   names must be prefixed while prose remains unchanged and the installed
+   validator passes.
+2. Challenge no-write and ownership guarantees for colliding dry runs,
+   receipt collision, partial receipt failure, symlink ancestors, and doctor
+   paths.
+3. Audit receipt schema/path validation and verify modified user templates do
+   not become false immutable findings.
+4. Confirm the breaking CLI and exit 0/1/2 behavior match both recorded human
+   decisions and README, without an implicit unprefixed or repair path.
+5. Inspect the complete diff for unnecessary abstraction or accidental scope
+   expansion, and reproduce the focused suite plus `./scripts/verify.sh`.
+
+#### Recommended Next Action
+
+Reviewer `codex-b` checks the fixed branch tip, records an independent
+structured verdict, and returns `Turn` to `driver`. Any required revision
+should name a reproducer and the smallest failing contract.
+
+### Session Completion (codex-a, Driver)
+
+#### Work completed
+
+Implemented all approved Installer v2 behavior, regression coverage,
+documentation, and durable code audit in three bounded commits; completed the
+Driver self-audit and prepared the branch for independent review.
+
+#### Evidence
+
+Focused distribution suite 24/24; full five-stage verification 82/82; separate
+disposable Git install/validate/doctor/tamper probe passed; fixed-tip diff and
+22-file `core` boundary inspected.
+
+#### Files changed
+
+- `distribution/manifest.json`
+- `scripts/install_agent_workflow.py`
+- `tests/test_distribution.py`
+- `README.md`
+- `docs/audits/installer-v2.md`
+- `.agents/state/current-task.md` (handoff metadata only)
+
+#### Tests or experiments run
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/test_distribution.py -v`
+- `./scripts/verify.sh`
+- Disposable Git target: slugged install, installed validator, clean doctor,
+  induced immutable drift, doctor finding, Git HEAD/branch comparison
+- Manifest version/group/core-count query, fixed-tip diff check, CLI help and
+  ARA-path scope inspection
+
+#### Known limitations
+
+Receipt integrity is unsigned; missing-receipt fallback is presence-only and
+cannot infer optional profiles; filesystem preflight is cooperative rather
+than transactional. No overwrite, update, uninstall, or repair behavior exists.
+
+#### Unresolved questions
+
+None for Driver implementation. Independent Reviewer verdict and CI matrix
+results remain pending.
+
+#### Repository state updated
+
+Yes
+
+#### Recommended next action
+
+Reviewer `codex-b` begins with this Handoff Log and fixed implementation tip
+`e562259`, reproduces the evidence, and records a verdict before any Driver
+closeout.
