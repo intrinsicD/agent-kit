@@ -10,7 +10,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED_FILES = [
     "AGENTS.md",
-    "README.md",
     ".agents/state/state.md",
     ".agents/state/current-task.md",
     ".agents/state/backlog.md",

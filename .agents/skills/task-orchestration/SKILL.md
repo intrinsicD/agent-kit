@@ -37,6 +37,7 @@ substantial.
 - Unclear methods or prior art → `research-methods`
 - New algorithm or method ideas → `novel-idea-generation`
 - Empirical uncertainty → `experiment-design`
+- Completed quantitative results or empirical claim promotion → `results-audit`
 - Defined behavior requiring code → `implementation`
 - Independent challenge → `review-and-falsification`
 - Critical correctness or performance → `code-audit`
