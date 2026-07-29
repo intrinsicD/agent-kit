@@ -197,3 +197,14 @@ observations:
     promoted_to: "logic/claims.md:C17"
     crystallized_via: artifact-commitment
     stale: false
+  - id: O19
+    timestamp: "2026-07-29T20:09+02:00"
+    provenance: ai-suggested
+    content: "Merged Task 008 provides a six-file opt-in validator profile and a passing fresh target gate while explicitly excluding named-step mutation-test completeness."
+    context: "The repository owner promoted Task 008 with follow-up after two non-accepting reviews; merge, archive, and the 109-test closeout gate completed."
+    potential_type: claim
+    bound_to: [N35, N36, N41, N42]
+    promoted: true
+    promoted_to: "logic/claims.md:C18"
+    crystallized_via: artifact-commitment
+    stale: false

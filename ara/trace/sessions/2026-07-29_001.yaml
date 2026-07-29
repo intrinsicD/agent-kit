@@ -2,9 +2,9 @@ session:
   id: "2026-07-29_001"
   date: "2026-07-29"
   started: "2026-07-29T00:07+02:00"
-  last_turn: "2026-07-29T14:27+02:00"
-  turn_count: 12
-  summary: "Task 007 was accepted and merged; Task 008 is blocked after two reviews on one test-only named-step gap."
+  last_turn: "2026-07-29T20:09+02:00"
+  turn_count: 13
+  summary: "Task 008 was owner-promoted, merged, and archived with one named-step mutation-test follow-up."
 
 events_logged:
   - turn: 1
@@ -289,6 +289,24 @@ events_logged:
     routing: direct
     provenance: ai-suggested
     summary: "Ask whether to authorize one final test-only Task 008 correction after two non-accepting reviews."
+  - turn: 13
+    type: decision
+    id: N41
+    routing: direct
+    provenance: user
+    summary: "Accept and merge Task 008 while preserving the named-step regression gap as follow-up."
+  - turn: 13
+    type: experiment
+    id: N42
+    routing: direct
+    provenance: ai-executed
+    summary: "Merged closeout passed the seven-stage gate and all 109 regressions."
+  - turn: 13
+    type: claim
+    id: O19
+    routing: crystallized
+    provenance: ai-suggested
+    summary: "Task 008 supplies a bounded opt-in validator profile with explicit named-step test limits."
 
 ai_actions:
   - turn: 1
@@ -452,6 +470,16 @@ ai_actions:
       - "tests/test_verification.py"
       - "docs/audits/validator-pack.md"
       - ".agents/state/current-task.md"
+  - turn: 13
+    action: "Recorded the owner promotion, merged Task 008, archived and reset task state, updated durable planning records, and reran the complete merged gate."
+    provenance: ai-executed
+    files_changed:
+      - "docs/tasks/008-validator-pack.md"
+      - ".agents/state/current-task.md"
+      - ".agents/state/state.md"
+      - ".agents/state/backlog.md"
+      - "docs/audits/validator-pack.md"
+      - "docs/research/maturity-program-plan.md"
 
 claims_touched:
   - id: C01
@@ -517,6 +545,9 @@ claims_touched:
   - id: C17
     action: crystallized
     turn: 12
+  - id: C18
+    action: crystallized
+    turn: 13
 
 key_context:
   - turn: 1
@@ -543,10 +574,11 @@ key_context:
     excerpt: "Round 2 closed four Task 008 finding groups, but valid named scalar and named block run steps still bypass the workflow anti-drift assertion."
   - turn: 12
     excerpt: "The user selected both recommended Installer v2 policies; Task 007 was accepted, while Task 008 reached the mandatory two-round human decision boundary."
+  - turn: 13
+    excerpt: "The repository owner directed all changes to be committed, merged into main, and pushed; Task 008 was promoted with the named-step gap preserved as follow-up."
 
 open_threads:
   - "If explicitly prioritized, add a read-only installer plan and measure whether a bounded realtime-gs pilot earns adoption; consider Prospect separately later."
-  - "Task 008 awaits the repository owner's choice: authorize one final named-step test correction/review or close Inconclusive without merging."
+  - "When prioritized, make the target-workflow run-key detector cover named scalar and named block steps and add both mutation regressions."
 
-ai_suggestions_pending:
-  - "Authorize one bounded, test-only Task 008 correction and one final independent review."
+ai_suggestions_pending: []

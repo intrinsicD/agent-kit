@@ -250,7 +250,7 @@ present.
 - **Falsification criteria**: At `a14d554`, any listed counterexample does not
   reproduce under the exact Task 008 interface, or the committed Round 1
   review does not require its correction.
-- **Proof**: [.agents/state/current-task.md, docs/audits/validator-pack.md, 0184f1f]
+- **Proof**: [docs/tasks/008-validator-pack.md, docs/audits/validator-pack.md, 0184f1f]
 - **Dependencies**: [C14]
 - **Tags**: validator-pack, authority, markdown, docs-sync, ci, falsification
 - **From staging**: O16
@@ -268,7 +268,7 @@ present.
   the helper's detected-directive tuple and fails the anti-drift assertion, or
   any of the four stated closed correction groups still reproduces its Round 1
   failure.
-- **Proof**: [.agents/state/current-task.md, tests/test_verification.py, dd0e3fa]
+- **Proof**: [docs/tasks/008-validator-pack.md, tests/test_verification.py, dd0e3fa]
 - **Dependencies**: [C15]
 - **Tags**: validator-pack, ci, yaml, regression-tests, falsification
 - **From staging**: O17
@@ -293,3 +293,23 @@ present.
 - **Dependencies**: [C11, C14]
 - **Tags**: installer, slug, dry-run, receipt, doctor, independent-review
 - **From staging**: O18
+
+## C18: Task 008 provides a bounded opt-in validator profile
+- **Statement**: At merge commit `c38abb5`, the schema-v2 `verify` group adds
+  exactly six files while `core` remains 22 files; a fresh combined install
+  passes its four-stage target gate and clean doctor, and the shipped workflow
+  contains one `./scripts/verify.sh` invocation with no relisted checker
+  command. Repository-owner acceptance explicitly excludes complete
+  named-step mutation-test coverage.
+- **Status**: supported
+- **Provenance**: ai-suggested
+- **Crystallized via**: artifact-commitment
+- **Falsification criteria**: At `c38abb5`, `core` or `verify` has a different
+  payload size, the disposable combined install/gate/doctor regression fails,
+  the shipped workflow directly invokes a delegated checker, or the archived
+  task represents named scalar and named block mutation coverage as complete.
+- **Proof**: [distribution/manifest.json, distribution/templates/scripts/verify.sh, distribution/templates/.github/workflows/agent-workflow.yml, tests/test_distribution.py, tests/test_verification.py, docs/audits/validator-pack.md, docs/tasks/008-validator-pack.md, c38abb5, 6211629]
+- **Dependencies**: [C14, C16, C17]
+- **Tags**: validator-pack, authority, documentation, ci, installation,
+  accepted-with-follow-up
+- **From staging**: O19

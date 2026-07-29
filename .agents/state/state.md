@@ -94,7 +94,7 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
 - Verification wiring regression tests: 7.
 - Unified verification tests: 109.
 - ARA checker fixtures: 23.
-- Tracked ARA claims: 17.
+- Tracked ARA claims: 18.
 - Archived operational tasks: 8.
 - Remediated audit findings: 6 of 6.
 - Task 007 review findings resolved: 3 of 3.

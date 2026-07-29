@@ -698,7 +698,48 @@ tree:
         evidence:
           - "N36"
           - "1ebcba1"
-          - ".agents/state/current-task.md"
+          - "docs/tasks/008-validator-pack.md"
         also_depends_on: [N35, N36]
-        status: open
-        children: []
+        status: resolved
+        children:
+          - id: N41
+            type: decision
+            title: "Accept and merge Task 008 with a named-step follow-up"
+            provenance: user
+            timestamp: "2026-07-29T20:09+02:00"
+            choice: >
+              Commit all Task 008 changes, merge them into main, and push
+              while preserving the named-step anti-drift mutation gap as an
+              explicit accepted follow-up.
+            alternatives:
+              - "Authorize the bounded test correction before merge"
+              - "Close Task 008 as Inconclusive without merging"
+            evidence:
+              - "N36"
+              - "N40"
+              - "5fa7d30"
+              - "c38abb5"
+              - "docs/tasks/008-validator-pack.md"
+              - "docs/audits/validator-pack.md"
+            status: resolved
+            children:
+              - id: N42
+                type: experiment
+                title: "Verify the merged Task 008 closeout"
+                provenance: ai-executed
+                timestamp: "2026-07-29T20:09+02:00"
+                result: >
+                  The accepted-with-follow-up task record validated, the task
+                  branch merged at c38abb5, the archive/reset closeout
+                  committed at 6211629, and the merged seven-stage gate passed
+                  strict authority and link checks plus all 109 regressions.
+                evidence:
+                  - "c38abb5"
+                  - "6211629"
+                  - "docs/tasks/008-validator-pack.md"
+                  - "docs/audits/validator-pack.md"
+                  - "tests/test_validator_pack.py"
+                  - "tests/test_distribution.py"
+                  - "tests/test_verification.py"
+                status: resolved
+                children: []
