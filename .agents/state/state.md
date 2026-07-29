@@ -21,6 +21,8 @@ Driver/Reviewer handoffs, independent falsification, and reproducible evidence.
   matching ids.
 - Accepted merge closeout and metadata-only non-merge closeout are documented
   and covered by executable Git probes.
+- The four target-workflow dispositions were revalidated at explicit commits:
+  no normal installation or replacement, with only bounded conditional pilots.
 - The regression suite and live validator pass on the completed repository.
 
 ## Experimental Components
@@ -47,29 +49,33 @@ accepted remediations remain in `docs/audits/` and `docs/tasks/`.
 - Preserve target-specific task, evidence, validation, and domain-skill
   systems. `results-audit` is an optional generic procedure; domain rules
   remain local.
-- Evaluate only bounded coordination pilots in realtime-gs or Prospect after
-  explicit prioritization. Consider changes in StructSplat or IntrinsicEngine
-  only after a concrete failure establishes the need.
+- If explicitly prioritized, evaluate the smallest coordination pilot in
+  realtime-gs first and Prospect separately afterward. Consider only in-place
+  identity/verdict checks in StructSplat or IntrinsicEngine after a concrete
+  failure establishes the need.
+- Before an authorized zero-collision target pilot, add a read-only installer
+  plan; do not import IntrinsicEngine's broader generator platform.
 
 ## Current Metrics
 
 - Routed skills: 11.
 - Fixed payload files: 22.
 - Workflow regression tests: 36.
-- Archived operational tasks: 4.
+- Archived operational tasks: 5.
 - Remediated audit findings: 6 of 6.
 - Assessed target workflows: 4.
-- Task 004 independent verdict: Accepted.
+- Task 005 independent verdict: Accepted.
 
 ## Immediate Next Step
 
-The distribution blocker is closed. If a target pilot becomes a repository
-priority, frame the smallest measurable realtime-gs or Prospect coordination
-pilot with `task-orchestration`; do not infer adoption from packaging alone.
-The next substantial agent-kit task swaps the roles recorded below.
+No target workflow change is currently justified. If a target pilot becomes a
+repository priority, first add a read-only installation plan, then frame the
+smallest measurable realtime-gs coordination pilot with `task-orchestration`;
+do not infer adoption from packaging alone. The next substantial agent-kit
+task swaps the roles recorded below.
 
 ## Last Completed Task
 
-- Task ID: 004
-- Driver: codex-b
-- Reviewer: codex-a
+- Task ID: 005
+- Driver: codex-a
+- Reviewer: codex-b
